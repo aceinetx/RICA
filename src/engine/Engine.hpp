@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include <shared_mutex>
 #include <vector>
 
 class Scene;
@@ -41,7 +43,7 @@ public:
 
   class SceneManager {
   public:
-    Scene& newSceneByID(unsigned int ID);
+    std::shared_ptr<Scene> newSceneByID(unsigned int ID);
     void setSceneByID(unsigned int ID);
     void setSceneLimit(unsigned int limit);
     unsigned int getCurrentSceneID() const {
@@ -49,7 +51,7 @@ public:
     }
     void addComponentCurrentScene();
 
-    template <typename T> T& CreateScene(unsigned int ID);
+    template <typename T> std::shared_ptr<T> CreateScene(unsigned int ID);
 
     friend class Engine;
 
@@ -58,7 +60,7 @@ public:
   };
 
   static SceneManager sceneManager;
-  Scene* getActiveScene() {
+  std::shared_ptr<Scene> getActiveScene() {
     unsigned int currentSceneId = sceneManager.getCurrentSceneID();
     if (currentSceneId < vectorSceneManager.size()) {
       return vectorSceneManager[currentSceneId];
@@ -67,7 +69,7 @@ public:
   }
 
 private:
-  static std::vector<Scene*> vectorSceneManager;
+  static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
 
   void updateCurrentScene();
 

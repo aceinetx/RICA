@@ -1,19 +1,18 @@
 #include "../rica.hpp"
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 
 AudioSystem& audioSystem = AudioSystem::getInstance();
 
-void AudioSystem::update(const std::vector<Entity*>& entities) {
+void AudioSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   logger.addLog(LogLevel::DEBUG, __FILE__, __func__, "logRica.txt");
 
-  Camera2DComponent* cameraActive = nullptr;
-  TransformComponent* transformActive = nullptr;
+  std::shared_ptr<Camera2DComponent> cameraActive = nullptr;
+  std::shared_ptr<TransformComponent> transformActive = nullptr;
 
-  for (Entity* entity : entities) {
-    Camera2DComponent* camera = entity->getComponent<Camera2DComponent>();
-    TransformComponent* transform = entity->getComponent<TransformComponent>();
+  for (auto entity : entities) {
+    auto camera = entity->getComponent<Camera2DComponent>();
+    auto transform = entity->getComponent<TransformComponent>();
 
     if (camera && camera->isActiveCamera() && transform) {
       cameraActive = camera;
@@ -22,9 +21,9 @@ void AudioSystem::update(const std::vector<Entity*>& entities) {
     }
   }
 
-  for (Entity* entity : entities) {
-    TransformComponent* transform = entity->getComponent<TransformComponent>();
-    AudioComponent* audio = entity->getComponent<AudioComponent>();
+  for (auto entity : entities) {
+    auto transform = entity->getComponent<TransformComponent>();
+    auto audio = entity->getComponent<AudioComponent>();
 
     if (!transform || !audio)
       continue;

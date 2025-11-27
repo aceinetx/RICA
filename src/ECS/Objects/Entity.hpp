@@ -1,7 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <optional>
 #include <string>
-#include <utility>
 #include <vector>
 
 class Component;
@@ -17,12 +18,8 @@ public:
   virtual void update(float deltaTime) {
   }
 
-  template <typename T, typename... Args> T& AddComponent(Args... args);
-
-  template <typename T> T* GetComponent();
-
-  void addComponent(Component* comp);
-  template <typename T> T* getComponent();
+  void addComponent(std::shared_ptr<Component> comp);
+  template <typename T> std::shared_ptr<T> getComponent();
 
   int getID() const;
 
@@ -34,7 +31,7 @@ public:
   }
 
 private:
-  std::vector<Component*> components;
+  std::vector<std::shared_ptr<Component>> components;
   int id;
   std::string tag;
 };

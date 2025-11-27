@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 class Entity;
@@ -19,8 +20,9 @@ public:
     return instance;
   }
 
-  void update(const std::vector<Entity*>& entities);
-  bool isColliding(Entity* entity1, Entity* entity2);
+  void update(const std::vector<std::shared_ptr<Entity>>& entities);
+  bool isColliding(std::shared_ptr<Entity> entity1,
+                   std::shared_ptr<Entity> entity2);
 
 private:
   Collider2DSystem() = default;

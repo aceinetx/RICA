@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -18,21 +20,23 @@ public:
   }
 
   // Создание Entity (старый API)
-  Entity* createEntity(Entity* entity);
+  [[deprecated]] std::shared_ptr<Entity>
+  createEntity(std::shared_ptr<Entity> entity);
 
   // Создание Entity (новый API)
-  template <typename T, typename... Args> T* Create(Args&&... args);
+  template <typename T, typename... Args>
+  std::shared_ptr<T> Create(Args&&... args);
 
   // Поиск Entity
-  Entity* findById(int id);
-  std::vector<Entity*> findByTag(const std::string& tag);
-  const std::vector<Entity*>& getAllEntities() const;
+  std::optional<std::shared_ptr<Entity>> findById(int id);
+  std::vector<std::shared_ptr<Entity>> findByTag(const std::string& tag);
+  const std::vector<std::shared_ptr<Entity>>& getAllEntities() const;
 
   // Обновление
   void updateEntity();
 
 private:
-  std::vector<Entity*> entities;
+  std::vector<std::shared_ptr<Entity>> entities;
 };
 
 #include "Scene.inl"

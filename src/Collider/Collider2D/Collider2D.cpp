@@ -1,15 +1,17 @@
 #include "Collider2D.hpp"
 #include "../../rica.hpp"
+#include "Transform.hpp"
 
 Collider2DSystem& collider2DSystem = Collider2DSystem::getInstance();
 
-void Collider2DSystem::update(const std::vector<Entity*>& entities) {
+void Collider2DSystem::update(
+    const std::vector<std::shared_ptr<Entity>>& entities) {
   logger.addLog(LogLevel::DEBUG, "void Collider2DSystem::update",
                 "logRica.txt");
 
-  for (Entity* entity : entities) {
-    TransformComponent* transform = entity->getComponent<TransformComponent>();
-    Collider2DComponent* collider = entity->getComponent<Collider2DComponent>();
+  for (auto entity : entities) {
+    auto transform = entity->getComponent<TransformComponent>();
+    auto collider = entity->getComponent<Collider2DComponent>();
 
     if (!transform || !collider)
       continue;
@@ -19,7 +21,8 @@ void Collider2DSystem::update(const std::vector<Entity*>& entities) {
   }
 }
 
-bool Collider2DSystem::isColliding(Entity* entity1, Entity* entity2) {
+bool Collider2DSystem::isColliding(std::shared_ptr<Entity> entity1,
+                                   std::shared_ptr<Entity> entity2) {
   auto transform1 = entity1->getComponent<TransformComponent>();
   auto collider1 = entity1->getComponent<Collider2DComponent>();
   auto transform2 = entity2->getComponent<TransformComponent>();

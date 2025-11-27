@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 class Entity;
@@ -18,7 +19,7 @@ public:
     return instance;
   }
 
-  void update(const std::vector<Entity*>& entities);
+  void update(const std::vector<std::shared_ptr<Entity>>& entities);
 
 private:
   AudioSystem() = default;

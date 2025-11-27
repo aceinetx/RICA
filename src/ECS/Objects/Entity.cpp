@@ -11,9 +11,10 @@ Entity::Entity(std::string tag) : id(globalEntityId++), tag(tag) {
 }
 
 Entity::~Entity() {
-  for (Component* componentPtr : components) {
+  for (auto componentPtr : components) {
     if (componentPtr != nullptr) {
-      delete componentPtr;
+      componentPtr = nullptr;
+      // delete componentPtr;
     }
   }
 }
@@ -22,26 +23,30 @@ int Entity::getID() const {
   return id;
 }
 
-void Entity::addComponent(Component* comp) {
+void Entity::addComponent(std::shared_ptr<Component> comp) {
   if (comp != nullptr) {
     components.push_back(comp);
   }
 }
 
-template <typename T> T* Entity::getComponent() {
-  for (Component* componentPtr : components) {
+template <typename T> std::shared_ptr<T> Entity::getComponent() {
+  for (auto componentPtr : components) {
     if (componentPtr == nullptr)
       continue;
 
-    if (T* casted = dynamic_cast<T*>(componentPtr)) {
+    if (auto casted = std::dynamic_pointer_cast<T>(componentPtr)) {
       return casted;
     }
   }
   return nullptr;
 }
 
-template SpriteComponent* Entity::getComponent<SpriteComponent>();
-template TransformComponent* Entity::getComponent<TransformComponent>();
-template Collider2DComponent* Entity::getComponent<Collider2DComponent>();
-template AudioComponent* Entity::getComponent<AudioComponent>();
-template Camera2DComponent* Entity::getComponent<Camera2DComponent>();
+template std::shared_ptr<SpriteComponent>
+Entity::getComponent<SpriteComponent>();
+template std::shared_ptr<TransformComponent>
+Entity::getComponent<TransformComponent>();
+template std::shared_ptr<Collider2DComponent>
+Entity::getComponent<Collider2DComponent>();
+template std::shared_ptr<AudioComponent> Entity::getComponent<AudioComponent>();
+template std::shared_ptr<Camera2DComponent>
+Entity::getComponent<Camera2DComponent>();

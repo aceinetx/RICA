@@ -148,7 +148,6 @@ void Engine::update() {
 void Engine::deleteVectorSceneManager() {
   for (size_t i = 0; i < vectorSceneManager.size(); i++) {
     if (vectorSceneManager[i] != nullptr) {
-      delete vectorSceneManager[i];
       vectorSceneManager[i] = nullptr;
     }
   }
@@ -158,7 +157,7 @@ void Engine::shutdown() {
   CloseWindow();
 }
 
-std::vector<Scene*> Engine::vectorSceneManager;
+std::vector<std::shared_ptr<Scene>> Engine::vectorSceneManager;
 Engine::SceneManager Engine::sceneManager;
 
 void Engine::updateCurrentScene() {
@@ -170,7 +169,7 @@ void Engine::updateCurrentScene() {
   }
 }
 
-Scene& Engine::SceneManager::newSceneByID(unsigned int ID) {
+std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
   if (ID >= Engine::vectorSceneManager.size()) {
     logger.addLog(LogLevel::WARNING,
                   "World ID " + std::to_string(ID) +
@@ -179,11 +178,11 @@ Scene& Engine::SceneManager::newSceneByID(unsigned int ID) {
     Engine::vectorSceneManager.resize(ID + 1, nullptr);
   }
   if (Engine::vectorSceneManager[ID] != nullptr) {
-    delete Engine::vectorSceneManager[ID];
+    Engine::vectorSceneManager[ID] = nullptr;
   }
-  Scene* scenePtr = new Scene();
+  auto scenePtr = std::make_shared<Scene>();
   Engine::vectorSceneManager[ID] = scenePtr;
-  return *scenePtr;
+  return scenePtr;
 }
 
 void Engine::SceneManager::setSceneByID(unsigned int ID) {
@@ -210,7 +209,6 @@ void Engine::SceneManager::setSceneLimit(unsigned int limit) {
   } else if (limit < Engine::vectorSceneManager.size()) {
     for (int i = limit; i < (int)Engine::vectorSceneManager.size(); i++) {
       if (Engine::vectorSceneManager[i] != nullptr) {
-        delete Engine::vectorSceneManager[i];
         Engine::vectorSceneManager[i] = nullptr;
       }
     }
@@ -237,7 +235,7 @@ int main() {
       break;
     }
 
-    Scene* currentScenePtr = Engine::vectorSceneManager[currentSceneId];
+    auto currentScenePtr = Engine::vectorSceneManager[currentSceneId];
 
     currentScenePtr->OnUpdate(GetFrameTime());
     collider2DSystem.update(currentScenePtr->getAllEntities());
