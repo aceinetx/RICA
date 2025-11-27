@@ -1,6 +1,5 @@
 #pragma once
 
-struct Component
-{
-    virtual ~Component() = default;
+struct Component {
+  virtual ~Component() = default;
 };

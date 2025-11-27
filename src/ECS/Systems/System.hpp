@@ -4,16 +4,13 @@
 
 class Entity;
 
-struct System
-{
-    std::vector<Entity *> entities;
+struct System {
+  std::vector<Entity*> entities;
 
-    virtual ~System() = default;
+  virtual ~System() = default;
 
-    public:
-
-    void addEntity(Entity *entity)
-    {
-        entities.push_back(entity);
-    }
+public:
+  void addEntity(Entity* entity) {
+    entities.push_back(entity);
+  }
 };

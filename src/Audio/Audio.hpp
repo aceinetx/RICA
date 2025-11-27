@@ -1,34 +1,29 @@
 #pragma once
 
-#include<vector>
+#include <vector>
 
 class Entity;
 class TransformComponent;
 class Engine;
 
-
-class AudioSystem
-{
+class AudioSystem {
 public:
-    AudioSystem(const AudioSystem &) = delete;
-    AudioSystem &operator=(const AudioSystem &) = delete;
-    AudioSystem(AudioSystem &&) = delete;
-    AudioSystem &operator=(AudioSystem &&) = delete;
+  AudioSystem(const AudioSystem&) = delete;
+  AudioSystem& operator=(const AudioSystem&) = delete;
+  AudioSystem(AudioSystem&&) = delete;
+  AudioSystem& operator=(AudioSystem&&) = delete;
 
-    static AudioSystem &getInstance()
-    {
-        static AudioSystem instance;
-        return instance;
-    }
+  static AudioSystem& getInstance() {
+    static AudioSystem instance;
+    return instance;
+  }
 
-    void update(const std::vector<Entity *> &entities);
-
+  void update(const std::vector<Entity*>& entities);
 
 private:
+  AudioSystem() = default;
 
-    AudioSystem() = default;
-    
-    ~AudioSystem() = default;
+  ~AudioSystem() = default;
 };
 
-extern AudioSystem &audioSystem; 
+extern AudioSystem& audioSystem;

@@ -1,40 +1,42 @@
 #pragma once
 
-#include <vector>
 #include <string>
 #include <utility>
+#include <vector>
 
 class Component;
 
-class Entity
-{
+class Entity {
 public:
-    Entity();
-    Entity(std::string tag);
-    virtual ~Entity();
+  Entity();
+  Entity(std::string tag);
+  virtual ~Entity();
 
-    virtual void Start() {}
-    virtual void update(float deltaTime) {}
+  virtual void Start() {
+  }
+  virtual void update(float deltaTime) {
+  }
 
-    template <typename T, typename... Args>
-    T& AddComponent(Args... args);
-    
-    template <typename T>
-    T* GetComponent();
+  template <typename T, typename... Args> T& AddComponent(Args... args);
 
-    void addComponent(Component *comp);
-    template <typename T>
-    T *getComponent();
+  template <typename T> T* GetComponent();
 
-    int getID() const;
+  void addComponent(Component* comp);
+  template <typename T> T* getComponent();
 
-    void setTag(std::string tag){this->tag=tag;}
-    std::string getTag(){return tag;}
+  int getID() const;
+
+  void setTag(std::string tag) {
+    this->tag = tag;
+  }
+  std::string getTag() {
+    return tag;
+  }
 
 private:
-    std::vector<Component *> components;
-    int id;
-    std::string tag;
+  std::vector<Component*> components;
+  int id;
+  std::string tag;
 };
 
 #include "Entity.inl"

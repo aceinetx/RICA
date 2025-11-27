@@ -1,6 +1,6 @@
 #pragma once
 
-#include<vector>
+#include <vector>
 
 class Entity;
 class SpriteComponent;
@@ -8,28 +8,24 @@ class Camera2DComponent;
 class TransformComponent;
 
 class Engine;
-class RenderSystem
-{
+class RenderSystem {
 public:
-    RenderSystem(const RenderSystem &) = delete;
-    RenderSystem &operator=(const RenderSystem &) = delete;
-    RenderSystem(RenderSystem &&) = delete;
-    RenderSystem &operator=(RenderSystem &&) = delete;
+  RenderSystem(const RenderSystem&) = delete;
+  RenderSystem& operator=(const RenderSystem&) = delete;
+  RenderSystem(RenderSystem&&) = delete;
+  RenderSystem& operator=(RenderSystem&&) = delete;
 
-    static RenderSystem &getInstance()
-    {
-        static RenderSystem instance;
-        return instance;
-    }
+  static RenderSystem& getInstance() {
+    static RenderSystem instance;
+    return instance;
+  }
 
-    void update(const std::vector<Entity *> &entities);
-
+  void update(const std::vector<Entity*>& entities);
 
 private:
+  RenderSystem() = default;
 
-    RenderSystem() = default;
-    
-    ~RenderSystem() = default;
+  ~RenderSystem() = default;
 };
 
-extern RenderSystem &renderSystem; 
+extern RenderSystem& renderSystem;

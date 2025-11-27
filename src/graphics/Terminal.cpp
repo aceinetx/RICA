@@ -1,3 +1,3 @@
 #include "Terminal.hpp"
 
-Terminal &terminal = Terminal::getInstance();
+Terminal& terminal = Terminal::getInstance();

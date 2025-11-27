@@ -1,46 +1,43 @@
 #include "Collider2D.hpp"
 #include "../../rica.hpp"
 
-Collider2DSystem &collider2DSystem = Collider2DSystem::getInstance();
+Collider2DSystem& collider2DSystem = Collider2DSystem::getInstance();
 
-void Collider2DSystem::update(const std::vector<Entity *> &entities)
-{
-    logger.addLog(LogLevel::DEBUG, "void Collider2DSystem::update", "logRica.txt");
+void Collider2DSystem::update(const std::vector<Entity*>& entities) {
+  logger.addLog(LogLevel::DEBUG, "void Collider2DSystem::update",
+                "logRica.txt");
 
-    for (Entity *entity : entities)
-    {
-        TransformComponent *transform = entity->getComponent<TransformComponent>();
-        Collider2DComponent *collider = entity->getComponent<Collider2DComponent>();
+  for (Entity* entity : entities) {
+    TransformComponent* transform = entity->getComponent<TransformComponent>();
+    Collider2DComponent* collider = entity->getComponent<Collider2DComponent>();
 
-        if (!transform || !collider)
-            continue;
-        
-        collider->setX(transform->getPosition().x);
-        collider->setY(transform->getPosition().y);
-    }
+    if (!transform || !collider)
+      continue;
+
+    collider->setX(transform->getPosition().x);
+    collider->setY(transform->getPosition().y);
+  }
 }
 
-bool Collider2DSystem::isColliding(Entity* entity1, Entity* entity2){
-    auto transform1 = entity1->getComponent<TransformComponent>();
-    auto collider1 = entity1->getComponent<Collider2DComponent>();
-    auto transform2 = entity2->getComponent<TransformComponent>();
-    auto collider2 = entity2->getComponent<Collider2DComponent>();
+bool Collider2DSystem::isColliding(Entity* entity1, Entity* entity2) {
+  auto transform1 = entity1->getComponent<TransformComponent>();
+  auto collider1 = entity1->getComponent<Collider2DComponent>();
+  auto transform2 = entity2->getComponent<TransformComponent>();
+  auto collider2 = entity2->getComponent<Collider2DComponent>();
 
-    if(!transform1 || !collider1 || !transform2 || !collider2) {
-    return false; 
-    }
+  if (!transform1 || !collider1 || !transform2 || !collider2) {
+    return false;
+  }
 
-    float left1 = collider1->getPosition().x - collider1->getWidth();
-    float right1 = collider1->getPosition().x;
-    float top1 = collider1->getPosition().y - collider1->getHeight();
-    float bottom1 = collider1->getPosition().y;
+  float left1 = collider1->getPosition().x - collider1->getWidth();
+  float right1 = collider1->getPosition().x;
+  float top1 = collider1->getPosition().y - collider1->getHeight();
+  float bottom1 = collider1->getPosition().y;
 
-    float left2 = collider2->getPosition().x - collider2->getWidth();
-    float right2 = collider2->getPosition().x;
-    float top2 = collider2->getPosition().y - collider2->getHeight();
-    float bottom2 = collider2->getPosition().y;
+  float left2 = collider2->getPosition().x - collider2->getWidth();
+  float right2 = collider2->getPosition().x;
+  float top2 = collider2->getPosition().y - collider2->getHeight();
+  float bottom2 = collider2->getPosition().y;
 
-
-    return (left1 < right2 && right1 > left2 && top1 < bottom2 && bottom1 > top2);
+  return (left1 < right2 && right1 > left2 && top1 < bottom2 && bottom1 > top2);
 }
-
