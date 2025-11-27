@@ -141,11 +141,7 @@ void Engine::update() {
 }
 
 void Engine::deleteVectorSceneManager() {
-  for (size_t i = 0; i < vectorSceneManager.size(); i++) {
-    if (vectorSceneManager[i] != nullptr) {
-      vectorSceneManager[i] = nullptr;
-    }
-  }
+  vectorSceneManager.clear();
 }
 
 void Engine::shutdown() {

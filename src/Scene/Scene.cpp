@@ -6,13 +6,7 @@ Scene::Scene() {
 }
 
 // Деструктор
-Scene::~Scene() {
-  for (auto entityPtr : entities) {
-    if (entityPtr != nullptr) {
-      entityPtr = nullptr;
-    }
-  }
-}
+Scene::~Scene() = default;
 
 // Создание новой сущности
 std::shared_ptr<Entity> Scene::createEntity(std::shared_ptr<Entity> entityPtr) {
