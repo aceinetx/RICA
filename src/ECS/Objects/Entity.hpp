@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-class Component;
+struct Component;
 
 class Entity {
 public:

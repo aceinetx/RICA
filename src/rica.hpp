@@ -1,7 +1,7 @@
 #pragma once
 
 // Предварительные объявления
-class Component;
+struct Component;
 class SpriteComponent;
 class TransformComponent;
 class Camera2DComponent;
