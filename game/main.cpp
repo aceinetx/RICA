@@ -1,4 +1,4 @@
-#include "../src/rica.hpp"
+#include "../src//rica.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
