@@ -48,7 +48,7 @@ void SceneManager::setSceneLimit(unsigned int limit) {
   if (limit > scenes.size()) {
     scenes.resize(limit, nullptr);
   } else if (limit < scenes.size()) {
-    for (int i = limit; i < (int)scenes.size(); i++) {
+    for (size_t i = limit; i < scenes.size(); i++) {
       if (scenes[i] != nullptr) {
         scenes[i] = nullptr;
       }
