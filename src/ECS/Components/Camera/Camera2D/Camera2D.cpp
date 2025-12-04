@@ -1,40 +1,39 @@
 #include "Camera2D.hpp"
+
+Camera2DComponent::Camera2DComponent() : camera({}) {
+}
+
 Camera2DComponent::Camera2DComponent(Vector2 offset, float zoom, bool isActive)
-    : offset(offset), zoom(zoom), isActive(isActive) {
+    : camera{.offset = offset, .zoom = zoom}, isActive(isActive) {
 }
 
 Camera2D Camera2DComponent::getCamera2D() const {
-  Camera2D cam;
-  cam.target = target;
-  cam.offset = offset;
-  cam.rotation = rotation;
-  cam.zoom = zoom;
-  return cam;
+  return camera;
 }
 
 void Camera2DComponent::followTarget(Vector2 position) {
-  target = position;
+  camera.target = position;
 }
 
 void Camera2DComponent::smoothFollow(Vector2 position, float speed) {
-  target.x += (position.x - target.x) * speed;
-  target.y += (position.y - target.y) * speed;
+  camera.target.x += (position.x - camera.target.x) * speed;
+  camera.target.y += (position.y - camera.target.y) * speed;
 }
 
 void Camera2DComponent::setTarget(Vector2 target) {
-  this->target = target;
+  camera.target = target;
 }
 
 void Camera2DComponent::setOffset(Vector2 offset) {
-  this->offset = offset;
+  camera.offset = offset;
 }
 
 void Camera2DComponent::setRotation(float rotation) {
-  this->rotation = rotation;
+  camera.rotation = rotation;
 }
 
 void Camera2DComponent::setZoom(float zoom) {
-  this->zoom = zoom;
+  camera.zoom = zoom;
 }
 
 void Camera2DComponent::setActive(bool isActive) {
@@ -42,19 +41,19 @@ void Camera2DComponent::setActive(bool isActive) {
 }
 
 Vector2 Camera2DComponent::getTarget() const {
-  return target;
+  return camera.target;
 }
 
 Vector2 Camera2DComponent::getOffset() const {
-  return offset;
+  return camera.offset;
 }
 
 float Camera2DComponent::getRotation() const {
-  return rotation;
+  return camera.rotation;
 }
 
 float Camera2DComponent::getZoom() const {
-  return zoom;
+  return camera.zoom;
 }
 
 bool Camera2DComponent::isActiveCamera() const {

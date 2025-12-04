@@ -5,8 +5,7 @@
 
 class Camera2DComponent : public Component {
 public:
-  Camera2DComponent() = default;
-
+  Camera2DComponent();
   Camera2DComponent(Vector2 offset, float zoom = 1.0f, bool isActive = true);
 
   // Получить Camera2D для raylib
@@ -33,9 +32,6 @@ public:
   [[nodiscard]] bool isActiveCamera() const;
 
 private:
-  Vector2 target{0, 0};
-  Vector2 offset{0, 0};
-  float rotation = 0.0f;
-  float zoom = 1.0f;
+  Camera2D camera;
   bool isActive = false;
 };
