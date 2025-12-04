@@ -1,6 +1,14 @@
 #include "Logger.hpp"
+#include <chrono>
+#include <ctime>
+#include <fstream>
 
-Log& logger = Log::getInstance();
+static constexpr const int YEAR_OFFSET = 1900;
+
+Log& Log::getInstance() {
+  static Log instance;
+  return instance;
+}
 
 std::string Log::levelToString(LogLevel level) {
   switch (level) {
@@ -32,9 +40,10 @@ bool Log::addLog(LogLevel type, std::string module, std::string msg,
     return false;
 
   // логирование
-  file << "[" << local_time->tm_year + 1900 << "-" << local_time->tm_mon + 1
-       << "-" << local_time->tm_mday << " " << local_time->tm_hour << ":"
-       << local_time->tm_min << ":" << local_time->tm_sec << "] "
+  file << "[" << local_time->tm_year + YEAR_OFFSET << "-"
+       << local_time->tm_mon + 1 << "-" << local_time->tm_mday << " "
+       << local_time->tm_hour << ":" << local_time->tm_min << ":"
+       << local_time->tm_sec << "] "
        << "[" << levelToString(type) << "] [" << module << "] -" << msg
        << std::endl;
 
@@ -68,7 +77,7 @@ bool Log::addLog(LogLevel type, std::string module, std::string msg) {
   }
 
   printf("%s[%d-%d-%d %d:%d:%d] [%s] [%s] - %s\033[0m\n", colorCode,
-         local_time->tm_year + 1900, local_time->tm_mon + 1,
+         local_time->tm_year + YEAR_OFFSET, local_time->tm_mon + 1,
          local_time->tm_mday, local_time->tm_hour, local_time->tm_min,
          local_time->tm_sec, levelToString(type).c_str(), module.c_str(),
          msg.c_str());

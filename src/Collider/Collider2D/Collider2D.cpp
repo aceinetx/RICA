@@ -2,7 +2,13 @@
 #include "../../rica.hpp"
 #include "Transform.hpp"
 
-Collider2DSystem& collider2DSystem = Collider2DSystem::getInstance();
+Collider2DSystem& Collider2DSystem::getInstance() {
+  static Collider2DSystem instance;
+  return instance;
+}
+
+Collider2DSystem::Collider2DSystem() : logger(Log::getInstance()) {
+}
 
 void Collider2DSystem::update(
     const std::vector<std::shared_ptr<Entity>>& entities) {
@@ -16,8 +22,8 @@ void Collider2DSystem::update(
     if (!transform || !collider)
       continue;
 
-    collider->setX(transform->getPosition().x);
-    collider->setY(transform->getPosition().y);
+    collider->setX((int)transform->getPosition().x);
+    collider->setY((int)transform->getPosition().y);
   }
 }
 
@@ -32,14 +38,14 @@ bool Collider2DSystem::isColliding(std::shared_ptr<Entity> entity1,
     return false;
   }
 
-  float left1 = collider1->getPosition().x - collider1->getWidth();
+  float left1 = collider1->getPosition().x - (float)collider1->getWidth();
   float right1 = collider1->getPosition().x;
-  float top1 = collider1->getPosition().y - collider1->getHeight();
+  float top1 = collider1->getPosition().y - (float)collider1->getHeight();
   float bottom1 = collider1->getPosition().y;
 
-  float left2 = collider2->getPosition().x - collider2->getWidth();
+  float left2 = collider2->getPosition().x - (float)collider2->getWidth();
   float right2 = collider2->getPosition().x;
-  float top2 = collider2->getPosition().y - collider2->getHeight();
+  float top2 = collider2->getPosition().y - (float)collider2->getHeight();
   float bottom2 = collider2->getPosition().y;
 
   return (left1 < right2 && right1 > left2 && top1 < bottom2 && bottom1 > top2);

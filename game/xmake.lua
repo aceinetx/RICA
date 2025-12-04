@@ -1,7 +1,10 @@
 target("rica-game")
     set_kind("binary")
 
-    add_files("main.cpp")
+    add_files(
+        "src/main.cpp", 
+        "src/Scenes/GameScene.cpp"
+    )
 
     add_deps("EngineLib")
 

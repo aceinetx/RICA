@@ -1,9 +1,11 @@
 #include "Render.hpp"
 #include "../rica.hpp"
 #include "Camera2D/Camera2D.hpp"
-#include <iostream>
 
-RenderSystem& renderSystem = RenderSystem::getInstance();
+RenderSystem& RenderSystem::getInstance() {
+  static RenderSystem instance;
+  return instance;
+}
 
 void RenderSystem::update(
     const std::vector<std::shared_ptr<Entity>>& entities) {

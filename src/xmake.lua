@@ -1,6 +1,7 @@
 target("EngineLib")
     set_kind("static")
     add_files(
+        "main.cpp",
         "Audio/*.cpp",
         "Collider/**/*.cpp",
         "ECS/**/*.cpp",
@@ -29,7 +30,8 @@ target("EngineLib")
         "graphics/",
         "Logger/",
         "Scene/",
-        "UI/"
+        "UI/",
+        {public=true}
     )
 
     add_packages("raylib", "rapidjson")

@@ -1,12 +1,10 @@
 #pragma once
-#include "../../../../Logger/Logger.hpp"
-#include "../../../../lib/raylib/src/raymath.h"
 #include "../../Component.hpp"
+#include <raymath.h>
 
 class Physic2DComponent : public Component {
 public:
-  Physic2DComponent() {
-  }
+  Physic2DComponent();
 
   friend class Physic2DComponent;
 

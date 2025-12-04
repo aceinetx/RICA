@@ -16,17 +16,11 @@ public:
   RenderSystem(RenderSystem&&) = delete;
   RenderSystem& operator=(RenderSystem&&) = delete;
 
-  static RenderSystem& getInstance() {
-    static RenderSystem instance;
-    return instance;
-  }
+  static RenderSystem& getInstance();
 
   void update(const std::vector<std::shared_ptr<Entity>>& entities);
 
 private:
   RenderSystem() = default;
-
   ~RenderSystem() = default;
 };
-
-extern RenderSystem& renderSystem;

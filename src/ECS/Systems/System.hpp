@@ -10,7 +10,5 @@ struct System {
   virtual ~System() = default;
 
 public:
-  void addEntity(Entity* entity) {
-    entities.push_back(entity);
-  }
+  void addEntity(Entity* entity);
 };

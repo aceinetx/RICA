@@ -1,8 +1,15 @@
+#include "Audio/Audio.hpp"
 #include "../rica.hpp"
 #include <algorithm>
 #include <cmath>
 
-AudioSystem& audioSystem = AudioSystem::getInstance();
+AudioSystem& AudioSystem::getInstance() {
+  static AudioSystem instance;
+  return instance;
+}
+
+AudioSystem::AudioSystem() : logger(Log::getInstance()) {
+}
 
 void AudioSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   logger.addLog(LogLevel::DEBUG, __FILE__, __func__, "logRica.txt");

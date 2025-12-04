@@ -2,14 +2,18 @@
 
 #include "../rica.hpp"
 
-#include <cstddef>
 #include <fstream>
 #include <string> // Добавлен для std::stoi
 
-// Глобальная переменная движка (Engine Singleton)
-Engine& engine = Engine::getInstance();
+Engine& Engine::getInstance() {
+  static Engine instance;
+  return instance;
+}
 
-bool parseInitFile(rapidjson::Document& doc) {
+Engine::Engine() : sceneManager(*this), logger(Log::getInstance()) {
+}
+
+bool Engine::parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
     logger.addLog(LogLevel::ERROR, "Не удалось открыть файл initEngine.json",
@@ -29,45 +33,7 @@ bool parseInitFile(rapidjson::Document& doc) {
   return true;
 }
 
-unsigned int GetFlagValue(const char* flagName) {
-  if (strcmp(flagName, "FLAG_FULLSCREEN_MODE") == 0)
-    return FLAG_FULLSCREEN_MODE;
-  if (strcmp(flagName, "FLAG_WINDOW_RESIZABLE") == 0)
-    return FLAG_WINDOW_RESIZABLE;
-  if (strcmp(flagName, "FLAG_WINDOW_UNDECORATED") == 0)
-    return FLAG_WINDOW_UNDECORATED;
-  if (strcmp(flagName, "FLAG_WINDOW_HIDDEN") == 0)
-    return FLAG_WINDOW_HIDDEN;
-  if (strcmp(flagName, "FLAG_WINDOW_MINIMIZED") == 0)
-    return FLAG_WINDOW_MINIMIZED;
-  if (strcmp(flagName, "FLAG_WINDOW_MAXIMIZED") == 0)
-    return FLAG_WINDOW_MAXIMIZED;
-  if (strcmp(flagName, "FLAG_WINDOW_UNFOCUSED") == 0)
-    return FLAG_WINDOW_UNFOCUSED;
-  if (strcmp(flagName, "FLAG_WINDOW_TOPMOST") == 0)
-    return FLAG_WINDOW_TOPMOST;
-  if (strcmp(flagName, "FLAG_WINDOW_ALWAYS_RUN") == 0)
-    return FLAG_WINDOW_ALWAYS_RUN;
-  if (strcmp(flagName, "FLAG_WINDOW_TRANSPARENT") == 0)
-    return FLAG_WINDOW_TRANSPARENT;
-
-  if (strcmp(flagName, "FLAG_VSYNC_HINT") == 0)
-    return FLAG_VSYNC_HINT;
-  if (strcmp(flagName, "FLAG_MSAA_4X_HINT") == 0)
-    return FLAG_MSAA_4X_HINT;
-  if (strcmp(flagName, "FLAG_INTERLACED_HINT") == 0)
-    return FLAG_INTERLACED_HINT;
-  return 0;
-}
-struct RayLibVar {
-  int width = 200;
-  int height = 400;
-  std::string title = "Default Game Title";
-  int maxFPS = 60;
-  unsigned int flag = 0;
-};
-
-std::optional<RayLibVar> parseInitFileForRayLib() {
+std::optional<Engine::RayLibVar> Engine::parseInitFileForRayLib() {
   RayLibVar rayVar;
   rayVar.flag = 0;
   rapidjson::Document doc;
@@ -124,6 +90,37 @@ std::optional<RayLibVar> parseInitFileForRayLib() {
   return rayVar;
 }
 
+unsigned int Engine::GetFlagValue(const char* flagName) {
+  if (strcmp(flagName, "FLAG_FULLSCREEN_MODE") == 0)
+    return FLAG_FULLSCREEN_MODE;
+  if (strcmp(flagName, "FLAG_WINDOW_RESIZABLE") == 0)
+    return FLAG_WINDOW_RESIZABLE;
+  if (strcmp(flagName, "FLAG_WINDOW_UNDECORATED") == 0)
+    return FLAG_WINDOW_UNDECORATED;
+  if (strcmp(flagName, "FLAG_WINDOW_HIDDEN") == 0)
+    return FLAG_WINDOW_HIDDEN;
+  if (strcmp(flagName, "FLAG_WINDOW_MINIMIZED") == 0)
+    return FLAG_WINDOW_MINIMIZED;
+  if (strcmp(flagName, "FLAG_WINDOW_MAXIMIZED") == 0)
+    return FLAG_WINDOW_MAXIMIZED;
+  if (strcmp(flagName, "FLAG_WINDOW_UNFOCUSED") == 0)
+    return FLAG_WINDOW_UNFOCUSED;
+  if (strcmp(flagName, "FLAG_WINDOW_TOPMOST") == 0)
+    return FLAG_WINDOW_TOPMOST;
+  if (strcmp(flagName, "FLAG_WINDOW_ALWAYS_RUN") == 0)
+    return FLAG_WINDOW_ALWAYS_RUN;
+  if (strcmp(flagName, "FLAG_WINDOW_TRANSPARENT") == 0)
+    return FLAG_WINDOW_TRANSPARENT;
+
+  if (strcmp(flagName, "FLAG_VSYNC_HINT") == 0)
+    return FLAG_VSYNC_HINT;
+  if (strcmp(flagName, "FLAG_MSAA_4X_HINT") == 0)
+    return FLAG_MSAA_4X_HINT;
+  if (strcmp(flagName, "FLAG_INTERLACED_HINT") == 0)
+    return FLAG_INTERLACED_HINT;
+  return 0;
+}
+
 bool Engine::init() {
   SetTraceLogLevel(LOG_ALL);
   InitAudioDevice();
@@ -140,107 +137,28 @@ bool Engine::init() {
 void Engine::update() {
 }
 
-void Engine::deleteVectorSceneManager() {
-  vectorSceneManager.clear();
+void Engine::deleteAllScenes() {
+  sceneManager.scenes.clear();
 }
 
 void Engine::shutdown() {
   CloseWindow();
 }
 
-std::vector<std::shared_ptr<Scene>> Engine::vectorSceneManager;
-Engine::SceneManager Engine::sceneManager;
-
 void Engine::updateCurrentScene() {
   logger.addLog(LogLevel::DEBUG, "updateCurrentWorld", "logRica.txt");
-  unsigned int currentSceneId = sceneManager.getCurrentSceneID();
-  if (currentSceneId < vectorSceneManager.size() &&
-      vectorSceneManager[currentSceneId] != nullptr) {
-    vectorSceneManager[currentSceneId]->updateEntity();
-  }
+  auto scene = sceneManager.getActiveScene();
+  scene->updateEntity();
 }
 
-std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
-  if (ID >= Engine::vectorSceneManager.size()) {
-    logger.addLog(LogLevel::WARNING,
-                  "World ID " + std::to_string(ID) +
-                      " is out of bounds! Resizing vector.",
-                  "logRica.txt");
-    Engine::vectorSceneManager.resize(ID + 1, nullptr);
-  }
-  if (Engine::vectorSceneManager[ID] != nullptr) {
-    Engine::vectorSceneManager[ID] = nullptr;
-  }
-  auto scenePtr = std::make_shared<Scene>();
-  Engine::vectorSceneManager[ID] = scenePtr;
-  return scenePtr;
+bool Engine::getIsRunning() {
+  return isRunning;
 }
 
-void Engine::SceneManager::setSceneByID(unsigned int ID) {
-  if (ID >= vectorSceneManager.size()) {
-    logger.addLog(LogLevel::WARNING,
-                  "Cannot set scene ID " + std::to_string(ID) +
-                      ": out of bounds",
-                  "logRica.txt");
-    return;
-  }
-  if (vectorSceneManager[ID] == nullptr) {
-    logger.addLog(LogLevel::WARNING,
-                  "Cannot set scene ID " + std::to_string(ID) +
-                      ": scene is null",
-                  "logRica.txt");
-    return;
-  }
-  sceneCurrent = ID;
+void Engine::setIsRunning(bool isRunning) {
+  this->isRunning = isRunning;
 }
 
-void Engine::SceneManager::setSceneLimit(unsigned int limit) {
-  if (limit > Engine::vectorSceneManager.size()) {
-    Engine::vectorSceneManager.resize(limit, nullptr);
-  } else if (limit < Engine::vectorSceneManager.size()) {
-    for (int i = limit; i < (int)Engine::vectorSceneManager.size(); i++) {
-      if (Engine::vectorSceneManager[i] != nullptr) {
-        Engine::vectorSceneManager[i] = nullptr;
-      }
-    }
-    Engine::vectorSceneManager.resize(limit);
-  }
-}
-
-int main() {
-  logger.addLog(LogLevel::DEBUG, "main", "logRica.txt");
-
-  if (!gameStart())
-    return 1;
-
-  while (engine.getIsRunning() && !WindowShouldClose()) {
-    engine.deltaTime = GetFrameTime();
-    if (IsKeyPressed(KEY_ESCAPE))
-      engine.setIsRunning(false);
-
-    unsigned int currentSceneId = engine.sceneManager.getCurrentSceneID();
-    if (currentSceneId >= Engine::vectorSceneManager.size() ||
-        Engine::vectorSceneManager[currentSceneId] == nullptr) {
-      logger.addLog(LogLevel::ERROR, "Invalid scene in main loop",
-                    "logRica.txt");
-      break;
-    }
-
-    auto currentScenePtr = Engine::vectorSceneManager[currentSceneId];
-
-    currentScenePtr->OnUpdate(GetFrameTime());
-    collider2DSystem.update(currentScenePtr->getAllEntities());
-    audioSystem.update(currentScenePtr->getAllEntities());
-
-    BeginDrawing();
-    ClearBackground(BLACK);
-    renderSystem.update(currentScenePtr->getAllEntities());
-    EndDrawing();
-
-    logger.addLog(LogLevel::DEBUG, "gameLoop", "logRica.txt");
-    engine.update();
-  }
-
-  engine.shutdown();
-  return 0;
+float Engine::getDeltaTime() const {
+  return deltaTime;
 }

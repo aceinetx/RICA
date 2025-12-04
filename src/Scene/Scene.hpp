@@ -12,12 +12,11 @@ public:
   virtual ~Scene();
 
   // Lifecycle методы - переопределяет пользователь
-  virtual void OnLoad() {
-  }
-  virtual void OnUpdate(float deltaTime) {
-  }
-  virtual void OnUnload() {
-  }
+  virtual void OnLoad();
+
+  virtual void OnUpdate(float deltaTime);
+
+  virtual void OnUnload();
 
   // Создание Entity (старый API)
   [[deprecated]] std::shared_ptr<Entity>
@@ -30,7 +29,8 @@ public:
   // Поиск Entity
   std::optional<std::shared_ptr<Entity>> findById(int id);
   std::vector<std::shared_ptr<Entity>> findByTag(const std::string& tag);
-  const std::vector<std::shared_ptr<Entity>>& getAllEntities() const;
+  [[nodiscard]] const std::vector<std::shared_ptr<Entity>>&
+  getAllEntities() const;
 
   // Обновление
   void updateEntity();

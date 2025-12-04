@@ -1,7 +1,4 @@
 #pragma once
-#include <chrono>
-#include <ctime>
-#include <fstream>
 #include <string>
 
 enum LogLevel { DEBUG, INFO, WARNING, ERROR, CRITICAL };
@@ -13,10 +10,7 @@ public:
   Log(Log&&) = delete;
   Log& operator=(Log&&) = delete;
 
-  static Log& getInstance() {
-    static Log instance;
-    return instance;
-  }
+  static Log& getInstance();
 
   bool addLog(LogLevel type, std::string module, std::string msg,
               std::string path);
@@ -28,5 +22,3 @@ private:
 
   std::string levelToString(LogLevel level);
 };
-
-extern Log& logger;

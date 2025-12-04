@@ -2,11 +2,17 @@
 #include "../rica.hpp"
 
 // Конструктор
-Scene::Scene() {
-}
+Scene::Scene() = default;
 
 // Деструктор
 Scene::~Scene() = default;
+
+void Scene::OnUnload() {
+}
+void Scene::OnUpdate(float deltaTime) {
+}
+void Scene::OnLoad() {
+}
 
 // Создание новой сущности
 std::shared_ptr<Entity> Scene::createEntity(std::shared_ptr<Entity> entityPtr) {

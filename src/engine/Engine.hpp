@@ -1,8 +1,11 @@
 #pragma once
 
-#include <memory>
-#include <shared_mutex>
-#include <vector>
+#include "../Scene/SceneManager.hpp"
+#include <rapidjson/document.h>
+
+constexpr const int DEFAULT_WINDOW_WIDTH = 200;
+constexpr const int DEFAULT_WINDOW_HEIGHT = 400;
+constexpr const int DEFAULT_MAX_FPS = 60;
 
 class Scene;
 class RenderSystem;
@@ -11,77 +14,55 @@ class Collider2DComponent;
 class Engine {
 public:
   // движок
+  Engine();
   Engine(const Engine&) = delete;
   Engine& operator=(const Engine&) = delete;
   Engine(Engine&&) = delete;
   Engine& operator=(Engine&&) = delete;
 
-  static Engine& getInstance() {
-    static Engine instance;
-    return instance;
-  }
+  static Engine& getInstance();
 
   void update();
   bool init();
-  bool getIsRunning() {
-    return isRunning;
-  }
-  void setIsRunning(bool isRunning) {
-    this->isRunning = isRunning;
-  }
-  void deleteVectorSceneManager();
+  bool getIsRunning();
+  void setIsRunning(bool isRunning);
+  void deleteAllScenes();
   void shutdown();
 
-  float getDeltaTime() const {
-    return deltaTime;
-  }
+  [[nodiscard]] float getDeltaTime() const;
 
   // дружественные
+  friend class SceneManager;
   friend int main();
 
   // мир
-
-  class SceneManager {
-  public:
-    std::shared_ptr<Scene> newSceneByID(unsigned int ID);
-    void setSceneByID(unsigned int ID);
-    void setSceneLimit(unsigned int limit);
-    unsigned int getCurrentSceneID() const {
-      return sceneCurrent;
-    }
-    void addComponentCurrentScene();
-
-    template <typename T> std::shared_ptr<T> CreateScene(unsigned int ID);
-
-    friend class Engine;
-
-  private:
-    unsigned int sceneCurrent = 0;
-  };
-
-  static SceneManager sceneManager;
-  std::shared_ptr<Scene> getActiveScene() {
-    unsigned int currentSceneId = sceneManager.getCurrentSceneID();
-    if (currentSceneId < vectorSceneManager.size()) {
-      return vectorSceneManager[currentSceneId];
-    }
-    return nullptr;
-  }
+  SceneManager sceneManager;
 
 private:
-  static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
+  struct RayLibVar {
+    int width = DEFAULT_WINDOW_WIDTH;
+    int height = DEFAULT_WINDOW_HEIGHT;
+    std::string title = "Default Game Title";
+    int maxFPS = DEFAULT_MAX_FPS;
+    unsigned int flag = 0;
+  };
 
   void updateCurrentScene();
 
+  bool parseInitFile(rapidjson::Document& doc);
+  std::optional<RayLibVar> parseInitFileForRayLib();
+  unsigned int GetFlagValue(const char* flagName);
+
   bool isRunning = true;
-  Engine() = default;
-  ~Engine() = default;
 
   float deltaTime = 0.0f;
+
+  ~Engine() = default;
+
+protected:
+  Log& logger;
 };
 
 bool gameStart();
 
-extern Engine& engine;
-
-#include "Engine.inl"
+// #include "Engine.inl"
