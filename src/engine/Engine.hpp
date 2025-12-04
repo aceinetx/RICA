@@ -51,7 +51,7 @@ private:
 
   bool parseInitFile(rapidjson::Document& doc);
   std::optional<RayLibVar> parseInitFileForRayLib();
-  unsigned int GetFlagValue(const char* flagName);
+  unsigned int getFlagValue(const char* flagName);
 
   bool isRunning = true;
 

@@ -77,7 +77,7 @@ std::optional<Engine::RayLibVar> Engine::parseInitFileForRayLib() {
       for (rapidjson::SizeType i = 0; i < flagsArray.Size(); i++) {
         if (flagsArray[i].IsString()) {
           const char* flagString = flagsArray[i].GetString();
-          rayVar.flag += GetFlagValue(flagString);
+          rayVar.flag += getFlagValue(flagString);
         }
       }
     }
@@ -90,7 +90,7 @@ std::optional<Engine::RayLibVar> Engine::parseInitFileForRayLib() {
   return rayVar;
 }
 
-unsigned int Engine::GetFlagValue(const char* flagName) {
+unsigned int Engine::getFlagValue(const char* flagName) {
   if (strcmp(flagName, "FLAG_FULLSCREEN_MODE") == 0)
     return FLAG_FULLSCREEN_MODE;
   if (strcmp(flagName, "FLAG_WINDOW_RESIZABLE") == 0)
