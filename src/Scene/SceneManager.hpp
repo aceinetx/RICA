@@ -12,7 +12,7 @@ public:
   std::shared_ptr<Scene> newSceneByID(unsigned int ID);
   void setSceneByID(unsigned int ID);
   void setSceneLimit(unsigned int limit);
-  unsigned int getCurrentSceneID() const;
+  [[nodiscard]] unsigned int getCurrentSceneID() const;
   void addComponentCurrentScene();
 
   template <typename T> std::shared_ptr<T> createScene(unsigned int ID) {
