@@ -15,7 +15,7 @@ public:
   unsigned int getCurrentSceneID() const;
   void addComponentCurrentScene();
 
-  template <typename T> std::shared_ptr<T> CreateScene(unsigned int ID) {
+  template <typename T> std::shared_ptr<T> createScene(unsigned int ID) {
     if (ID >= scenes.size()) {
       scenes.resize(ID + 1, nullptr);
     }

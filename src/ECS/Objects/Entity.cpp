@@ -11,7 +11,7 @@ Entity::Entity(std::string&& tag) : id(globalEntityId++), tag(std::move(tag)) {
 
 Entity::~Entity() = default;
 
-void Entity::Start() {
+void Entity::start() {
 }
 
 void Entity::update(float deltaTime) {

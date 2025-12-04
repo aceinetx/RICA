@@ -12,7 +12,7 @@ public:
   Entity(std::string&& tag);
   virtual ~Entity();
 
-  virtual void Start();
+  virtual void start();
   virtual void update(float deltaTime);
 
   void addComponent(std::shared_ptr<Component> comp);

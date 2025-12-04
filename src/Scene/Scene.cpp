@@ -7,7 +7,7 @@ Scene::Scene() = default;
 // Деструктор
 Scene::~Scene() = default;
 
-void Scene::OnUnload() {
+void Scene::onUnload() {
 }
 void Scene::onUpdate(float deltaTime) {
 }

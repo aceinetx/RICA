@@ -16,7 +16,7 @@ public:
 
   virtual void onUpdate(float deltaTime);
 
-  virtual void OnUnload();
+  virtual void onUnload();
 
   // Создание Entity (старый API)
   [[deprecated]] std::shared_ptr<Entity>
@@ -24,7 +24,7 @@ public:
 
   // Создание Entity (новый API)
   template <typename T, typename... Args>
-  std::shared_ptr<T> Create(Args&&... args);
+  std::shared_ptr<T> create(Args&&... args);
 
   // Поиск Entity
   std::optional<std::shared_ptr<Entity>> findById(int id);

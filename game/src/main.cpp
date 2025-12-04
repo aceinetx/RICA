@@ -8,6 +8,6 @@ bool gameStart() {
   if (!engine.init())
     return false;
   engine.sceneManager.setSceneLimit(sceneLimit);
-  engine.sceneManager.CreateScene<GameScene>(1);
+  engine.sceneManager.createScene<GameScene>(1);
   return true;
 }
