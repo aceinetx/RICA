@@ -23,7 +23,6 @@ target("EngineLib")
         "ECS/Components/Sprite/",
         "ECS/Components/Transform/",
         "ECS/Objects/",
-        "ECS/Systems/",
         "Collider/",
         "Collider/Collider2D/",
         "engine/",
