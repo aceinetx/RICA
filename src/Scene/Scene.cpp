@@ -9,9 +9,9 @@ Scene::~Scene() = default;
 
 void Scene::OnUnload() {
 }
-void Scene::OnUpdate(float deltaTime) {
+void Scene::onUpdate(float deltaTime) {
 }
-void Scene::OnLoad() {
+void Scene::onLoad() {
 }
 
 // Создание новой сущности

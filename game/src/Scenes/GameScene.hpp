@@ -3,6 +3,6 @@
 class GameScene : public Scene {
 private:
 public:
-  void OnLoad() override;
-  void OnUpdate(float deltaTime) override;
+  void onLoad() override;
+  void onUpdate(float deltaTime) override;
 };

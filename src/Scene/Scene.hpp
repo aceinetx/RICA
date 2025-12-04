@@ -12,9 +12,9 @@ public:
   virtual ~Scene();
 
   // Lifecycle методы - переопределяет пользователь
-  virtual void OnLoad();
+  virtual void onLoad();
 
-  virtual void OnUpdate(float deltaTime);
+  virtual void onUpdate(float deltaTime);
 
   virtual void OnUnload();
 

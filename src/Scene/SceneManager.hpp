@@ -26,7 +26,7 @@ public:
     auto scenePtr = std::make_shared<T>();
     scenes[ID] = scenePtr;
     sceneCurrent = ID;
-    scenePtr->OnLoad();
+    scenePtr->onLoad();
     return scenePtr;
   }
 

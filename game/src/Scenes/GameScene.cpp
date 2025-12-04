@@ -1,7 +1,7 @@
 #include "GameScene.hpp"
 
-void GameScene::OnLoad() {
+void GameScene::onLoad() {
 }
 
-void GameScene::OnUpdate(float deltaTime) {
+void GameScene::onUpdate(float deltaTime) {
 }

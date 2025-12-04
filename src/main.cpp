@@ -26,7 +26,7 @@ int main() {
       break;
     }
 
-    currentScenePtr->OnUpdate(GetFrameTime());
+    currentScenePtr->onUpdate(GetFrameTime());
     collider2DSystem.update(currentScenePtr->getAllEntities());
     audioSystem.update(currentScenePtr->getAllEntities());
 
