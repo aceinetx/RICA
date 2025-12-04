@@ -6,7 +6,7 @@ template <typename T, typename... Args>
 std::shared_ptr<T> Scene::Create(Args&&... args) {
   T* entityPtr = new T(std::forward<Args>(args)...);
   if (entityPtr != nullptr) {
-    createEntity(entityPtr);
+    Create(entityPtr);
     entityPtr->Start();
   }
   return entityPtr;
