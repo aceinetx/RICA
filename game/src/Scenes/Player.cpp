@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include <iostream>
 
 Player::Player() {
   trans = std::make_shared<Transform3DComponent>();

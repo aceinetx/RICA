@@ -1,11 +1,8 @@
 #pragma once
 
-#include "../src/ECS/Components/Mesh/Mesh.hpp"
-#include "../src/ECS/Components/Transform/Transform3D/Transform3D.hpp"
 #include "../src/rica.hpp"
 #include "raylib.h"
 
-#include <iostream>
 #include <memory>
 
 class Player : public Entity {
