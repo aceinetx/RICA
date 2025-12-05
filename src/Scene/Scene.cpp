@@ -15,11 +15,10 @@ void Scene::onUpdate(float deltaTime) {
 void Scene::onUnload() {
 }
 
-std::shared_ptr<Entity> Scene::createEntity(std::shared_ptr<Entity> entityPtr) {
+void Scene::addEntity(std::shared_ptr<Entity> entityPtr) {
   if (entityPtr != nullptr) {
     entities.push_back(entityPtr);
   }
-  return entityPtr;
 }
 
 std::optional<std::shared_ptr<Entity>> Scene::findById(int id) {

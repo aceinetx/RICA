@@ -9,11 +9,11 @@ GameScene::GameScene() {
   cam3D->setTarget({0.0f, 0.0f, 0.0f});
 
   cameraEntity->addComponent(cam3D);
-  this->createEntity(cameraEntity);
+  this->addEntity(cameraEntity);
 
   //
   player = std::make_shared<Player>();
-  this->createEntity(player);
+  this->addEntity(player);
 }
 
 void GameScene::onUpdate(float dt) {
