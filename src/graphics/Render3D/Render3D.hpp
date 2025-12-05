@@ -1,5 +1,6 @@
 #pragma once
 
+#include "raylib.h"
 #include <memory>
 #include <vector>
 
@@ -23,9 +24,16 @@ public:
 
   void update(const std::vector<std::shared_ptr<Entity>>& entities);
 
+  void initIfNeeded();
+
+public:
+  Shader lightningShader;
+
 private:
-  Render3DSystem() = default;
-  ~Render3DSystem() = default;
+  Render3DSystem();
+  ~Render3DSystem();
+
+  bool isInitialized;
 };
 
 extern Render3DSystem& render3Dsystem;

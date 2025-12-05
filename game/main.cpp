@@ -1,53 +1,64 @@
-#include "../src/ECS/Components/Camera/Camera3D/Camera3D.hpp"   
 #include "../src/rica.hpp"
-#include "../src/engine/Engine.hpp"
 
-#include <iostream>
 #include "player.hpp"
+#include <iostream>
+#include <memory>
 
 #include "player.hpp"
 #include "raylib.h"
 
 class GameScene : public Scene {
 private:
-    std::shared_ptr<Player> player;
-    std::shared_ptr<Entity> cameraEntity;
+  std::shared_ptr<Player> player;
+  std::shared_ptr<Entity> cameraEntity;
+  std::shared_ptr<Entity> lightEntity;
+
+  float time;
 
 public:
-    GameScene() {
-        cameraEntity = std::make_shared<Entity>();
+  GameScene() {
+    cameraEntity = std::make_shared<Entity>();
 
-        auto cam3D = std::make_shared<Camera3DComponent>(
-            Vector3{0.0f, 5.0f, 10.0f}, 
-            75.0f,
-            true
-        );
-        
-        cam3D->setTarget({0.0f, 0.0f, 0.0f}); 
+    auto cam3D = std::make_shared<Camera3DComponent>(Vector3{0.0f, 5.0f, 10.0f},
+                                                     75.0f, true);
 
-        cameraEntity->addComponent(cam3D);
-        this->createEntity(cameraEntity);
+    cam3D->setTarget({0.0f, 0.0f, 0.0f});
 
-        // 
-        player = std::make_shared<Player>();
-        this->createEntity(player);
-        
+    cameraEntity->addComponent(cam3D);
+    this->createEntity(cameraEntity);
+
+    //
+    player = std::make_shared<Player>();
+    this->createEntity(player);
+
+    //
+    lightEntity = std::make_shared<Entity>();
+    auto lightning = std::make_shared<Lightning3DComponent>();
+    lightEntity->addComponent(lightning);
+    this->createEntity(lightEntity);
+  }
+
+  void OnUpdate(float dt) override {
+    if (player)
+      player->update(dt);
+    time += dt;
+    auto lightning = lightEntity->getComponent<Lightning3DComponent>();
+    if (lightning) {
+      float x = 2 * cos(2 * time);
+      float z = 2 * sin(2 * time);
+      lightning->setPosition({x, sin(time) * 2, z});
     }
-
-    void OnUpdate(float dt) override {
-        if (player) player->update(dt);
-
-    }
+  }
 };
 
-
 bool gameStart() {
-    if (!engine.init()) return false;
+  if (!engine.init())
+    return false;
 
-    engine.set3Dmode(true);
+  engine.set3Dmode(true);
 
-    engine.sceneManager.setSceneLimit(10);
-    engine.sceneManager.CreateScene<GameScene>(1);
+  engine.sceneManager.setSceneLimit(10);
+  engine.sceneManager.CreateScene<GameScene>(1);
 
-    return true;
+  return true;
 }

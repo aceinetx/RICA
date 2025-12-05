@@ -1,55 +1,61 @@
 #pragma once
+#include "../../../Logger/Logger.hpp"
+#include "../../../rica.hpp"
 #include "../Component.hpp"
 #include <raylib.h>
 #include <raymath.h>
-#include "../../../Logger/Logger.hpp"
-#include "../../../rica.hpp"
 
 class MeshComponent : public Component {
 public:
-    MeshComponent() = default;
+  MeshComponent() = default;
 
-    ~MeshComponent() override {
-        if (loaded) {
-            UnloadModel(model);
-        }
+  ~MeshComponent() override {
+    if (loaded) {
+      UnloadModel(model);
+    }
+  }
+
+  // Загружаем модель целиком (правильно для GLTF)
+  void loadMesh(const char* path) {
+    model = LoadModel(path);
+
+    auto& render3Dsystem = Render3DSystem::getInstance();
+    for (int i = 0; i < model.materialCount; i++)
+      model.materials[i].shader = render3Dsystem.lightningShader;
+
+    if (model.meshCount == 0) {
+      logger.addLog(
+          LogLevel::ERROR, basePath,
+          TextFormat("Failed to load mesh: empty meshCount from %s", path),
+          "logRica.txt");
+      logger.addLog(
+          LogLevel::ERROR, basePath,
+          TextFormat("Failed to load mesh: empty meshCount from %s", path));
+      return;
     }
 
-    // Загружаем модель целиком (правильно для GLTF)
-    void loadMesh(const char *path) {
-        model = LoadModel(path);
+    loaded = true;
+  }
 
-        if (model.meshCount == 0) {
-            logger.addLog(LogLevel::ERROR, basePath,
-                TextFormat("Failed to load mesh: empty meshCount from %s", path),
-                "logRica.txt");
-            logger.addLog(LogLevel::ERROR, basePath,
-                TextFormat("Failed to load mesh: empty meshCount from %s", path));
-            return;
-        }
+  // Установить глобальный цвет модели
+  void setColor(Color newColor) {
+    color = newColor;
+  }
 
-        loaded = true;
-    }
+  Color getColor() const {
+    return color;
+  }
 
-    // Установить глобальный цвет модели
-    void setColor(Color newColor) {
-        color = newColor;
-    }
+  Model& getModel() {
+    return model;
+  }
 
-    Color getColor() const {
-        return color;
-    }
-
-    Model& getModel() {
-        return model;
-    }
-
-    bool isLoaded() const {
-        return loaded;
-    }
+  bool isLoaded() const {
+    return loaded;
+  }
 
 private:
-    Model model = { 0 };
-    Color color = WHITE;
-    bool loaded = false;
+  Model model = {0};
+  Color color = WHITE;
+  bool loaded = false;
 };
