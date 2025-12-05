@@ -1,6 +1,5 @@
 #include "Collider2D.hpp"
 #include "../../rica.hpp"
-#include "Transform.hpp"
 
 Collider2DSystem& Collider2DSystem::getInstance() {
   static Collider2DSystem instance;
@@ -12,8 +11,8 @@ Collider2DSystem::Collider2DSystem() : logger(Log::getInstance()) {
 
 void Collider2DSystem::update(
     const std::vector<std::shared_ptr<Entity>>& entities) {
-  logger.addLog(LogLevel::DEBUG, "void Collider2DSystem::update",
-                "logRica.txt");
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+
 
   for (auto entity : entities) {
     auto transform = entity->getComponent<TransformComponent>();

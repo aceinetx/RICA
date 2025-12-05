@@ -1,6 +1,7 @@
 #include "Engine.hpp"
 
 #include "../rica.hpp"
+#include "Var/Var.hpp"
 
 #include <fstream>
 #include <string> // Добавлен для std::stoi
@@ -49,17 +50,13 @@ float Engine::getDeltaTime() const {
   return deltaTime;
 }
 
-void Engine::updateCurrentScene() {
-  logger.addLog(LogLevel::DEBUG, "updateCurrentWorld", "logRica.txt");
-  auto scene = sceneManager.getActiveScene();
-  scene->updateEntity();
-}
-
 bool Engine::parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
-    logger.addLog(LogLevel::ERROR, "Не удалось открыть файл initEngine.json",
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json",
                   "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json");
+
     return false;
   }
 
@@ -68,10 +65,14 @@ bool Engine::parseInitFile(rapidjson::Document& doc) {
   doc.Parse(initString.c_str());
 
   if (doc.HasParseError()) {
-    logger.addLog(LogLevel::ERROR,
-                  "Ошибка парсинга JSON на позиции " +
+    logger.addLog(LogLevel::ERROR, basePath,
+                  "Failed to parse JSON for position" +
                       std::to_string(doc.GetErrorOffset()),
                   "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath,
+                  "Failed to parse JSON for position" +
+                      std::to_string(doc.GetErrorOffset()));
+
     return false;
   }
   return true;
@@ -154,12 +155,28 @@ unsigned int Engine::getFlagValue(std::string flagName) {
     return FLAG_WINDOW_ALWAYS_RUN;
   if (flagName == "FLAG_WINDOW_TRANSPARENT")
     return FLAG_WINDOW_TRANSPARENT;
-
   if (flagName == "FLAG_VSYNC_HINT")
     return FLAG_VSYNC_HINT;
   if (flagName == "FLAG_MSAA_4X_HINT")
     return FLAG_MSAA_4X_HINT;
   if (flagName == "FLAG_INTERLACED_HINT")
     return FLAG_INTERLACED_HINT;
-  return 0;
+  isRunning = true;
+  auto var = parseInitFileForRayLib();
+  // можно использовать var.has_value(), но лучше оставить так для
+  // читабельности
+  if (!var)
+    return false;
+  return true;
+}
+
+void Engine::deleteVectorSceneManager() {
+  sceneManager.scenes.clear();
+}
+
+void Engine::updateCurrentScene() {
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+
+  auto currentScenePtr = sceneManager.getActiveScene();
+  currentScenePtr->updateEntity();
 }

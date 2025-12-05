@@ -19,7 +19,7 @@ public:
   virtual void onUnload();
 
   // Создание Entity (старый API)
-  [[deprecated]] std::shared_ptr<Entity>
+  std::shared_ptr<Entity>
   createEntity(std::shared_ptr<Entity> entity);
 
   // Создание Entity (новый API)

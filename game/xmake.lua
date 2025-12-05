@@ -1,14 +1,9 @@
-target("rica-game")
+target("MyGame")
     set_kind("binary")
 
-    add_files(
-        "src/main.cpp", 
-        "src/Scenes/GameScene.cpp"
-    )
+    add_files("**/*.cpp")
 
     add_deps("EngineLib")
 
     add_packages("raylib", "rapidjson")
-
-    add_includedirs("..")
 target_end()

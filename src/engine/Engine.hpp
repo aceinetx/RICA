@@ -5,7 +5,7 @@
 #include <rapidjson/document.h>
 
 class Scene;
-class RenderSystem;
+class Render2DSystem;
 class Collider2DComponent;
 
 class Engine {
@@ -21,6 +21,7 @@ public:
 
   void update();
   bool init();
+
   bool getIsRunning();
   void setIsRunning(bool isRunning);
   void deleteAllScenes();
@@ -30,6 +31,16 @@ public:
 
   // мир
   SceneManager sceneManager;
+
+  void set3Dmode(const bool& is3D) {
+    this->is3D = is3D;
+  }
+  bool is3Dmode() const {
+    return is3D;
+  }
+  void deleteVectorSceneManager();
+
+  friend int main();
 
   // дружественные
   friend class SceneManager;
@@ -44,8 +55,9 @@ private:
   std::optional<RayLibVar> parseInitFileForRayLib();
   unsigned int getFlagValue(std::string flagName);
 
-  bool isRunning = true;
   float deltaTime = 0.0f;
+  bool is3D = false;
+  bool isRunning = true;
 
 protected:
   Log& logger;

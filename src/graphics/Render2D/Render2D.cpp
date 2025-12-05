@@ -1,13 +1,13 @@
-#include "Render.hpp"
+#include "Render2D.hpp"
 #include "../rica.hpp"
 #include "Camera2D/Camera2D.hpp"
 
-RenderSystem& RenderSystem::getInstance() {
-  static RenderSystem instance;
+Render2DSystem& Render2DSystem::getInstance() {
+  static Render2DSystem instance;
   return instance;
 }
 
-void RenderSystem::update(
+void Render2DSystem::update(
     const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera2DComponent> activeCamera = nullptr;
   for (auto entity : entities) {

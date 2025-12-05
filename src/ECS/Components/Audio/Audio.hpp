@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../Logger/Logger.hpp"
+#include "../../../rica.hpp"
 #include "../Component.hpp"
 #include <raylib.h>
 #include <string>

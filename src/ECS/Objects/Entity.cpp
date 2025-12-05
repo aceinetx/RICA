@@ -1,5 +1,8 @@
 #include "Entity.hpp"
-#include "../../rica.hpp"
+#include "../Components/Camera/Camera3D/Camera3D.hpp"
+#include "../Components/Mesh/Mesh.hpp"
+#include "../Components/Transform/Transform3D/Transform3D.hpp"
+#include <iostream>
 
 /* NOLINT хотя вот с этим надо чето делать */ static int globalEntityId = 0;
 
@@ -56,3 +59,9 @@ Entity::getComponent<Collider2DComponent>();
 template std::shared_ptr<AudioComponent> Entity::getComponent<AudioComponent>();
 template std::shared_ptr<Camera2DComponent>
 Entity::getComponent<Camera2DComponent>();
+
+template std::shared_ptr<Camera3DComponent>
+Entity::getComponent<Camera3DComponent>();
+template std::shared_ptr<MeshComponent> Entity::getComponent<MeshComponent>();
+template std::shared_ptr<Transform3DComponent>
+Entity::getComponent<Transform3DComponent>();

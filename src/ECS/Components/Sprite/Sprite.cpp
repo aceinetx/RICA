@@ -1,4 +1,5 @@
 #include "Sprite.hpp"
+#include "../../../rica.hpp"
 #include "Logger.hpp"
 
 // Загрузка текстуры
@@ -10,9 +11,10 @@ bool SpriteComponent::LoadTextureSprite(const char* path) {
   texture = LoadTexture(path);
 
   if (texture.id == 0) {
-    logger.addLog(LogLevel::ERROR,
-                  "Failed to load texture: " + std::string(path),
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture",
                   "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture");
+
     return false;
   }
 

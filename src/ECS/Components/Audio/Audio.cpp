@@ -13,8 +13,8 @@ AudioComponent::~AudioComponent() {
 
 void AudioComponent::addSound(const std::string& tag, const std::string& path) {
   if (tag.empty() || path.empty()) {
-    logger.addLog(LogLevel::ERROR, "tag.empty() || path.empty()",
-                  "logRica.txt");
+    logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+
     return;
   }
   Sound sound = LoadSound(path.c_str());
