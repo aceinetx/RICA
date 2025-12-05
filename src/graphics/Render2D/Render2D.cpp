@@ -1,12 +1,11 @@
-#include "Render.hpp"
+#include "Render2D.hpp"
 #include "../rica.hpp"
 #include "Camera2D/Camera2D.hpp"
 #include <iostream>
 
-RenderSystem& renderSystem = RenderSystem::getInstance();
+Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
 
-void RenderSystem::update(
-    const std::vector<std::shared_ptr<Entity>>& entities) {
+void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera2DComponent> activeCamera = nullptr;
   for (auto entity : entities) {
     auto camera = entity->getComponent<Camera2DComponent>();
@@ -35,4 +34,5 @@ void RenderSystem::update(
   if (activeCamera) {
     EndMode2D();
   }
+
 }

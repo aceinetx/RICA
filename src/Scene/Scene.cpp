@@ -1,14 +1,11 @@
 #include "Scene.hpp"
 #include "../rica.hpp"
 
-// Конструктор
 Scene::Scene() {
 }
 
-// Деструктор
 Scene::~Scene() = default;
 
-// Создание новой сущности
 std::shared_ptr<Entity> Scene::createEntity(std::shared_ptr<Entity> entityPtr) {
   if (entityPtr != nullptr) {
     entities.push_back(entityPtr);
@@ -16,7 +13,6 @@ std::shared_ptr<Entity> Scene::createEntity(std::shared_ptr<Entity> entityPtr) {
   return entityPtr;
 }
 
-// Поиск сущности по ID
 std::optional<std::shared_ptr<Entity>> Scene::findById(int id) {
   for (auto entityPtr : entities) {
     if (entityPtr != nullptr && entityPtr->getID() == id) {
@@ -36,12 +32,10 @@ std::vector<std::shared_ptr<Entity>> Scene::findByTag(const std::string& tag) {
   return resultVector;
 }
 
-// Получение всех сущностей
 const std::vector<std::shared_ptr<Entity>>& Scene::getAllEntities() const {
   return entities;
 }
 
-// Обновление всех сущностей
 void Scene::updateEntity() {
   for (auto entityPtr : entities) {
     if (entityPtr != nullptr) {

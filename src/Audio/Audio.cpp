@@ -1,11 +1,13 @@
 #include "../rica.hpp"
+#include "Var/Var.hpp"
 #include <algorithm>
 #include <cmath>
+#include <linux/limits.h>
 
 AudioSystem& audioSystem = AudioSystem::getInstance();
 
 void AudioSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
-  logger.addLog(LogLevel::DEBUG, __FILE__, __func__, "logRica.txt");
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
 
   std::shared_ptr<Camera2DComponent> cameraActive = nullptr;
   std::shared_ptr<TransformComponent> transformActive = nullptr;

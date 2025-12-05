@@ -11,7 +11,6 @@ public:
       : offset(offset), zoom(zoom), isActive(isActive) {
   }
 
-  // Получить Camera2D для raylib
   Camera2D getCamera2D() const {
     Camera2D cam;
     cam.target = target;
@@ -21,18 +20,15 @@ public:
     return cam;
   }
 
-  // Мгновенное следование за позицией
   void followTarget(Vector2 position) {
     target = position;
   }
 
-  // Плавное следование за позицией
   void smoothFollow(Vector2 position, float speed) {
     target.x += (position.x - target.x) * speed;
     target.y += (position.y - target.y) * speed;
   }
 
-  // Setters
   void setTarget(Vector2 target) {
     this->target = target;
   }

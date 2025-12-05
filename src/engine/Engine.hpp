@@ -5,7 +5,7 @@
 #include <vector>
 
 class Scene;
-class RenderSystem;
+class Render2DSystem;
 class Collider2DComponent;
 
 class Engine {
@@ -23,6 +23,12 @@ public:
 
   void update();
   bool init();
+  void set3Dmode(const bool& is3D){
+    this->is3D = is3D;
+  }
+  bool is3Dmode() const {
+    return is3D;
+  }
   bool getIsRunning() {
     return isRunning;
   }
@@ -36,10 +42,8 @@ public:
     return deltaTime;
   }
 
-  // дружественные
   friend int main();
 
-  // мир
 
   class SceneManager {
   public:
@@ -72,7 +76,7 @@ private:
   static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
 
   void updateCurrentScene();
-
+  bool is3D=false;
   bool isRunning = true;
   Engine() = default;
   ~Engine() = default;
