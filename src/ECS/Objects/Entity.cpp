@@ -59,7 +59,6 @@ Entity::getComponent<Collider2DComponent>();
 template std::shared_ptr<AudioComponent> Entity::getComponent<AudioComponent>();
 template std::shared_ptr<Camera2DComponent>
 Entity::getComponent<Camera2DComponent>();
-
 template std::shared_ptr<Camera3DComponent>
 Entity::getComponent<Camera3DComponent>();
 template std::shared_ptr<MeshComponent> Entity::getComponent<MeshComponent>();
