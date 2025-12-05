@@ -13,6 +13,48 @@ Engine& Engine::getInstance() {
 Engine::Engine() : sceneManager(*this), logger(Log::getInstance()) {
 }
 
+void Engine::update() {
+}
+
+bool Engine::init() {
+  SetTraceLogLevel(LOG_ALL);
+  InitAudioDevice();
+
+  isRunning = true;
+  auto var = parseInitFileForRayLib();
+  // можно использовать var.has_value(), но лучше оставить так для
+  // читабельности
+  if (!var)
+    return false;
+  return true;
+}
+
+bool Engine::getIsRunning() {
+  return isRunning;
+}
+
+void Engine::setIsRunning(bool isRunning) {
+  this->isRunning = isRunning;
+}
+
+void Engine::deleteAllScenes() {
+  sceneManager.scenes.clear();
+}
+
+void Engine::shutdown() {
+  CloseWindow();
+}
+
+float Engine::getDeltaTime() const {
+  return deltaTime;
+}
+
+void Engine::updateCurrentScene() {
+  logger.addLog(LogLevel::DEBUG, "updateCurrentWorld", "logRica.txt");
+  auto scene = sceneManager.getActiveScene();
+  scene->updateEntity();
+}
+
 bool Engine::parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
@@ -20,9 +62,11 @@ bool Engine::parseInitFile(rapidjson::Document& doc) {
                   "logRica.txt");
     return false;
   }
+
   std::string initString((std::istreambuf_iterator<char>(initFile)),
                          std::istreambuf_iterator<char>());
   doc.Parse(initString.c_str());
+
   if (doc.HasParseError()) {
     logger.addLog(LogLevel::ERROR,
                   "Ошибка парсинга JSON на позиции " +
@@ -33,9 +77,8 @@ bool Engine::parseInitFile(rapidjson::Document& doc) {
   return true;
 }
 
-std::optional<Engine::RayLibVar> Engine::parseInitFileForRayLib() {
+std::optional<RayLibVar> Engine::parseInitFileForRayLib() {
   RayLibVar rayVar;
-  rayVar.flag = 0;
   rapidjson::Document doc;
 
   if (!parseInitFile(doc))
@@ -90,75 +133,33 @@ std::optional<Engine::RayLibVar> Engine::parseInitFileForRayLib() {
   return rayVar;
 }
 
-unsigned int Engine::getFlagValue(const char* flagName) {
-  if (strcmp(flagName, "FLAG_FULLSCREEN_MODE") == 0)
+unsigned int Engine::getFlagValue(std::string flagName) {
+  if (flagName == "FLAG_FULLSCREEN_MODE")
     return FLAG_FULLSCREEN_MODE;
-  if (strcmp(flagName, "FLAG_WINDOW_RESIZABLE") == 0)
+  if (flagName == "FLAG_WINDOW_RESIZABLE")
     return FLAG_WINDOW_RESIZABLE;
-  if (strcmp(flagName, "FLAG_WINDOW_UNDECORATED") == 0)
+  if (flagName == "FLAG_WINDOW_UNDECORATED")
     return FLAG_WINDOW_UNDECORATED;
-  if (strcmp(flagName, "FLAG_WINDOW_HIDDEN") == 0)
+  if (flagName == "FLAG_WINDOW_HIDDEN")
     return FLAG_WINDOW_HIDDEN;
-  if (strcmp(flagName, "FLAG_WINDOW_MINIMIZED") == 0)
+  if (flagName == "FLAG_WINDOW_MINIMIZED")
     return FLAG_WINDOW_MINIMIZED;
-  if (strcmp(flagName, "FLAG_WINDOW_MAXIMIZED") == 0)
+  if (flagName == "FLAG_WINDOW_MAXIMIZED")
     return FLAG_WINDOW_MAXIMIZED;
-  if (strcmp(flagName, "FLAG_WINDOW_UNFOCUSED") == 0)
+  if (flagName == "FLAG_WINDOW_UNFOCUSED")
     return FLAG_WINDOW_UNFOCUSED;
-  if (strcmp(flagName, "FLAG_WINDOW_TOPMOST") == 0)
+  if (flagName == "FLAG_WINDOW_TOPMOST")
     return FLAG_WINDOW_TOPMOST;
-  if (strcmp(flagName, "FLAG_WINDOW_ALWAYS_RUN") == 0)
+  if (flagName == "FLAG_WINDOW_ALWAYS_RUN")
     return FLAG_WINDOW_ALWAYS_RUN;
-  if (strcmp(flagName, "FLAG_WINDOW_TRANSPARENT") == 0)
+  if (flagName == "FLAG_WINDOW_TRANSPARENT")
     return FLAG_WINDOW_TRANSPARENT;
 
-  if (strcmp(flagName, "FLAG_VSYNC_HINT") == 0)
+  if (flagName == "FLAG_VSYNC_HINT")
     return FLAG_VSYNC_HINT;
-  if (strcmp(flagName, "FLAG_MSAA_4X_HINT") == 0)
+  if (flagName == "FLAG_MSAA_4X_HINT")
     return FLAG_MSAA_4X_HINT;
-  if (strcmp(flagName, "FLAG_INTERLACED_HINT") == 0)
+  if (flagName == "FLAG_INTERLACED_HINT")
     return FLAG_INTERLACED_HINT;
   return 0;
-}
-
-bool Engine::init() {
-  SetTraceLogLevel(LOG_ALL);
-  InitAudioDevice();
-
-  isRunning = true;
-  auto var = parseInitFileForRayLib();
-  // можно использовать var.has_value(), но лучше оставить так для
-  // читабельности
-  if (!var)
-    return false;
-  return true;
-}
-
-void Engine::update() {
-}
-
-void Engine::deleteAllScenes() {
-  sceneManager.scenes.clear();
-}
-
-void Engine::shutdown() {
-  CloseWindow();
-}
-
-void Engine::updateCurrentScene() {
-  logger.addLog(LogLevel::DEBUG, "updateCurrentWorld", "logRica.txt");
-  auto scene = sceneManager.getActiveScene();
-  scene->updateEntity();
-}
-
-bool Engine::getIsRunning() {
-  return isRunning;
-}
-
-void Engine::setIsRunning(bool isRunning) {
-  this->isRunning = isRunning;
-}
-
-float Engine::getDeltaTime() const {
-  return deltaTime;
 }

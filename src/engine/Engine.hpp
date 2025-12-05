@@ -1,11 +1,8 @@
 #pragma once
 
 #include "../Scene/SceneManager.hpp"
+#include "RayLibVar.hpp"
 #include <rapidjson/document.h>
-
-constexpr const int DEFAULT_WINDOW_WIDTH = 200;
-constexpr const int DEFAULT_WINDOW_HEIGHT = 400;
-constexpr const int DEFAULT_MAX_FPS = 60;
 
 class Scene;
 class RenderSystem;
@@ -31,33 +28,24 @@ public:
 
   [[nodiscard]] float getDeltaTime() const;
 
+  // мир
+  SceneManager sceneManager;
+
   // дружественные
   friend class SceneManager;
   friend int main();
 
-  // мир
-  SceneManager sceneManager;
-
 private:
-  struct RayLibVar {
-    int width = DEFAULT_WINDOW_WIDTH;
-    int height = DEFAULT_WINDOW_HEIGHT;
-    std::string title = "Default Game Title";
-    int maxFPS = DEFAULT_MAX_FPS;
-    unsigned int flag = 0;
-  };
+  ~Engine() = default;
 
   void updateCurrentScene();
 
   bool parseInitFile(rapidjson::Document& doc);
   std::optional<RayLibVar> parseInitFileForRayLib();
-  unsigned int getFlagValue(const char* flagName);
+  unsigned int getFlagValue(std::string flagName);
 
   bool isRunning = true;
-
   float deltaTime = 0.0f;
-
-  ~Engine() = default;
 
 protected:
   Log& logger;
