@@ -30,13 +30,7 @@ public:
     return scenePtr;
   }
 
-  std::shared_ptr<Scene> getActiveScene() {
-    unsigned int currentSceneId = getCurrentSceneID();
-    if (currentSceneId < scenes.size()) {
-      return scenes[currentSceneId];
-    }
-    return nullptr;
-  }
+  std::shared_ptr<Scene> getActiveScene();
 
   friend class Engine;
 

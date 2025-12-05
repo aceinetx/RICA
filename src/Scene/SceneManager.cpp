@@ -56,3 +56,11 @@ void SceneManager::setSceneLimit(unsigned int limit) {
     scenes.resize(limit);
   }
 }
+
+std::shared_ptr<Scene> SceneManager::getActiveScene() {
+  unsigned int currentSceneId = getCurrentSceneID();
+  if (currentSceneId < scenes.size()) {
+    return scenes[currentSceneId];
+  }
+  return nullptr;
+}
