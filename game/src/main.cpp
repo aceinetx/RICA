@@ -7,7 +7,11 @@ bool gameStart() {
 
   if (!engine.init())
     return false;
+
+  engine.set3Dmode(true);
+
   engine.sceneManager.setSceneLimit(sceneLimit);
   engine.sceneManager.createScene<GameScene>(1);
+
   return true;
 }

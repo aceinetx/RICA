@@ -32,15 +32,9 @@ public:
   // мир
   SceneManager sceneManager;
 
-  void set3Dmode(const bool& is3D) {
-    this->is3D = is3D;
-  }
-  bool is3Dmode() const {
-    return is3D;
-  }
+  void set3Dmode(const bool& is3D);
+  [[nodiscard]] bool is3Dmode() const;
   void deleteVectorSceneManager();
-
-  friend int main();
 
   // дружественные
   friend class SceneManager;

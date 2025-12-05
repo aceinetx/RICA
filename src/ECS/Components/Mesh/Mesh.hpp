@@ -7,51 +7,24 @@
 
 class MeshComponent : public Component {
 public:
-  MeshComponent() : logger(Log::getInstance()) {};
+  MeshComponent();
 
-  ~MeshComponent() override {
-    if (loaded) {
-      UnloadModel(model);
-    }
-  }
+  ~MeshComponent() override;
 
   // Загружаем модель целиком (правильно для GLTF)
-  void loadMesh(const char* path) {
-    model = LoadModel(path);
-
-    if (model.meshCount == 0) {
-      logger.addLog(
-          LogLevel::ERROR, basePath,
-          TextFormat("Failed to load mesh: empty meshCount from %s", path),
-          "logRica.txt");
-      logger.addLog(
-          LogLevel::ERROR, basePath,
-          TextFormat("Failed to load mesh: empty meshCount from %s", path));
-      return;
-    }
-
-    loaded = true;
-  }
+  void loadMesh(const char* path);
 
   // Установить глобальный цвет модели
-  void setColor(Color newColor) {
-    color = newColor;
-  }
+  void setColor(Color newColor);
 
-  Color getColor() const {
-    return color;
-  }
+  [[nodiscard]] Color getColor() const;
 
-  Model& getModel() {
-    return model;
-  }
+  Model& getModel();
 
-  bool isLoaded() const {
-    return loaded;
-  }
+  [[nodiscard]] bool isLoaded() const;
 
 private:
-  Model model = {0};
+  Model model = {{0}};
   Color color = WHITE;
   bool loaded = false;
 

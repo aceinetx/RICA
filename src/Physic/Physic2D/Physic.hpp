@@ -16,10 +16,7 @@ public:
   Physic2D(Physic2D&&) = delete;
   Physic2D& operator=(Physic2D&&) = delete;
 
-  static Physic2D& getInstance() {
-    static Physic2D instance;
-    return instance;
-  }
+  static Physic2D& getInstance();
 
   void update(const std::vector<std::shared_ptr<Entity>>& entities);
   bool isColliding(std::shared_ptr<Entity> entity1,
@@ -30,5 +27,3 @@ private:
 
   ~Physic2D() = default;
 };
-
-extern Physic2D& physic2D;

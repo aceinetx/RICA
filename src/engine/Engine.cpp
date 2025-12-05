@@ -50,6 +50,25 @@ float Engine::getDeltaTime() const {
   return deltaTime;
 }
 
+void Engine::set3Dmode(const bool& is3D) {
+  this->is3D = is3D;
+}
+
+bool Engine::is3Dmode() const {
+  return is3D;
+}
+
+void Engine::deleteVectorSceneManager() {
+  sceneManager.scenes.clear();
+}
+
+void Engine::updateCurrentScene() {
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+
+  auto currentScenePtr = sceneManager.getActiveScene();
+  currentScenePtr->updateEntity();
+}
+
 bool Engine::parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
@@ -161,22 +180,5 @@ unsigned int Engine::getFlagValue(std::string flagName) {
     return FLAG_MSAA_4X_HINT;
   if (flagName == "FLAG_INTERLACED_HINT")
     return FLAG_INTERLACED_HINT;
-  isRunning = true;
-  auto var = parseInitFileForRayLib();
-  // можно использовать var.has_value(), но лучше оставить так для
-  // читабельности
-  if (!var)
-    return false;
-  return true;
-}
-
-void Engine::deleteVectorSceneManager() {
-  sceneManager.scenes.clear();
-}
-
-void Engine::updateCurrentScene() {
-  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
-
-  auto currentScenePtr = sceneManager.getActiveScene();
-  currentScenePtr->updateEntity();
+  std::abort();
 }

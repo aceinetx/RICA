@@ -1,5 +1,3 @@
-#include "Audio/Audio.hpp"
-#include "Render2D/Render2D.hpp"
 #include "rica.hpp"
 
 int main() {
@@ -11,6 +9,7 @@ int main() {
   Collider2DSystem& collider2DSystem = Collider2DSystem::getInstance();
   AudioSystem& audioSystem = AudioSystem::getInstance();
   Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
+  Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
 
   if (!gameStart())
     return 1;

@@ -16,10 +16,7 @@ public:
   Render3DSystem(Render3DSystem&&) = delete;
   Render3DSystem& operator=(Render3DSystem&&) = delete;
 
-  static Render3DSystem& getInstance() {
-    static Render3DSystem instance;
-    return instance;
-  }
+  static Render3DSystem& getInstance();
 
   void update(const std::vector<std::shared_ptr<Entity>>& entities);
 
@@ -27,5 +24,3 @@ private:
   Render3DSystem() = default;
   ~Render3DSystem() = default;
 };
-
-extern Render3DSystem& render3Dsystem;
