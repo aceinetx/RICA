@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../Logger/Logger.hpp"
-#include "../Component.hpp"
+#include "../../../../Logger/Logger.hpp"
+#include "../../Component.hpp"
 #include <raymath.h>
 
 class Collider2DComponent : public Component {

@@ -1,6 +1,7 @@
 #include "Engine.hpp"
 
 #include "../rica.hpp"
+#include "Var/Var.hpp"
 
 #include <cstddef>
 #include <fstream>
@@ -12,18 +13,18 @@ Engine& engine = Engine::getInstance();
 bool parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
-    logger.addLog(LogLevel::ERROR, "Не удалось открыть файл initEngine.json",
-                  "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json", "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json");
+
     return false;
   }
   std::string initString((std::istreambuf_iterator<char>(initFile)),
                          std::istreambuf_iterator<char>());
   doc.Parse(initString.c_str());
   if (doc.HasParseError()) {
-    logger.addLog(LogLevel::ERROR,
-                  "Ошибка парсинга JSON на позиции " +
-                      std::to_string(doc.GetErrorOffset()),
-                  "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to parse JSON for position"+std::to_string(doc.GetErrorOffset()), "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to parse JSON for position"+std::to_string(doc.GetErrorOffset()));
+
     return false;
   }
   return true;
@@ -152,7 +153,7 @@ std::vector<std::shared_ptr<Scene>> Engine::vectorSceneManager;
 Engine::SceneManager Engine::sceneManager;
 
 void Engine::updateCurrentScene() {
-  logger.addLog(LogLevel::DEBUG, "updateCurrentWorld", "logRica.txt");
+    logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
   unsigned int currentSceneId = sceneManager.getCurrentSceneID();
   if (currentSceneId < vectorSceneManager.size() &&
       vectorSceneManager[currentSceneId] != nullptr) {
@@ -162,10 +163,10 @@ void Engine::updateCurrentScene() {
 
 std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
   if (ID >= Engine::vectorSceneManager.size()) {
-    logger.addLog(LogLevel::WARNING,
-                  "World ID " + std::to_string(ID) +
-                      " is out of bounds! Resizing vector.",
-                  "logRica.txt");
+
+    logger.addLog(LogLevel::CRITICAL, basePath,"World ID " + std::to_string(ID)+" is out of bounds! Resizing vector." , "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,"World ID " + std::to_string(ID)+" is out of bounds! Resizing vector.");
+
     Engine::vectorSceneManager.resize(ID + 1, nullptr);
   }
   if (Engine::vectorSceneManager[ID] != nullptr) {
@@ -178,17 +179,14 @@ std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
 
 void Engine::SceneManager::setSceneByID(unsigned int ID) {
   if (ID >= vectorSceneManager.size()) {
-    logger.addLog(LogLevel::WARNING,
-                  "Cannot set scene ID " + std::to_string(ID) +
-                      ": out of bounds",
-                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": out of bounds", "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": out of bounds");
     return;
   }
   if (vectorSceneManager[ID] == nullptr) {
-    logger.addLog(LogLevel::WARNING,
-                  "Cannot set scene ID " + std::to_string(ID) +
-                      ": scene is null",
-                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": scene is null", "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": scene is null");
+
     return;
   }
   sceneCurrent = ID;
@@ -208,7 +206,7 @@ void Engine::SceneManager::setSceneLimit(unsigned int limit) {
 }
 
 int main() {
-  logger.addLog(LogLevel::DEBUG, "main", "logRica.txt");
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
 
   if (!gameStart())
     return 1;
@@ -220,24 +218,30 @@ int main() {
 
     unsigned int currentSceneId = engine.sceneManager.getCurrentSceneID();
     if (currentSceneId >= Engine::vectorSceneManager.size() ||
-        Engine::vectorSceneManager[currentSceneId] == nullptr) {
-      logger.addLog(LogLevel::ERROR, "Invalid scene in main loop",
-                    "logRica.txt");
+      Engine::vectorSceneManager[currentSceneId] == nullptr) {
+      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop", "logRica.txt");
+      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop");
+
       break;
     }
 
     auto currentScenePtr = Engine::vectorSceneManager[currentSceneId];
 
     currentScenePtr->OnUpdate(GetFrameTime());
-    collider2DSystem.update(currentScenePtr->getAllEntities());
-    audioSystem.update(currentScenePtr->getAllEntities());
 
     BeginDrawing();
     ClearBackground(BLACK);
-    renderSystem.update(currentScenePtr->getAllEntities());
+    if(engine.is3Dmode()){
+      render3Dsystem.update(currentScenePtr->getAllEntities());
+    }
+    else{
+      collider2DSystem.update(currentScenePtr->getAllEntities());
+      render2Dsystem.update(currentScenePtr->getAllEntities());
+      audioSystem.update(currentScenePtr->getAllEntities());
+    }
     EndDrawing();
 
-    logger.addLog(LogLevel::DEBUG, "gameLoop", "logRica.txt");
+    logger.addLog(LogLevel::DEBUG, basePath, __func__,"logRica.txt");
     engine.update();
   }
 

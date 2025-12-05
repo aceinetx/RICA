@@ -1,5 +1,8 @@
 #include "Entity.hpp"
 #include "../../rica.hpp"
+#include "../Components/Camera/Camera3D/Camera3D.hpp"
+#include "../Components/Mesh/Mesh.hpp"
+#include "../Components/Transform/Transform3D/Transform3D.hpp"
 #include <iostream>
 
 static int globalEntityId = 0;
