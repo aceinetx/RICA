@@ -10,4 +10,5 @@ add_requires("rapidjson", {external=false})
 set_warnings("all") -- warns
 set_languages("c++17")
 
+includes("lib/BufferedRaylib")
 includes("src", "game")
