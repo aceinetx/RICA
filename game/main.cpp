@@ -35,6 +35,7 @@ public:
     lightEntity = std::make_shared<Entity>();
     auto lightning = std::make_shared<Lightning3DComponent>();
     lightEntity->addComponent(lightning);
+    lightning->setColor(YELLOW);
     this->createEntity(lightEntity);
   }
 
