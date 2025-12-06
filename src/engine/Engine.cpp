@@ -1,19 +1,27 @@
 #include "Engine.hpp"
 
 #include "../rica.hpp"
+#include "Input/InputDispatcher.hpp"
 #include "Var/Var.hpp"
 
-#include <cstddef>
 #include <fstream>
+#include <functional>
 #include <string> // Добавлен для std::stoi
 
 // Глобальная переменная движка (Engine Singleton)
 Engine& engine = Engine::getInstance();
 
+Engine::Engine() {
+  input.keyboard_callback =
+      std::bind(&Engine::keyboardCallback, this, std::placeholders::_1,
+                std::placeholders::_2);
+}
+
 bool parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json", "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json",
+                  "logRica.txt");
     logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json");
 
     return false;
@@ -22,8 +30,13 @@ bool parseInitFile(rapidjson::Document& doc) {
                          std::istreambuf_iterator<char>());
   doc.Parse(initString.c_str());
   if (doc.HasParseError()) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to parse JSON for position"+std::to_string(doc.GetErrorOffset()), "logRica.txt");
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to parse JSON for position"+std::to_string(doc.GetErrorOffset()));
+    logger.addLog(LogLevel::ERROR, basePath,
+                  "Failed to parse JSON for position" +
+                      std::to_string(doc.GetErrorOffset()),
+                  "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath,
+                  "Failed to parse JSON for position" +
+                      std::to_string(doc.GetErrorOffset()));
 
     return false;
   }
@@ -126,6 +139,8 @@ std::optional<RayLibVar> parseInitFileForRayLib() {
 }
 
 bool Engine::init() {
+  m_inputDispatcher = &InputDispatcher::getInstance();
+
   SetTraceLogLevel(LOG_ALL);
   InitAudioDevice();
 
@@ -153,7 +168,7 @@ std::vector<std::shared_ptr<Scene>> Engine::vectorSceneManager;
 Engine::SceneManager Engine::sceneManager;
 
 void Engine::updateCurrentScene() {
-    logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
   unsigned int currentSceneId = sceneManager.getCurrentSceneID();
   if (currentSceneId < vectorSceneManager.size() &&
       vectorSceneManager[currentSceneId] != nullptr) {
@@ -164,8 +179,13 @@ void Engine::updateCurrentScene() {
 std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
   if (ID >= Engine::vectorSceneManager.size()) {
 
-    logger.addLog(LogLevel::CRITICAL, basePath,"World ID " + std::to_string(ID)+" is out of bounds! Resizing vector." , "logRica.txt");
-    logger.addLog(LogLevel::CRITICAL, basePath,"World ID " + std::to_string(ID)+" is out of bounds! Resizing vector.");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "World ID " + std::to_string(ID) +
+                      " is out of bounds! Resizing vector.",
+                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "World ID " + std::to_string(ID) +
+                      " is out of bounds! Resizing vector.");
 
     Engine::vectorSceneManager.resize(ID + 1, nullptr);
   }
@@ -179,13 +199,23 @@ std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
 
 void Engine::SceneManager::setSceneByID(unsigned int ID) {
   if (ID >= vectorSceneManager.size()) {
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": out of bounds", "logRica.txt");
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": out of bounds");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": out of bounds",
+                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": out of bounds");
     return;
   }
   if (vectorSceneManager[ID] == nullptr) {
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": scene is null", "logRica.txt");
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": scene is null");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": scene is null",
+                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": scene is null");
 
     return;
   }
@@ -213,13 +243,18 @@ int main() {
 
   while (engine.getIsRunning() && !WindowShouldClose()) {
     engine.deltaTime = GetFrameTime();
-    if (IsKeyPressed(KEY_ESCAPE))
+    if (IsKeyPressed(KEY_ESCAPE)) {
       engine.setIsRunning(false);
+      break;
+    }
+
+    engine.input.PollEvents();
 
     unsigned int currentSceneId = engine.sceneManager.getCurrentSceneID();
     if (currentSceneId >= Engine::vectorSceneManager.size() ||
-      Engine::vectorSceneManager[currentSceneId] == nullptr) {
-      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop", "logRica.txt");
+        Engine::vectorSceneManager[currentSceneId] == nullptr) {
+      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop",
+                    "logRica.txt");
       logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop");
 
       break;
@@ -231,17 +266,16 @@ int main() {
 
     BeginDrawing();
     ClearBackground(BLACK);
-    if(engine.is3Dmode()){
+    if (engine.is3Dmode()) {
       render3Dsystem.update(currentScenePtr->getAllEntities());
-    }
-    else{
+    } else {
       collider2DSystem.update(currentScenePtr->getAllEntities());
       render2Dsystem.update(currentScenePtr->getAllEntities());
       audioSystem.update(currentScenePtr->getAllEntities());
     }
     EndDrawing();
 
-    logger.addLog(LogLevel::DEBUG, basePath, __func__,"logRica.txt");
+    logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
     engine.update();
   }
 
