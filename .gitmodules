@@ -1,0 +1,3 @@
+[submodule "lib/BufferedRaylib"]
+	path = lib/BufferedRaylib
+	url = https://github.com/its-useless/BufferedRaylib

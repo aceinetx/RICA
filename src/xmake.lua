@@ -34,4 +34,5 @@ target("EngineLib")
     )
 
     add_packages("raylib", "rapidjson")
+		add_deps("buffered-raylib::buffered-raylib", {public=true})
 target_end()
