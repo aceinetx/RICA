@@ -13,7 +13,7 @@ Lightning3DComponent::~Lightning3DComponent() = default;
 
 void Lightning3DComponent::setPosition(Vector3 position) {
   light.position = position;
-  UpdateLightValues(render3Dsystem.lightningShader, light);
+  updateLight();
 }
 
 void Lightning3DComponent::setAttenuation(float value) {
