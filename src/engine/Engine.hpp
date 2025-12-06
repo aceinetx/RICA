@@ -1,7 +1,10 @@
 #pragma once
 
+#include "../Input/InputDispatcher.hpp"
+#include "../Input/InputEvent.hpp"
+#include "BufferedRaylib.hpp"
 #include <memory>
-#include <shared_mutex>
+#include <raylib.h>
 #include <vector>
 
 class Scene;
@@ -23,7 +26,7 @@ public:
 
   void update();
   bool init();
-  void set3Dmode(const bool& is3D){
+  void set3Dmode(const bool& is3D) {
     this->is3D = is3D;
   }
   bool is3Dmode() const {
@@ -43,7 +46,6 @@ public:
   }
 
   friend int main();
-
 
   class SceneManager {
   public:
@@ -76,12 +78,23 @@ private:
   static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
 
   void updateCurrentScene();
-  bool is3D=false;
+  void keyboardCallback(KeyboardKey key, bool isDown) {
+    InputEvent ev;
+    ev.type = InputEventType::Keyboard;
+    ev.keyboard.key = key;
+    ev.keyboard.isDown = isDown;
+    m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+  }
+
+  bool is3D = false;
   bool isRunning = true;
-  Engine() = default;
+  Engine();
   ~Engine() = default;
 
   float deltaTime = 0.0f;
+
+  raylib::BufferedInput input;
+  InputDispatcher* m_inputDispatcher;
 };
 
 bool gameStart();

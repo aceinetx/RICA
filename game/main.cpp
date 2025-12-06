@@ -3,6 +3,7 @@
 #include "../src/rica.hpp"
 
 #include "player.hpp"
+#include <functional>
 #include <iostream>
 
 #include "player.hpp"
@@ -28,6 +29,25 @@ public:
     //
     player = std::make_shared<Player>();
     this->createEntity(player);
+
+    //
+    auto listener = std::make_shared<InputListenerKeyboard>();
+    listener->onKeyDown =
+        std::bind(&GameScene::onKeyDown, this, std::placeholders::_1);
+    InputDispatcher::getInstance().addListener(player, listener);
+  }
+
+  bool onKeyDown(KeyboardKey key) {
+    std::cout << key << std::endl;
+    if (key == KEY_D)
+      player->trans->setX(player->trans->getPosition().x + 2);
+    if (key == KEY_A)
+      player->trans->setX(player->trans->getPosition().x - 2);
+    if (key == KEY_W)
+      player->trans->setY(player->trans->getPosition().y + 2);
+    if (key == KEY_S)
+      player->trans->setY(player->trans->getPosition().y - 2);
+    return true;
   }
 
   void OnUpdate(float dt) override {
