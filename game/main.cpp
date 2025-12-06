@@ -4,7 +4,6 @@
 
 #include "player.hpp"
 #include <functional>
-#include <iostream>
 
 #include "player.hpp"
 #include "raylib.h"
@@ -14,8 +13,10 @@ private:
   std::shared_ptr<Player> player;
   std::shared_ptr<Entity> cameraEntity;
 
+  Vector2 move_delta;
+
 public:
-  GameScene() {
+  GameScene() : move_delta({0, 0}) {
     cameraEntity = std::make_shared<Entity>();
 
     auto cam3D = std::make_shared<Camera3DComponent>(Vector3{0.0f, 5.0f, 10.0f},
@@ -34,25 +35,47 @@ public:
     auto listener = std::make_shared<InputListenerKeyboard>();
     listener->onKeyDown =
         std::bind(&GameScene::onKeyDown, this, std::placeholders::_1);
+    listener->onKeyUp =
+        std::bind(&GameScene::onKeyUp, this, std::placeholders::_1);
     InputDispatcher::getInstance().addListener(player, listener);
   }
 
-  bool onKeyDown(KeyboardKey key) {
-    std::cout << key << std::endl;
-    if (key == KEY_D)
-      player->trans->setX(player->trans->getPosition().x + 2);
-    if (key == KEY_A)
-      player->trans->setX(player->trans->getPosition().x - 2);
+  bool onKey(KeyboardKey key, bool isDown) {
+    move_delta = {0, 0};
+    static bool keyW, keyS, keyA, keyD;
     if (key == KEY_W)
-      player->trans->setY(player->trans->getPosition().y + 2);
+      keyW = isDown;
     if (key == KEY_S)
-      player->trans->setY(player->trans->getPosition().y - 2);
+      keyS = isDown;
+    if (key == KEY_A)
+      keyA = isDown;
+    if (key == KEY_D)
+      keyD = isDown;
+
+    if (keyW)
+      move_delta.y += 1;
+    if (keyS)
+      move_delta.y -= 1;
+    if (keyA)
+      move_delta.x -= 1;
+    if (keyD)
+      move_delta.x += 1;
     return true;
+  }
+
+  bool onKeyDown(KeyboardKey key) {
+    return onKey(key, true);
+  }
+
+  bool onKeyUp(KeyboardKey key) {
+    return onKey(key, false);
   }
 
   void OnUpdate(float dt) override {
     if (player)
       player->update(dt);
+    player->trans->setX(player->trans->getPosition().x + move_delta.x * 5 * dt);
+    player->trans->setY(player->trans->getPosition().y + move_delta.y * 5 * dt);
   }
 };
 
