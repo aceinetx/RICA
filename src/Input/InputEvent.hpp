@@ -3,6 +3,9 @@
 
 enum class InputEventType {
   Keyboard,
+  MouseWheel,
+  MouseButton,
+  MousePosition,
 };
 
 struct InputEvent {
