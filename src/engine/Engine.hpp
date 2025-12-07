@@ -78,20 +78,8 @@ private:
   static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
 
   void updateCurrentScene();
-  void keyboardCallback(KeyboardKey key, bool isDown) {
-    InputEvent ev;
-    ev.type = InputEventType::Keyboard;
-    ev.keyboard.key = key;
-    ev.keyboard.isDown = isDown;
-    m_inputDispatcher->dispatchEvent(ev, getActiveScene());
-  }
-  void mouseButtonCallback(MouseButton button, bool isDown) {
-    InputEvent ev;
-    ev.type = InputEventType::MouseButton;
-    ev.mouse_button.button = button;
-    ev.mouse_button.isDown = isDown;
-    m_inputDispatcher->dispatchEvent(ev, getActiveScene());
-  }
+  void keyboardCallback(KeyboardKey key, bool isDown);
+  void mouseButtonCallback(MouseButton button, bool isDown);
 
   bool is3D = false;
   bool isRunning = true;
