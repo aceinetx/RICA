@@ -85,6 +85,13 @@ private:
     ev.keyboard.isDown = isDown;
     m_inputDispatcher->dispatchEvent(ev, getActiveScene());
   }
+  void mouseButtonCallback(MouseButton button, bool isDown) {
+    InputEvent ev;
+    ev.type = InputEventType::MouseButton;
+    ev.mouse_button.button = button;
+    ev.mouse_button.isDown = isDown;
+    m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+  }
 
   bool is3D = false;
   bool isRunning = true;

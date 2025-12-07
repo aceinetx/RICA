@@ -12,9 +12,8 @@
 Engine& engine = Engine::getInstance();
 
 Engine::Engine() {
-  input.keyboard_callback =
-      std::bind(&Engine::keyboardCallback, this, std::placeholders::_1,
-                std::placeholders::_2);
+  input.keyboard_callback = CALLBACK_2(Engine::keyboardCallback, this);
+  input.mouse_button_callback = CALLBACK_2(Engine::mouseButtonCallback, this);
 }
 
 bool parseInitFile(rapidjson::Document& doc) {

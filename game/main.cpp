@@ -32,12 +32,19 @@ public:
     this->createEntity(player);
 
     //
-    auto listener = std::make_shared<InputListenerKeyboard>();
-    listener->onKeyDown =
-        std::bind(&GameScene::onKeyDown, this, std::placeholders::_1);
-    listener->onKeyUp =
-        std::bind(&GameScene::onKeyUp, this, std::placeholders::_1);
-    InputDispatcher::getInstance().addListener(player, listener);
+    {
+      auto listener = std::make_shared<InputListenerKeyboard>();
+      listener->onKeyDown = CALLBACK_1(GameScene::onKeyDown, this);
+      listener->onKeyUp = CALLBACK_1(GameScene::onKeyUp, this);
+      InputDispatcher::getInstance().addListener(player, listener);
+    }
+    {
+      auto listener = std::make_shared<InputListenerMouseButton>();
+      listener->onMouseButtonDown = CALLBACK_1(GameScene::onMouseBtnDown, this);
+      listener->onMouseButtonUp = CALLBACK_1(GameScene::onMouseBtnUp, this);
+      // listener->onKeyUp = CALLBACK_1(GameScene::onKeyUp, this);
+      InputDispatcher::getInstance().addListener(player, listener);
+    }
   }
 
   bool onKey(KeyboardKey key, bool isDown) {
@@ -69,6 +76,16 @@ public:
 
   bool onKeyUp(KeyboardKey key) {
     return onKey(key, false);
+  }
+
+  bool onMouseBtnDown(MouseButton button) {
+    std::cout << "mouse button " << button << " down" << std::endl;
+    return true;
+  }
+
+  bool onMouseBtnUp(MouseButton button) {
+    std::cout << "mouse button " << button << " up" << std::endl;
+    return true;
   }
 
   void OnUpdate(float dt) override {
