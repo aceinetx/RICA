@@ -234,6 +234,22 @@ void Engine::SceneManager::setSceneLimit(unsigned int limit) {
   }
 }
 
+void Engine::mouseButtonCallback(MouseButton button, bool isDown) {
+  InputEvent ev;
+  ev.type = InputEventType::MouseButton;
+  ev.mouse_button.button = button;
+  ev.mouse_button.isDown = isDown;
+  m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+}
+
+void Engine::keyboardCallback(KeyboardKey key, bool isDown) {
+  InputEvent ev;
+  ev.type = InputEventType::Keyboard;
+  ev.keyboard.key = key;
+  ev.keyboard.isDown = isDown;
+  m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+}
+
 int main() {
   logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
 
@@ -281,3 +297,4 @@ int main() {
   engine.shutdown();
   return 0;
 }
+
