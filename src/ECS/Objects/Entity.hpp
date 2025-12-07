@@ -1,4 +1,6 @@
 #pragma once
+#include "../../Object/Object.hpp"
+#include "../../Object/ObjectVector.hpp"
 
 #include <memory>
 #include <optional>
@@ -7,7 +9,7 @@
 
 struct Component;
 
-class Entity {
+class Entity : public Object {
 public:
   Entity();
   Entity(std::string tag);
@@ -18,8 +20,8 @@ public:
   virtual void update(float deltaTime) {
   }
 
-  void addComponent(std::shared_ptr<Component> comp);
-  template <typename T> std::shared_ptr<T> getComponent();
+  void addComponent(Component* comp);
+  template <typename T> T* getComponent();
 
   int getID() const;
 
@@ -31,7 +33,7 @@ public:
   }
 
 private:
-  std::vector<std::shared_ptr<Component>> components;
+  ObjectVector<Component*> components;
   int id;
   std::string tag;
 };

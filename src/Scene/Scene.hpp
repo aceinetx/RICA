@@ -1,4 +1,6 @@
 #pragma once
+#include "../Object/Object.hpp"
+#include "../Object/ObjectVector.hpp"
 #include <memory>
 #include <optional>
 #include <string>
@@ -6,7 +8,7 @@
 
 class Entity;
 
-class Scene {
+class Scene : public Object {
 public:
   Scene();
   virtual ~Scene();
@@ -20,23 +22,21 @@ public:
   }
 
   // Создание Entity (старый API)
-  std::shared_ptr<Entity>
-  createEntity(std::shared_ptr<Entity> entity);
+  Entity* createEntity(Entity* entity);
 
   // Создание Entity (новый API)
-  template <typename T, typename... Args>
-  std::shared_ptr<T> Create(Args&&... args);
+  template <typename T, typename... Args> T* Create(Args&&... args);
 
   // Поиск Entity
-  std::optional<std::shared_ptr<Entity>> findById(int id);
-  std::vector<std::shared_ptr<Entity>> findByTag(const std::string& tag);
-  const std::vector<std::shared_ptr<Entity>>& getAllEntities() const;
+  std::optional<Entity*> findById(int id);
+  ObjectVector<Entity*> findByTag(const std::string& tag);
+  const ObjectVector<Entity*>& getAllEntities() const;
 
   // Обновление
   void updateEntity();
 
 private:
-  std::vector<std::shared_ptr<Entity>> entities;
+  ObjectVector<Entity*> entities;
 };
 
 #include "Scene.inl"

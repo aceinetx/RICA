@@ -6,40 +6,40 @@ Scene::Scene() {
 
 Scene::~Scene() = default;
 
-std::shared_ptr<Entity> Scene::createEntity(std::shared_ptr<Entity> entityPtr) {
-  if (entityPtr != nullptr) {
-    entities.push_back(entityPtr);
-  }
+Entity* Scene::createEntity(Entity* entityPtr) {
+  assert(entityPtr);
+  entities.push_back(entityPtr);
   return entityPtr;
 }
 
-std::optional<std::shared_ptr<Entity>> Scene::findById(int id) {
+std::optional<Entity*> Scene::findById(int id) {
   for (auto entityPtr : entities) {
-    if (entityPtr != nullptr && entityPtr->getID() == id) {
+    assert(entityPtr);
+    if (entityPtr->getID() == id) {
       return entityPtr;
     }
   }
   return {};
 }
 
-std::vector<std::shared_ptr<Entity>> Scene::findByTag(const std::string& tag) {
-  std::vector<std::shared_ptr<Entity>> resultVector;
+ObjectVector<Entity*> Scene::findByTag(const std::string& tag) {
+  ObjectVector<Entity*> resultVector;
   for (auto entityPtr : entities) {
-    if (entityPtr != nullptr && entityPtr->getTag() == tag) {
+    assert(entityPtr);
+    if (entityPtr->getTag() == tag) {
       resultVector.push_back(entityPtr);
     }
   }
   return resultVector;
 }
 
-const std::vector<std::shared_ptr<Entity>>& Scene::getAllEntities() const {
+const ObjectVector<Entity*>& Scene::getAllEntities() const {
   return entities;
 }
 
 void Scene::updateEntity() {
   for (auto entityPtr : entities) {
-    if (entityPtr != nullptr) {
-      entityPtr->update(0.0f);
-    }
+    assert(entityPtr);
+    entityPtr->update(0.0f);
   }
 }

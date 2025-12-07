@@ -3,10 +3,8 @@
 
 Collider2DSystem& collider2DSystem = Collider2DSystem::getInstance();
 
-void Collider2DSystem::update(
-    const std::vector<std::shared_ptr<Entity>>& entities) {
+void Collider2DSystem::update(const ObjectVector<Entity*>& entities) {
   logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
-
 
   for (auto entity : entities) {
     auto transform = entity->getComponent<TransformComponent>();
@@ -20,8 +18,7 @@ void Collider2DSystem::update(
   }
 }
 
-bool Collider2DSystem::isColliding(std::shared_ptr<Entity> entity1,
-                                   std::shared_ptr<Entity> entity2) {
+bool Collider2DSystem::isColliding(Entity* entity1, Entity* entity2) {
   auto transform1 = entity1->getComponent<TransformComponent>();
   auto collider1 = entity1->getComponent<Collider2DComponent>();
   auto transform2 = entity2->getComponent<TransformComponent>();

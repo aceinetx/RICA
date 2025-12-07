@@ -5,8 +5,8 @@
 
 Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
 
-void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
-  std::shared_ptr<Camera2DComponent> activeCamera = nullptr;
+void Render2DSystem::update(const ObjectVector<Entity*>& entities) {
+  Camera2DComponent* activeCamera = nullptr;
   for (auto entity : entities) {
     auto camera = entity->getComponent<Camera2DComponent>();
     if (camera && camera->isActiveCamera()) {
@@ -34,5 +34,4 @@ void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
   if (activeCamera) {
     EndMode2D();
   }
-
 }

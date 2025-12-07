@@ -9,7 +9,8 @@ target("EngineLib")
         "Logger/*.cpp",
         "Scene/*.cpp",
         "UI/*.cpp",
-        "Var/*.cpp"
+        "Var/*.cpp",
+        "Object/*.cpp"
     )
 
     add_includedirs(

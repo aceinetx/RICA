@@ -6,11 +6,11 @@
 
 AudioSystem& audioSystem = AudioSystem::getInstance();
 
-void AudioSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
+void AudioSystem::update(const ObjectVector<Entity*>& entities) {
   logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
 
-  std::shared_ptr<Camera2DComponent> cameraActive = nullptr;
-  std::shared_ptr<TransformComponent> transformActive = nullptr;
+  Camera2DComponent* cameraActive = nullptr;
+  TransformComponent* transformActive = nullptr;
 
   for (auto entity : entities) {
     auto camera = entity->getComponent<Camera2DComponent>();

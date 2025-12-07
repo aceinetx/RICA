@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Object/ObjectVector.hpp"
 #include <memory>
 #include <shared_mutex>
 #include <vector>
@@ -23,7 +24,7 @@ public:
 
   void update();
   bool init();
-  void set3Dmode(const bool& is3D){
+  void set3Dmode(const bool& is3D) {
     this->is3D = is3D;
   }
   bool is3Dmode() const {
@@ -44,10 +45,9 @@ public:
 
   friend int main();
 
-
   class SceneManager {
   public:
-    std::shared_ptr<Scene> newSceneByID(unsigned int ID);
+    Scene* newSceneByID(unsigned int ID);
     void setSceneByID(unsigned int ID);
     void setSceneLimit(unsigned int limit);
     unsigned int getCurrentSceneID() const {
@@ -55,7 +55,7 @@ public:
     }
     void addComponentCurrentScene();
 
-    template <typename T> std::shared_ptr<T> CreateScene(unsigned int ID);
+    template <typename T> T* CreateScene(unsigned int ID);
 
     friend class Engine;
 
@@ -64,7 +64,7 @@ public:
   };
 
   static SceneManager sceneManager;
-  std::shared_ptr<Scene> getActiveScene() {
+  Scene* getActiveScene() {
     unsigned int currentSceneId = sceneManager.getCurrentSceneID();
     if (currentSceneId < vectorSceneManager.size()) {
       return vectorSceneManager[currentSceneId];
@@ -73,10 +73,10 @@ public:
   }
 
 private:
-  static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
+  static ObjectVector<Scene*> vectorSceneManager;
 
   void updateCurrentScene();
-  bool is3D=false;
+  bool is3D = false;
   bool isRunning = true;
   Engine() = default;
   ~Engine() = default;

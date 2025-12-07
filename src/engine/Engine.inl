@@ -2,8 +2,7 @@
 #include "../Scene/Scene.hpp"
 #include "Engine.hpp"
 
-template <typename T>
-std::shared_ptr<T> Engine::SceneManager::CreateScene(unsigned int ID) {
+template <typename T> T* Engine::SceneManager::CreateScene(unsigned int ID) {
   if (ID >= Engine::vectorSceneManager.size()) {
     Engine::vectorSceneManager.resize(ID + 1, nullptr);
   }
@@ -11,7 +10,8 @@ std::shared_ptr<T> Engine::SceneManager::CreateScene(unsigned int ID) {
     Engine::vectorSceneManager[ID] = nullptr;
   }
 
-  auto scenePtr = std::make_shared<T>();
+  auto scenePtr = make_object<T>();
+  scenePtr->retain();
   Engine::vectorSceneManager[ID] = scenePtr;
   sceneCurrent = ID;
   scenePtr->OnLoad();
