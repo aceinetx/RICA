@@ -1,12 +1,7 @@
 #include "AutoreleasePool.hpp"
 #include "Object.hpp"
 
-AutoreleasePool::AutoreleasePool() : p_objects({}) {};
-
-AutoreleasePool& AutoreleasePool::getInstance() {
-  static AutoreleasePool instance;
-  return instance;
-}
+AutoreleasePool::AutoreleasePool() = default;
 
 void AutoreleasePool::add(Object* object) {
   p_objects.emplace_back(object);

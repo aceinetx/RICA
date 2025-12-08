@@ -47,7 +47,7 @@ public:
 
   class SceneManager {
   public:
-    Scene* newSceneByID(unsigned int ID);
+    // Scene* newSceneByID(unsigned int ID);
     void setSceneByID(unsigned int ID);
     void setSceneLimit(unsigned int limit);
     unsigned int getCurrentSceneID() const {

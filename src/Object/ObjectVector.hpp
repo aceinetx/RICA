@@ -1,105 +1,97 @@
 #pragma once
+#include <algorithm>
 #include <vector>
 
-template <class T> class ObjectVector : std::vector<T> {
+template <class T> class ObjectVector {
 public:
-  using std::vector<T>::begin;
-  using std::vector<T>::end;
-  using std::vector<T>::size;
-  using std::vector<T>::at;
-  using std::vector<T>::operator[];
+  ObjectVector(std::initializer_list<T> list) : m_data(list) {
+    retainEverything();
+  }
+
+  ObjectVector() = default;
 
   ~ObjectVector() {
     clear();
   }
 
-  /**
-   * Add an element to the vector
-   *
-   * Retains the object
-   */
-  virtual void push_back(T object) {
-    object->retain();
-    std::vector<T>::push_back(object);
+  typename std::vector<T>::iterator begin() {
+    return m_data.begin();
   }
 
-  /**
-   * Pop and release the last element in the vector
-   */
-  virtual void pop_back() {
-    std::vector<T>::back()->release();
-    std::vector<T>::pop_back();
+  typename std::vector<T>::const_iterator begin() const {
+    return m_data.begin();
   }
 
-  /**
-   * Clear the entire vector and release all objects
-   */
-  virtual void clear() {
-    for (T obj : *this) {
-      if (obj != nullptr)
-        obj->release();
-    }
-    std::vector<T>::clear();
+  typename std::vector<T>::iterator end() {
+    return m_data.end();
   }
 
-  /**
-   * Erase an object from a position and release it
-   */
-  virtual void erase(typename std::vector<T>::iterator position) {
+  typename std::vector<T>::const_iterator end() const {
+    return m_data.end();
+  }
+
+  T& front() {
+    return m_data.front();
+  }
+
+  T& back() {
+    return m_data.back();
+  }
+
+  typename std::vector<T>::iterator find(T& object) {
+    return std::find(begin(), end(), object);
+  }
+
+  void erase(typename std::vector<T>::iterator position) {
     (*position)->release();
 
-    std::vector<T>::erase(position);
+    m_data.erase(position);
   }
 
-  /**
-   * Insert an retain an object at a given position
-   */
-  virtual void insert(typename std::vector<T>::iterator position, T object) {
-    object->retain();
+  void insert(typename std::vector<T>::iterator position, T& v) {
+    (*position)->retain();
 
-    std::vector<T>::insert(position, object);
+    m_data.insert(position, v);
   }
 
-  /**
-   * Resize the vector with a value, retaining or releasing elements as needed
-   */
-  virtual void resize(size_t count, T value) {
-    size_t currentSize = this->size();
-
-    if (count < currentSize) {
-      // Release excess elements
-      for (size_t i = count; i < currentSize; ++i) {
-        this->at(i)->release();
-      }
-    } else if (count > currentSize) {
-      // Retain new elements (initialize as nullptr)
-      for (size_t i = currentSize; i < count; ++i) {
-        if (value == nullptr)
-          std::vector<T>::push_back(
-              value); // or create a new instance of T if possible
-        else
-          push_back(value);
-      }
-    }
-    std::vector<T>::resize(count);
+  void push_back(T v) {
+    v->retain();
+    m_data.emplace_back(v);
   }
 
-  /**
-   * Resize the vector, retaining or releasing elements as needed
-   */
-  virtual void resize(size_t count) {
-    resize(count, nullptr);
+  void pop_back() {
+    T& v = m_data.back();
+    v->release();
+    m_data.pop_back();
   }
 
-  /**
-   * Get a std::vector equivalent of the current vector
-   */
-  virtual std::vector<T> vector() {
-    std::vector<T> vec;
-    for (T obj : *this) {
-      vec.push_back(obj);
-    }
+  void clear() {
+    releaseEverything();
+    m_data.clear();
+  }
 
-    return vec;
+  T& at(size_t i) {
+    return m_data.at(i);
+  }
+
+  T& operator[](size_t i) {
+    return at(i);
+  }
+
+  size_t size() const {
+    return m_data.size();
+  }
+
+private:
+  std::vector<T> m_data;
+
+  void retainEverything() {
+    for (T& v : m_data)
+      v->retain();
+  }
+
+  void releaseEverything() {
+    for (T& v : m_data)
+      v->release();
   }
 };

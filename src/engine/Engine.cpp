@@ -1,5 +1,5 @@
 #include "Engine.hpp"
-#include "../Object/AutoreleasePool.hpp"
+#include "../Object/PoolManager.hpp"
 
 #include "../rica.hpp"
 #include "Var/Var.hpp"
@@ -146,7 +146,7 @@ bool Engine::init() {
 }
 
 void Engine::update() {
-  AutoreleasePool::getInstance().clear();
+  PoolManager::getInstance().clear();
 }
 
 void Engine::deleteVectorSceneManager() {
@@ -170,6 +170,7 @@ void Engine::updateCurrentScene() {
   }
 }
 
+/*
 Scene* Engine::SceneManager::newSceneByID(unsigned int ID) {
   if (ID >= Engine::vectorSceneManager.size()) {
 
@@ -190,6 +191,7 @@ Scene* Engine::SceneManager::newSceneByID(unsigned int ID) {
   Engine::vectorSceneManager[ID] = scenePtr;
   return scenePtr;
 }
+*/
 
 void Engine::SceneManager::setSceneByID(unsigned int ID) {
   if (ID >= vectorSceneManager.size()) {
@@ -217,6 +219,7 @@ void Engine::SceneManager::setSceneByID(unsigned int ID) {
 }
 
 void Engine::SceneManager::setSceneLimit(unsigned int limit) {
+  /*
   if (limit > Engine::vectorSceneManager.size()) {
     Engine::vectorSceneManager.resize(limit, nullptr);
   } else if (limit < Engine::vectorSceneManager.size()) {
@@ -227,6 +230,7 @@ void Engine::SceneManager::setSceneLimit(unsigned int limit) {
     }
     Engine::vectorSceneManager.resize(limit);
   }
+  */
 }
 
 int main() {

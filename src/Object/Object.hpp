@@ -1,5 +1,5 @@
 #pragma once
-#include "AutoreleasePool.hpp"
+#include "PoolManager.hpp"
 #include <utility>
 
 class Object {
@@ -8,6 +8,7 @@ protected:
 
 public:
   Object();
+  virtual ~Object();
 
   void retain();
   void release();
@@ -15,6 +16,7 @@ public:
 
 template <typename T, typename... Args> T* make_object(Args&&... args) {
   T* p = new T(std::forward<Args>(args)...);
-  AutoreleasePool::getInstance().add(p);
+  // std::cout << "make_object " << p << "\n";
+  PoolManager::getInstance().add(p);
   return p;
 }
