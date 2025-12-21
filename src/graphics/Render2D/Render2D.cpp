@@ -1,9 +1,16 @@
 #include "Render2D.hpp"
 #include "../rica.hpp"
 #include "Camera2D/Camera2D.hpp"
+#include "raylib.h"
 #include <iostream>
 
 Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
+
+void Render2DSystem::init(int screenWidth, int screenHeight) {
+width=screenWidth;
+height=screenHeight;
+renderTexture = LoadRenderTexture(width, height);
+}
 
 void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera2DComponent> activeCamera = nullptr;
@@ -15,6 +22,7 @@ void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
     }
   }
 
+  BeginTextureMode(renderTexture);
   if (activeCamera) {
     BeginMode2D(activeCamera->getCamera2D());
   }
@@ -35,4 +43,5 @@ void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
     EndMode2D();
   }
 
+  EndTextureMode();
 }

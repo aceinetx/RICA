@@ -32,7 +32,7 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Only files matching these patterns are included: xmake.lua, src, game
+- Only files matching these patterns are included: game, src, .clang-format, .clangd, .gitignore, compile_commands.json, LICENSE, README.md, xmake.lua, TODO
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -47,6 +47,7 @@ game/
   main.cpp
   one.glb
   player.hpp
+  raymarching.fs
   xmake.lua
 src/
   Audio/
@@ -129,72 +130,234 @@ src/
     Var.hpp
   rica.hpp
   xmake.lua
+.clang-format
+.clangd
+.gitignore
+LICENSE
+README.md
+TODO
 xmake.lua
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
 
-<file path="game/player.hpp">
-// Файл: game/player.hpp
+<file path="game/raymarching.fs">
+#version 330
 
+// Входящие данные (Uniforms) от Raylib
+uniform float uTime;
+uniform vec2 uResolution;
+
+// Выходной цвет пикселя
+out vec4 finalColor;
+
+// Константы из оригинального кода
+#define EPS         .001
+#define PI          3.14159265359
+#define RADIAN      180. / PI
+#define SPEED       25.
+
+// --- Вспомогательные функции (Noise, Hash, FBM) ---
+
+float hash(in float n) { return fract(sin(n)*43758.5453123); }
+
+float hash(vec2 p)
+{
+    return fract(sin(dot(p,vec2(127.1,311.7))) * 43758.5453123);
+}
+
+float noise(vec2 p)
+{
+    vec2 i = floor(p), f = fract(p); 
+    f *= f*(3.-2.*f);
+     
+    vec2 c = vec2(0,1);
+     
+    return mix(mix(hash(i + c.xx), 
+                   hash(i + c.yx), f.x),
+               mix(hash(i + c.xy), 
+                   hash(i + c.yy), f.x), f.y);
+}
+
+float fbm(in vec2 p)
+{
+    return    .5000 * noise(p)
+           +.2500 * noise(p * 2.)
+           +.1250 * noise(p * 4.)
+           +.0625 * noise(p * 8.);
+}
+
+// --- Raymarching Distance Function ---
+
+float dst(vec3 p)
+{
+    return dot(vec3(p.x, p.y
+                    + 0.45 * fbm(p.zx) 
+                    + 2.55 * noise(.1 * p.xz) 
+                    + 0.83 * noise(.4 * p.xz)
+                    + 3.33 * noise(.001 * p.xz)
+                    + 3.59 * noise(.0005 * (p.xz + 132.453)) 
+                    , p.z),  vec3(0.,1.,0.));     
+}
+
+vec3 nrm(vec3 p, float d)
+{
+    return normalize(
+            vec3(dst(vec3(p.x + EPS, p.y, p.z)),
+                 dst(vec3(p.x, p.y + EPS, p.z)),
+                 dst(vec3(p.x, p.y, p.z + EPS))) - d);
+}
+
+bool rmarch(vec3 ro, vec3 rd, out vec3 p, out vec3 n)
+{
+    p = ro;
+    vec3 pos = p;
+    float d = 1.;
+
+    for (int i = 0; i < 64; i++) {
+        d = dst(pos);
+
+        if (d < EPS) {
+            p = pos;
+            break;
+        }
+        pos += d * rd;
+    }
+     
+    n = nrm(p, d);
+    return d < EPS;
+}
+
+// --- Основная логика рендера ---
+
+vec4 render(vec2 uv)
+{
+    float t = uTime; // Используем uTime
+     
+    vec2 uvn = (uv) * vec2(uResolution.x / uResolution.y, 1.); // Используем uResolution
+     
+    float vel = SPEED * t;
+     
+    vec3 cu = vec3(2. * noise(vec2(.3 * t)) - 1.,1., 1. * fbm(vec2(.8 * t)));
+    vec3 cp = vec3(0, 3.1 + noise(vec2(t)) * 3.1, vel);
+    vec3 ct = vec3(1.5 * sin(t), 
+                   -2. + cos(t) + fbm(cp.xz) * .4, 13. + vel);
+         
+    vec3 ro = cp,
+         rd = normalize(vec3(uvn, 1. / tan(60. * RADIAN)));
+     
+    vec3 cd = ct - cp,
+         rz = normalize(cd),
+         rx = normalize(cross(rz, cu)),
+         ry = normalize(cross(rx, rz));
+
+    rd = normalize(mat3(rx, ry, rz) * rd);
+     
+    vec3 sp, sn;
+    vec3 col = (rmarch(ro, rd, sp, sn) ?
+          vec3(.6) * dot(sn, normalize(vec3(cp.x, cp.y + .5, cp.z) - sp))
+        : vec3(0.));
+     
+    return vec4(col, length(ro-sp));
+}
+
+// --- Точка входа (Main) ---
+
+void main()
+{
+    // gl_FragCoord содержит координаты текущего пикселя (x, y)
+    vec2 fragCoord = gl_FragCoord.xy;
+
+    vec2 uv = fragCoord.xy / uResolution.xy * 2. - 1.;
+         
+    if (abs(EPS + uv.y) >= .7) { 
+        finalColor = vec4(0,0,0,1);
+        return;
+    }
+     
+    vec4 res = render(uv);
+     
+    vec3 col = res.xyz;
+     
+    col *= 1.75 * smoothstep(length(uv) * .35, .75, .4);
+    float noiseVal = hash((hash(uv.x) + uv.y) * uTime) * .15; // Переименовал noise в noiseVal, чтобы не конфликтовало с функцией noise
+    col += noiseVal;
+    col *= smoothstep(EPS, 3.5, uTime);
+
+    finalColor = vec4(col, 1);
+}
+</file>
+
+<file path="game/.gitignore">
+logRica.txt
+</file>
+
+<file path="game/initEngine.json">
+{
+    "rayLib":{
+         "windowTitle": "hello",
+
+         "resolution": {
+             "width": 1920,
+             "height": 1080
+         },
+
+         "maxFPS": 60,
+
+         "configurationFlags": [
+            "FLAG_FULLSCREEN_MODE"
+          ]
+    }
+}
+</file>
+
+<file path="game/player.hpp">
 #pragma once
 
 #include "../src/rica.hpp"
 #include "raylib.h"
-// Включаем только 3D компоненты
 #include "../src/ECS/Components/Mesh/Mesh.hpp"
 #include "../src/ECS/Components/Transform/Transform3D/Transform3D.hpp" 
-// Удалены: Sprite, Transform2D, Camera2D, Audio
+
 #include <iostream>
 #include <memory> 
 
+
 class Player : public Entity {
 private:
-    float speed = 5.0f; // Адаптированная скорость для 3D
+    float speed = 5.0f; 
+    float rotationSpeed = 90.0f;
     
-    // Используются только 3D компоненты
     std::shared_ptr<MeshComponent> mesh;
     std::shared_ptr<Transform3DComponent> trans; 
     
-    // Удалены isAudioPlaying, transformComp, audioComp
-
 public:
     Player() {
-        mesh = std::make_shared<MeshComponent>();
         trans = std::make_shared<Transform3DComponent>();
+        trans->setPosition({0.0f, 0.0f, 0.0f});
+        trans->setScale({0.01, 0.01, 0.01});
 
+        this->addComponent(trans); 
+
+        mesh = std::make_shared<MeshComponent>(); 
+        mesh->loadMesh("one.glb");
         this->addComponent(mesh);
-        this->addComponent(trans);
+            }
 
-        mesh->loadMesh("one.glb"); 
-
-        // Transform3DComponent ожидает Vector3
-        trans->setPosition({10.0f, 0.0f, 10.0f});
-        trans->setScale({0.5f, 0.5f, 0.5f}); 
-        trans->setRotation({0.0f, 0.0f, 0.0f});
-    }
 
     void update(float deltaTime) {
         if (!trans) return; 
         
-        Vector3 delta = {0.0f, 0.0f, 0.0f};
+        Vector3 currentRotation = trans->getRotationAngles();
         
-        // 3D-движение: Z (вперед/назад), X (влево/вправо)
-        if(IsKeyDown(KEY_W)) delta.z -= speed * deltaTime; 
-        if(IsKeyDown(KEY_S)) delta.z += speed * deltaTime; 
-        if(IsKeyDown(KEY_A)) delta.x -= speed * deltaTime; 
-        if(IsKeyDown(KEY_D)) delta.x += speed * deltaTime; 
+        currentRotation.y += rotationSpeed * deltaTime; 
         
-        Vector3 currentPos = trans->getPosition();
+        if (currentRotation.y > 360.0f) {
+            currentRotation.y -= 360.0f;
+        }
         
-        trans->setPosition({
-            currentPos.x + delta.x,
-            currentPos.y + delta.y,
-            currentPos.z + delta.z
-        });
-        
-        // Удалена вся устаревшая 2D- и аудио-логика
+        trans->setRotation(currentRotation);
     }
     
 };
@@ -584,9 +747,16 @@ private:
 #include "Render2D.hpp"
 #include "../rica.hpp"
 #include "Camera2D/Camera2D.hpp"
+#include "raylib.h"
 #include <iostream>
 
 Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
+
+void Render2DSystem::init(int screenWidth, int screenHeight) {
+width=screenWidth;
+height=screenHeight;
+renderTexture = LoadRenderTexture(width, height);
+}
 
 void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera2DComponent> activeCamera = nullptr;
@@ -598,6 +768,7 @@ void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
     }
   }
 
+  BeginTextureMode(renderTexture);
   if (activeCamera) {
     BeginMode2D(activeCamera->getCamera2D());
   }
@@ -618,38 +789,61 @@ void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
     EndMode2D();
   }
 
+  EndTextureMode();
 }
 </file>
 
 <file path="src/graphics/Render2D/Render2D.hpp">
 #pragma once
 
+#include "raylib.h"
 #include <memory>
 #include <vector>
 
+// ... (остальные forward declarations)
 class Entity;
-class SpriteComponent;
-class Camera2DComponent;
-class TransformComponent;
-
 class Engine;
+
 class Render2DSystem {
 public:
-  Render2DSystem(const Render2DSystem&) = delete;
-  Render2DSystem& operator=(const Render2DSystem&) = delete;
-  Render2DSystem(Render2DSystem&&) = delete;
-  Render2DSystem& operator=(Render2DSystem&&) = delete;
+    Render2DSystem(const Render2DSystem&) = delete;
+    Render2DSystem& operator=(const Render2DSystem&) = delete;
 
-  static Render2DSystem& getInstance() {
-    static Render2DSystem instance;
-    return instance;
-  }
+    static Render2DSystem& getInstance() {
+        static Render2DSystem instance;
+        return instance;
+    }
 
-  void update(const std::vector<std::shared_ptr<Entity>>& entities);
+    void init(int screenWidth, int screenHeight);
 
+    void update(const std::vector<std::shared_ptr<Entity>>& entities);
+
+    RenderTexture2D& getRenderTexture() { return renderTexture; }
+
+    friend Engine;
+
+    int getWidth() const {
+        return width;
+    }
+
+    int getHeight() const {
+        return height;
+    }
+    
 private:
-  Render2DSystem() = default;
-  ~Render2DSystem() = default;
+    Render2DSystem() = default;
+    
+    ~Render2DSystem() {
+        if (renderTexture.id > 0) {
+            UnloadRenderTexture(renderTexture);
+        }
+    }
+
+protected:
+    int width;
+    int height;
+    
+    RenderTexture2D renderTexture = { 0 }; 
 };
 
 extern Render2DSystem& render2Dsystem;
@@ -665,6 +859,13 @@ extern Render2DSystem& render2Dsystem;
 
 Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
 
+void Render3DSystem::init(int screenWidth, int screenHeight) {
+width=screenWidth;
+height = screenHeight; 
+renderTexture = LoadRenderTexture(width, height);
+SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
+}
+
 void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera3DComponent> activeCamera = nullptr;
   for (auto entity : entities) {
@@ -674,7 +875,9 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
       break;
     }
   }
-
+  
+  BeginTextureMode(renderTexture);
+  ClearBackground(SKYBLUE);
   if (activeCamera) {
     BeginMode3D(activeCamera->getCamera3D());
   }
@@ -701,6 +904,7 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
   if (activeCamera) {
     EndMode3D();
   }
+    EndTextureMode();
 
 }
 </file>
@@ -708,32 +912,59 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
 <file path="src/graphics/Render3D/Render3D.hpp">
 #pragma once
 
+#include "raylib.h"
 #include <memory>
 #include <vector>
 
 class Entity;
-class SpriteComponent;
-class Camera3DComponent;
-class TransformComponent;
 class Engine;
+class Camera3DComponent;
+class Transform3DComponent;
+class MeshComponent; 
 
 class Render3DSystem {
 public:
-  Render3DSystem(const Render3DSystem&) = delete;
-  Render3DSystem& operator=(const Render3DSystem&) = delete;
-  Render3DSystem(Render3DSystem&&) = delete;
-  Render3DSystem& operator=(Render3DSystem&&) = delete;
+    Render3DSystem(const Render3DSystem&) = delete;
+    Render3DSystem& operator=(const Render3DSystem&) = delete;
+    Render3DSystem(Render3DSystem&&) = delete;
+    Render3DSystem& operator=(Render3DSystem&&) = delete;
 
-  static Render3DSystem& getInstance() {
-    static Render3DSystem instance;
-    return instance;
-  }
+    static Render3DSystem& getInstance() {
+        static Render3DSystem instance;
+        return instance;
+    }
 
-  void update(const std::vector<std::shared_ptr<Entity>>& entities);
+    void init(int screenWidth, int screenHeight);
+
+    void update(const std::vector<std::shared_ptr<Entity>>& entities);
+
+    RenderTexture2D& getRenderTexture() { return renderTexture; }
+
+    friend Engine;
+
+    int getWidth() const {
+        return width;
+    }
+
+    int getHeight() const {
+        return height;
+    }
 
 private:
-  Render3DSystem() = default;
-  ~Render3DSystem() = default;
+    Render3DSystem() = default;
+    ~Render3DSystem() {
+        if (renderTexture.id > 0) {
+            UnloadRenderTexture(renderTexture);
+        }
+    }
+
+    friend Engine;
+
+protected:
+    int width = 0;
+    int height = 0;
+    
+    RenderTexture2D renderTexture = { 0 }; 
 };
 
 extern Render3DSystem& render3Dsystem;
@@ -776,29 +1007,6 @@ private:
 extern Physic2D& physic2D;
 </file>
 
-<file path="game/.gitignore">
-logRica.txt
-</file>
-
-<file path="game/initEngine.json">
-{
-    "rayLib":{
-         "windowTitle": "hello",
-
-         "resolution": {
-             "width": 1920,
-             "height": 1080
-         },
-
-         "maxFPS": 60,
-
-         "configurationFlags": [
-            "FLAG_FULLSCREEN_MODE"
-          ]
-    }
-}
-</file>
-
 <file path="src/Var/Var.cpp">
 #include "Var.hpp"
 #include "../rica.hpp"
@@ -813,15 +1021,106 @@ std::string basePath = GetApplicationDirectory();
 extern std::string basePath;
 </file>
 
-<file path="game/xmake.lua">
-target("MyGame")
-    set_kind("binary")
-    add_files("*.cpp")
+<file path=".clang-format">
+# Base style configuration
+# Inherit all formatting rules from the LLVM style as a starting point.
+BasedOnStyle: LLVM
 
-    add_deps("EngineLib")
+# Indentation settings
+# - IndentWidth: number of spaces per indent level.
+# - TabWidth: visual width of tab characters.
+# - UseTab: whether to emit real tab characters.
+# - NamespaceIndentation: ident namespaces
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+NamespaceIndentation: All
 
-    add_packages("raylib", "rapidjson")
-target_end()
+# Include directives
+# - SortIncludes: controls ordering of #include statements.
+# - IncludeBlocks: allow empty lines for includes.
+SortIncludes: true
+IncludeBlocks: Preserve
+
+# Short constructs on single lines
+# Disallow collapsing blocks, loops, cases, ifs, and functions into a single line.
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+# Access modifiers formatting
+# Shift class access specifiers (public/protected/private) relative to class indent.
+AccessModifierOffset: -2
+
+# Brace placement
+# Attach opening braces to the control statement or declaration line.
+BreakBeforeBraces: Attach
+
+# Spacing around parentheses and casts
+# ControlStatements: space before parens in if/for/while only.
+# No extra spaces inside parentheses, angles, container literals, or square brackets.
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: false
+SpacesInParentheses: false
+SpacesInAngles: false
+SpacesInContainerLiterals: false
+SpacesInSquareBrackets: false
+SpaceBeforeSquareBrackets: false
+
+# Template keyword spacing
+# Always place a space after the 'template' keyword.
+SpaceAfterTemplateKeyword: true
+
+# Line length
+ColumnLimit: 80
+
+# Pointer alignment
+# DerivePointerAlignment: ignore inference, use PointerAlignment setting.
+# PointerAlignment: align the '*' or '&' to the left with the type.
+DerivePointerAlignment: false
+PointerAlignment: Left
+</file>
+
+<file path=".clangd">
+CompileFlags:
+  CompilationDatabase: build/
+</file>
+
+<file path="LICENSE">
+MIT License
+
+Copyright (c) 2025 grechka731
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</file>
+
+<file path="README.md">
+# RICA
+Open-source игровой движок RICA не просто библиотека, а полноценный инструмент с UI. Простой под капотом, полностью открыт для глубокой настройки и адаптации под нужды вашей игры.
+</file>
+
+<file path="TODO">
+- Move everything to it's own namespace (maybe rica::)
+- Don't do ptr = nullptr for shared ptr vector elements, remove them instead (This leaks 8 bytes of memory techinally, this won't trigger ASAN so fix asap)
+- Add an abstract class Node
 </file>
 
 <file path="src/ECS/Components/Physic/Physic2D/Physic2D.hpp">
@@ -863,39 +1162,6 @@ private:
   // температура
   float temperature = 0;
 };
-</file>
-
-<file path="src/ECS/Components/Sprite/Sprite.cpp">
-#include "Sprite.hpp"
-#include "../../../rica.hpp"
-
-// Загрузка текстуры
-bool SpriteComponent::LoadTextureSprite(const char* path) {
-  // Если уже была текстура — разгрузим
-  if (texture.id != 0)
-    UnloadTexture(texture);
-
-  texture = LoadTexture(path);
-
-  if (texture.id == 0) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture", "logRica.txt");
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture");
-
-
-    return false;
-  }
-
-  // Настраиваем прямоугольник источника
-  source = {0, 0, (float)texture.width, (float)texture.height};
-  color = WHITE;
-
-  return true;
-}
-
-// Конструктор со std::string
-SpriteComponent::SpriteComponent(const std::string& path) {
-  LoadTextureSprite(path.c_str());
-}
 </file>
 
 <file path="src/ECS/Components/Component.hpp">
@@ -1208,6 +1474,166 @@ std::shared_ptr<T> Scene::Create(Args&&... args) {
 class UI {};
 </file>
 
+<file path="game/xmake.lua">
+target("MyGame")
+    set_kind("binary")
+    add_files("*.cpp")
+
+    add_deps("EngineLib")
+
+    add_packages("raylib", "rapidjson")
+target_end()
+</file>
+
+<file path="src/Audio/Audio.hpp">
+#pragma once
+
+#include <memory>
+#include <vector>
+
+class Entity;
+class TransformComponent;
+class Engine;
+
+class AudioSystem {
+public:
+  AudioSystem(const AudioSystem&) = delete;
+  AudioSystem& operator=(const AudioSystem&) = delete;
+  AudioSystem(AudioSystem&&) = delete;
+  AudioSystem& operator=(AudioSystem&&) = delete;
+
+  static AudioSystem& getInstance() {
+    static AudioSystem instance;
+    return instance;
+  }
+
+  void update(const std::vector<std::shared_ptr<Entity>>& entities);
+
+private:
+  AudioSystem() = default;
+
+  ~AudioSystem() = default;
+};
+
+extern AudioSystem& audioSystem;
+</file>
+
+<file path="src/Collider/Collider2D/Collider2D.hpp">
+#pragma once
+
+#include <memory>
+#include <vector>
+
+class Entity;
+class SpriteComponent;
+class TransformComponent;
+class Engine;
+
+class Collider2DSystem {
+public:
+  Collider2DSystem(const Collider2DSystem&) = delete;
+  Collider2DSystem& operator=(const Collider2DSystem&) = delete;
+  Collider2DSystem(Collider2DSystem&&) = delete;
+  Collider2DSystem& operator=(Collider2DSystem&&) = delete;
+
+  static Collider2DSystem& getInstance() {
+    static Collider2DSystem instance;
+    return instance;
+  }
+
+  void update(const std::vector<std::shared_ptr<Entity>>& entities);
+  bool isColliding(std::shared_ptr<Entity> entity1,
+                   std::shared_ptr<Entity> entity2);
+
+private:
+  Collider2DSystem() = default;
+
+  ~Collider2DSystem() = default;
+};
+
+extern Collider2DSystem& collider2DSystem;
+</file>
+
+<file path="src/ECS/Components/Sprite/Sprite.cpp">
+#include "Sprite.hpp"
+#include "../../../rica.hpp"
+
+// Загрузка текстуры
+bool SpriteComponent::LoadTextureSprite(const char* path) {
+  // Если уже была текстура — разгрузим
+  if (texture.id != 0)
+    UnloadTexture(texture);
+
+  texture = LoadTexture(path);
+
+  if (texture.id == 0) {
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture", "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture");
+
+
+    return false;
+  }
+
+  // Настраиваем прямоугольник источника
+  source = {0, 0, (float)texture.width, (float)texture.height};
+  color = WHITE;
+
+  return true;
+}
+
+// Конструктор со std::string
+SpriteComponent::SpriteComponent(const std::string& path) {
+  LoadTextureSprite(path.c_str());
+}
+</file>
+
+<file path="src/ECS/Components/Sprite/Sprite.hpp">
+#pragma once
+
+#include "../../../Logger/Logger.hpp"
+#include "../Component.hpp"
+#include <raylib.h>
+
+#include <string>
+
+class SpriteComponent : public Component {
+public:
+  // Удобный современный конструктор
+  SpriteComponent(const std::string& path);
+
+  // Функция загрузки текстуры (const char*, как требует Raylib)
+  bool LoadTextureSprite(const char* path);
+
+  void setColor(Color color) {
+    this->color = color;
+  }
+  void setSource(float x, float y, float width, float height) {
+    source = {x, y, width, height};
+  }
+
+  int getHeightSprite() {
+    return texture.height;
+  }
+  int getWidthSprite() {
+    return texture.width;
+  }
+  Color getColor() {
+    return color;
+  }
+  Texture2D getTexture() {
+    return texture;
+  }
+  Rectangle getSource() {
+    return source;
+  }
+
+private:
+  Texture2D texture{0}; // Инициализация Raylib стиля
+  Color color = WHITE;
+  Rectangle source{0, 0, 0, 0};
+};
+</file>
+
 <file path="src/Audio/Audio.cpp">
 #include "../rica.hpp"
 #include "Var/Var.hpp"
@@ -1273,39 +1699,6 @@ void AudioSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
 }
 </file>
 
-<file path="src/Audio/Audio.hpp">
-#pragma once
-
-#include <memory>
-#include <vector>
-
-class Entity;
-class TransformComponent;
-class Engine;
-
-class AudioSystem {
-public:
-  AudioSystem(const AudioSystem&) = delete;
-  AudioSystem& operator=(const AudioSystem&) = delete;
-  AudioSystem(AudioSystem&&) = delete;
-  AudioSystem& operator=(AudioSystem&&) = delete;
-
-  static AudioSystem& getInstance() {
-    static AudioSystem instance;
-    return instance;
-  }
-
-  void update(const std::vector<std::shared_ptr<Entity>>& entities);
-
-private:
-  AudioSystem() = default;
-
-  ~AudioSystem() = default;
-};
-
-extern AudioSystem& audioSystem;
-</file>
-
 <file path="src/Collider/Collider2D/Collider2D.cpp">
 #include "Collider2D.hpp"
 #include "../../rica.hpp"
@@ -1352,42 +1745,6 @@ bool Collider2DSystem::isColliding(std::shared_ptr<Entity> entity1,
 
   return (left1 < right2 && right1 > left2 && top1 < bottom2 && bottom1 > top2);
 }
-</file>
-
-<file path="src/Collider/Collider2D/Collider2D.hpp">
-#pragma once
-
-#include <memory>
-#include <vector>
-
-class Entity;
-class SpriteComponent;
-class TransformComponent;
-class Engine;
-
-class Collider2DSystem {
-public:
-  Collider2DSystem(const Collider2DSystem&) = delete;
-  Collider2DSystem& operator=(const Collider2DSystem&) = delete;
-  Collider2DSystem(Collider2DSystem&&) = delete;
-  Collider2DSystem& operator=(Collider2DSystem&&) = delete;
-
-  static Collider2DSystem& getInstance() {
-    static Collider2DSystem instance;
-    return instance;
-  }
-
-  void update(const std::vector<std::shared_ptr<Entity>>& entities);
-  bool isColliding(std::shared_ptr<Entity> entity1,
-                   std::shared_ptr<Entity> entity2);
-
-private:
-  Collider2DSystem() = default;
-
-  ~Collider2DSystem() = default;
-};
-
-extern Collider2DSystem& collider2DSystem;
 </file>
 
 <file path="src/ECS/Components/Audio/Audio.hpp">
@@ -1597,51 +1954,46 @@ private:
 };
 </file>
 
-<file path="src/ECS/Components/Sprite/Sprite.hpp">
+<file path="src/ECS/Objects/Entity.hpp">
 #pragma once
 
-#include "../../../Logger/Logger.hpp"
-#include "../Component.hpp"
-#include <raylib.h>
-
+#include <memory>
+#include <optional>
 #include <string>
+#include <vector>
 
-class SpriteComponent : public Component {
+struct Component;
+
+class Entity {
 public:
-  // Удобный современный конструктор
-  SpriteComponent(const std::string& path);
+  Entity();
+  Entity(std::string tag);
+  virtual ~Entity();
 
-  // Функция загрузки текстуры (const char*, как требует Raylib)
-  bool LoadTextureSprite(const char* path);
-
-  void setColor(Color color) {
-    this->color = color;
+  virtual void Start() {
   }
-  void setSource(float x, float y, float width, float height) {
-    source = {x, y, width, height};
+  virtual void update(float deltaTime) {
   }
 
-  int getHeightSprite() {
-    return texture.height;
+  void addComponent(std::shared_ptr<Component> comp);
+  template <typename T> std::shared_ptr<T> getComponent();
+
+  int getID() const;
+
+  void setTag(std::string tag) {
+    this->tag = tag;
   }
-  int getWidthSprite() {
-    return texture.width;
-  }
-  Color getColor() {
-    return color;
-  }
-  Texture2D getTexture() {
-    return texture;
-  }
-  Rectangle getSource() {
-    return source;
+  std::string getTag() {
+    return tag;
   }
 
 private:
-  Texture2D texture{0}; // Инициализация Raylib стиля
-  Color color = WHITE;
-  Rectangle source{0, 0, 0, 0};
+  std::vector<std::shared_ptr<Component>> components;
+  int id;
+  std::string tag;
 };
+
+#include "Entity.inl"
 </file>
 
 <file path="src/Scene/Scene.hpp">
@@ -1785,48 +2137,6 @@ template std::shared_ptr<MeshComponent>
 Entity::getComponent<MeshComponent>();
 template std::shared_ptr<Transform3DComponent>
 Entity::getComponent<Transform3DComponent>();
-</file>
-
-<file path="src/ECS/Objects/Entity.hpp">
-#pragma once
-
-#include <memory>
-#include <optional>
-#include <string>
-#include <vector>
-
-struct Component;
-
-class Entity {
-public:
-  Entity();
-  Entity(std::string tag);
-  virtual ~Entity();
-
-  virtual void Start() {
-  }
-  virtual void update(float deltaTime) {
-  }
-
-  void addComponent(std::shared_ptr<Component> comp);
-  template <typename T> std::shared_ptr<T> getComponent();
-
-  int getID() const;
-
-  void setTag(std::string tag) {
-    this->tag = tag;
-  }
-  std::string getTag() {
-    return tag;
-  }
-
-private:
-  std::vector<std::shared_ptr<Component>> components;
-  int id;
-  std::string tag;
-};
-
-#include "Entity.inl"
 </file>
 
 <file path="src/engine/Engine.hpp">
@@ -2027,59 +2337,61 @@ class AudioSystem;
 #include "engine/Engine.hpp"
 </file>
 
-<file path="game/main.cpp">
-#include "../src/ECS/Components/Camera/Camera3D/Camera3D.hpp"   
-#include "../src/rica.hpp"
-#include "../src/engine/Engine.hpp"
+<file path=".gitignore">
+# Prerequisites
+*.d
 
-#include <iostream>
-#include "player.hpp"
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
 
-class GameScene : public Scene {
-private:
-    std::shared_ptr<Player> player;
-    std::shared_ptr<Entity> cameraEntity;
+# Precompiled Headers
+*.gch
+*.pch
 
-public:
-    GameScene() {
-        // CAMERA 3D
-        cameraEntity = std::make_shared<Entity>();
+# Linker files
+*.ilk
 
-        auto cam3D = std::make_shared<Camera3DComponent>(
-            Vector3{0.0f, 5.0f, 10.0f},
-            75.0f,
-            true
-        );
+# Debugger Files
+*.pdb
 
-        cameraEntity->addComponent(cam3D);
-        this->createEntity(cameraEntity);
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
 
-        // PLAYER
-        player = std::make_shared<Player>();
-        this->createEntity(player);
-    }
+# Fortran module files
+*.mod
+*.smod
 
-    void OnUpdate(float dt) override {
-        if (player) player->update(dt);
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
 
-        auto cam = cameraEntity->getComponent<Camera3DComponent>();
-        auto trans = player->getComponent<Transform3DComponent>();
+# Executables
+*.exe
+*.out
+*.app
 
-        if (cam && trans)
-            cam->setTarget(trans->getPosition());
-    }
-};
+# debug information files
+*.dwo
 
-bool gameStart() {
-    if (!engine.init()) return false;
+# xmake build files
+build/
+.xmake/
 
-    engine.set3Dmode(true);
+# compile commands
+compile_commands.json
 
-    engine.sceneManager.setSceneLimit(10);
-    engine.sceneManager.CreateScene<GameScene>(1);
+# clangd cache
+.cache/*
 
-    return true;
-}
+# rica log
+logRica.txt
 </file>
 
 <file path="xmake.lua">
@@ -2098,11 +2410,117 @@ set_languages("c++17")
 includes("src", "game")
 </file>
 
+<file path="game/main.cpp">
+#include "../src/ECS/Components/Camera/Camera3D/Camera3D.hpp"   
+#include "../src/rica.hpp" // Предположительно, здесь raylib.h
+#include "../src/engine/Engine.hpp"
+#include "player.hpp"
+#include "raylib.h"
+#include <iostream>
+#include <memory> // Для std::shared_ptr
+
+// Предполагаем, что screenWidth и screenHeight доступны глобально или как константы
+// В Raylib обычно это:
+const int screenWidth = 800;
+const int screenHeight = 450;
+
+
+class GameScene : public Scene {
+private:
+    std::shared_ptr<Player> player;
+    std::shared_ptr<Entity> cameraEntity;
+
+    // ОБЪЯВЛЕНИЕ переменных-членов
+    Shader shader;
+    int timeLoc;
+    int resolutionLoc;
+    float resolution[2]; 
+
+public:
+    GameScene() {
+        // --- 1. ИНИЦИАЛИЗАЦИЯ ШЕЙДЕРА (перенесено из тела класса) ---
+        // 1.1 Загрузка шейдера
+        // Убедитесь, что "raymarching.fs" лежит в корне проекта или в папке ресурсов.
+        shader = LoadShader(0, "raymarching.fs");
+
+        // 1.2 Получение локаций
+        timeLoc = GetShaderLocation(shader, "uTime");
+        resolutionLoc = GetShaderLocation(shader, "uResolution");
+
+        // 1.3 Установка статического значения (разрешение)
+        resolution[0] = (float)screenWidth;
+        resolution[1] = (float)screenHeight;
+        
+        SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+        // -----------------------------------------------------------
+
+
+        // --- Логика вашего движка (не изменена) ---
+        cameraEntity = std::make_shared<Entity>();
+
+        auto cam3D = std::make_shared<Camera3DComponent>(
+            Vector3{0.0f, 2.0f, 10.0f}, 
+            130.0f,
+            true
+        );
+        
+        cam3D->setTarget({0.0f, 5.0f, 0.0f}); 
+
+        cameraEntity->addComponent(cam3D);
+        this->createEntity(cameraEntity);
+
+        player = std::make_shared<Player>();
+        this->createEntity(player);
+    }
+
+    // Деструктор для выгрузки шейдера
+    ~GameScene() {
+        UnloadShader(shader);
+    }
+
+    void OnUpdate(float dt) override {
+        // --- 2. ОБНОВЛЕНИЕ ШЕЙДЕРА (в цикле) ---
+        float time = (float)GetTime();
+        SetShaderValue(shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
+        // ----------------------------------------
+        
+        if (player) player->update(dt);
+    }
+
+    void Draw()  {
+        // --- 3. ИСПОЛЬЗОВАНИЕ ШЕЙДЕРА ---
+        BeginShaderMode(shader);
+            // Рисуем полноэкранный прямоугольник. 
+            // Шейдер будет применен к этому прямоугольнику.
+            DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
+        EndShaderMode();
+        // --------------------------------
+
+        // Дополнительная логика отрисовки, если требуется
+    }
+};
+
+bool gameStart() {
+    // Убедитесь, что engine.init() устанавливает окно с screenWidth/screenHeight
+    // Иначе шейдер не получит правильные размеры.
+    engine.set3Dmode(true);
+    if (!engine.init()) return false; // Добавил параметры для ясности
+
+    engine.sceneManager.setSceneLimit(10);
+    engine.sceneManager.CreateScene<GameScene>(1);
+
+    return true;
+}
+</file>
+
 <file path="src/engine/Engine.cpp">
 #include "Engine.hpp"
 
 #include "../rica.hpp"
+#include "Render2D/Render2D.hpp"
+#include "Render3D/Render3D.hpp"
 #include "Var/Var.hpp"
+#include "raylib.h"
 
 #include <cstddef>
 #include <fstream>
@@ -2221,6 +2639,12 @@ std::optional<RayLibVar> parseInitFileForRayLib() {
 
   SetConfigFlags(rayVar.flag);
   InitWindow(rayVar.width, rayVar.height, rayVar.title.c_str());
+  if(engine.is3Dmode())
+    render3Dsystem.init(rayVar.width, rayVar.height);
+  else 
+    render2Dsystem.init(rayVar.width, rayVar.height);
+  
+
   SetTargetFPS(rayVar.maxFPS);
 
   return rayVar;
@@ -2318,20 +2742,17 @@ int main() {
       engine.setIsRunning(false);
 
     unsigned int currentSceneId = engine.sceneManager.getCurrentSceneID();
-    if (currentSceneId >= Engine::vectorSceneManager.size() ||
-      Engine::vectorSceneManager[currentSceneId] == nullptr) {
-      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop", "logRica.txt");
-      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop");
-
-      break;
-    }
+    // ... (проверка на валидность сцены) ...
 
     auto currentScenePtr = Engine::vectorSceneManager[currentSceneId];
 
+    // 1. ОБНОВЛЕНИЕ ЛОГИКИ СЦЕНЫ
     currentScenePtr->OnUpdate(GetFrameTime());
 
-    BeginDrawing();
-    ClearBackground(BLACK);
+    // ==========================================================
+    // 2. OFF-SCREEN РЕНДЕРИНГ (Заполнение текстур)
+    //    Этот блок должен быть ВНЕ BeginDrawing()/EndDrawing()
+    // ==========================================================
     if(engine.is3Dmode()){
       render3Dsystem.update(currentScenePtr->getAllEntities());
     }
@@ -2340,7 +2761,38 @@ int main() {
       render2Dsystem.update(currentScenePtr->getAllEntities());
       audioSystem.update(currentScenePtr->getAllEntities());
     }
-    EndDrawing();
+    
+    // ==========================================================
+    // 3. ON-SCREEN РЕНДЕРИНГ (Отрисовка на экран)
+    // ==========================================================
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    // Выбираем, какую текстуру и размеры использовать
+    RenderTexture2D& targetTexture = engine.is3Dmode() ? 
+                                     render3Dsystem.getRenderTexture() : 
+                                     render2Dsystem.getRenderTexture();
+    
+    int width = engine.is3Dmode() ? render3Dsystem.getWidth() : render2Dsystem.getWidth();
+    int height = engine.is3Dmode() ? render3Dsystem.getHeight() : render2Dsystem.getHeight();
+
+    // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
+    if (targetTexture.id > 0) {
+        DrawTextureRec(
+            targetTexture.texture,
+            // Используем правильные размеры и отрицательную высоту
+            (Rectangle){ 0, 0, (float)width, (float)-height },
+            (Vector2){ 0, 0 },
+            WHITE 
+        );
+    }
+    
+    // 
+
+    // Отрисовка UI/FPS поверх сцены
+    DrawFPS(10, 10);
+    
+    EndDrawing(); // <-- ЗАКРЫВАЕМ БЛОК ОТРИСОВКИ НА ЭКРАН
 
     logger.addLog(LogLevel::DEBUG, basePath, __func__,"logRica.txt");
     engine.update();

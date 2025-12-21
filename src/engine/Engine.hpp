@@ -3,6 +3,7 @@
 #include "../Input/InputDispatcher.hpp"
 #include "../Input/InputEvent.hpp"
 #include "BufferedRaylib.hpp"
+#include "raylib.h"
 #include <memory>
 #include <raylib.h>
 #include <vector>
@@ -43,6 +44,10 @@ public:
 
   float getDeltaTime() const {
     return deltaTime;
+  }
+
+  Shader& getShader() {
+    return shader;
   }
 
   friend int main();
@@ -90,6 +95,7 @@ private:
 
   raylib::BufferedInput input;
   InputDispatcher* m_inputDispatcher;
+  Shader shader;
 };
 
 bool gameStart();

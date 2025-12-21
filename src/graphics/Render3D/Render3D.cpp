@@ -7,6 +7,13 @@
 
 Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
 
+void Render3DSystem::init(int screenWidth, int screenHeight) {
+width=screenWidth;
+height = screenHeight; 
+renderTexture = LoadRenderTexture(width, height);
+SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
+}
+
 void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera3DComponent> activeCamera = nullptr;
   for (auto entity : entities) {
@@ -16,7 +23,9 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
       break;
     }
   }
-
+  
+  BeginTextureMode(renderTexture);
+  ClearBackground(SKYBLUE);
   if (activeCamera) {
     BeginMode3D(activeCamera->getCamera3D());
   }
@@ -43,5 +52,6 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
   if (activeCamera) {
     EndMode3D();
   }
+    EndTextureMode();
 
 }
