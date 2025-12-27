@@ -2,18 +2,26 @@
 #include "../Object/PoolManager.hpp"
 
 #include "../rica.hpp"
+#include "Input/InputDispatcher.hpp"
 #include "Physic/Physic3D/Physic.hpp"
 #include "Render2D/Render2D.hpp"
 #include "Render3D/Render3D.hpp"
 #include "Var/Var.hpp"
 #include "raylib.h"
 
-#include <cstddef>
 #include <fstream>
+#include <iostream>
 #include <string> // Добавлен для std::stoi
 
 // Глобальная переменная движка (Engine Singleton)
 Engine& engine = Engine::getInstance();
+
+Engine::Engine() {
+  input.keyboard_callback = CALLBACK_2(Engine::keyboardCallback, this);
+  input.mouse_button_callback = CALLBACK_2(Engine::mouseButtonCallback, this);
+  input.mouse_position_callback =
+      CALLBACK_2(Engine::mousePositionCallback, this);
+}
 
 bool parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
@@ -142,6 +150,8 @@ std::optional<RayLibVar> parseInitFileForRayLib() {
 }
 
 bool Engine::init() {
+  m_inputDispatcher = &InputDispatcher::getInstance();
+
   SetTraceLogLevel(LOG_ALL);
   InitAudioDevice();
 
@@ -243,6 +253,30 @@ void Engine::SceneManager::setSceneLimit(unsigned int limit) {
   */
 }
 
+void Engine::mouseButtonCallback(MouseButton button, bool isDown) {
+  InputEvent ev;
+  ev.type = InputEventType::MouseButton;
+  ev.mouse_button.button = button;
+  ev.mouse_button.isDown = isDown;
+  m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+}
+
+void Engine::mousePositionCallback(Vector2 pos, Vector2 delta) {
+  InputEvent ev;
+  ev.type = InputEventType::MousePosition;
+  ev.mouse_position.position = pos;
+  ev.mouse_position.delta = delta;
+  m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+}
+
+void Engine::keyboardCallback(KeyboardKey key, bool isDown) {
+  InputEvent ev;
+  ev.type = InputEventType::Keyboard;
+  ev.keyboard.key = key;
+  ev.keyboard.isDown = isDown;
+  m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+}
+
 int main() {
   logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
 
@@ -251,10 +285,22 @@ int main() {
 
   while (engine.getIsRunning() && !WindowShouldClose()) {
     engine.deltaTime = GetFrameTime();
-    if (IsKeyPressed(KEY_ESCAPE))
+    if (IsKeyPressed(KEY_ESCAPE)) {
       engine.setIsRunning(false);
+      break;
+    }
+
+    engine.input.PollEvents();
 
     unsigned int currentSceneId = engine.sceneManager.getCurrentSceneID();
+    if (currentSceneId >= Engine::vectorSceneManager.size() ||
+        Engine::vectorSceneManager[currentSceneId] == nullptr) {
+      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop",
+                    "logRica.txt");
+      logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop");
+
+      break;
+    }
     // ... (проверка на валидность сцены) ...
     if (currentSceneId >= Engine::vectorSceneManager.size() ||
         Engine::vectorSceneManager[currentSceneId] == nullptr) {
@@ -281,8 +327,8 @@ int main() {
     } else {
       collider2DSystem.update(currentScenePtr->getAllEntities());
       render2Dsystem.update(currentScenePtr->getAllEntities());
-      audioSystem.update(currentScenePtr->getAllEntities());
     }
+    audioSystem.update(currentScenePtr->getAllEntities());
 
     // ==========================================================
     // 3. ON-SCREEN РЕНДЕРИНГ (Отрисовка на экран)

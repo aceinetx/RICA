@@ -1,10 +1,12 @@
 #pragma once
+
 #include "../src/rica.hpp"
 #include "raylib.h"
 
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <set>
 
 class CameraController : public Entity {
 private:
@@ -16,6 +18,8 @@ private:
 
   float yaw = 0.0f;
   float pitch = 0.0f;
+
+  std::set<KeyboardKey> downKeys;
 
 public:
   CameraController() {
@@ -29,11 +33,41 @@ public:
     this->addComponent(camera);
 
     DisableCursor(); // Захватываем курсор для управления мышью
+
+    {
+      auto listener = make_rc<InputListenerKeyboard>();
+      listener->onKeyDown = [this](KeyboardKey key) -> bool {
+        return onKeyDown(key);
+      };
+      listener->onKeyUp = [this](KeyboardKey key) -> bool {
+        return onKeyUp(key);
+      };
+      InputDispatcher::getInstance().addListener(this, listener);
+    }
+    {
+      auto listener = make_rc<InputListenerMousePosition>();
+      listener->onPosition = [this](Vector2 pos, Vector2 delta) -> bool {
+        return onMousePos(pos, delta);
+      };
+      InputDispatcher::getInstance().addListener(this, listener);
+    }
   }
 
-  void update(float deltaTime) {
-    // Обработка мыши для вращения
-    Vector2 mouseDelta = GetMouseDelta();
+  bool onKeyDown(KeyboardKey key) {
+    std::cout << "key down " << key << "\n";
+    downKeys.insert(key);
+    return true;
+  }
+
+  bool onKeyUp(KeyboardKey key) {
+    std::cout << "key up " << key << "\n";
+    downKeys.erase(key);
+    return true;
+  }
+
+  bool onMousePos(Vector2 pos, Vector2 mouseDelta) {
+    // std::cout << mouseDelta.x << " " << mouseDelta.y << std::endl;
+    //  Обработка мыши для вращения
     yaw -= mouseDelta.x * mouseSensitivity;
     pitch -= mouseDelta.y * mouseSensitivity;
 
@@ -43,6 +77,11 @@ public:
     if (pitch < -89.0f)
       pitch = -89.0f;
 
+    trans->setRotation({pitch, yaw, 0.0f});
+    return true;
+  }
+
+  void update(float deltaTime) {
     // Вычисление направления для движения (только yaw)
     Vector3 forwardMove = {sinf(yaw * DEG2RAD), 0.0f, cosf(yaw * DEG2RAD)};
 
@@ -52,25 +91,29 @@ public:
 
     // Движение
     Vector3 position = trans->getPosition();
-    if (IsKeyDown(KEY_W))
+    if (downKeys.count(KEY_W)) {
       position = Vector3Add(position,
                             Vector3Scale(forwardMove, moveSpeed * deltaTime));
-    if (IsKeyDown(KEY_S))
+    }
+    if (downKeys.count(KEY_S)) {
       position = Vector3Add(position,
                             Vector3Scale(forwardMove, -moveSpeed * deltaTime));
-    if (IsKeyDown(KEY_A))
+    }
+    if (downKeys.count(KEY_A)) {
       position =
           Vector3Add(position, Vector3Scale(rightMove, moveSpeed * deltaTime));
-    if (IsKeyDown(KEY_D))
+    }
+    if (downKeys.count(KEY_D)) {
       position =
           Vector3Add(position, Vector3Scale(rightMove, -moveSpeed * deltaTime));
-    if (IsKeyDown(KEY_SPACE))
+    }
+    if (downKeys.count(KEY_SPACE)) {
       position = Vector3Add(position, Vector3Scale(up, moveSpeed * deltaTime));
-    if (IsKeyDown(KEY_LEFT_CONTROL))
+    }
+    if (downKeys.count(KEY_LEFT_CONTROL)) {
       position = Vector3Add(position, Vector3Scale(up, -moveSpeed * deltaTime));
-
+    }
     trans->setPosition(position);
-    trans->setRotation({pitch, yaw, 0.0f});
 
     // Обновление камеры (target с pitch)
     Vector3 forwardLook = {sinf(yaw * DEG2RAD) * cosf(pitch * DEG2RAD),

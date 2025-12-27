@@ -18,6 +18,7 @@ private:
 
 public:
   Player() {
+
     trans = make_rc<Transform3DComponent>();
     trans->setPosition({0.0f, 0.0f, 0.0f});
     trans->setScale({0.1, 0.1, 0.1});

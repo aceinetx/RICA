@@ -1,10 +1,13 @@
 #pragma once
 
+#include "../Input/InputDispatcher.hpp"
+#include "../Input/InputEvent.hpp"
 #include "../Object/ObjectVector.hpp"
+#include "BufferedRaylib.hpp"
 #include "Shader.hpp"
 #include "raylib.h"
 #include <memory>
-#include <shared_mutex>
+#include <raylib.h>
 #include <vector>
 
 class Scene;
@@ -82,13 +85,19 @@ private:
   static ObjectVector<Scene*> vectorSceneManager;
 
   void updateCurrentScene();
+  void keyboardCallback(KeyboardKey key, bool isDown);
+  void mouseButtonCallback(MouseButton button, bool isDown);
+  void mousePositionCallback(Vector2 pos, Vector2 delta);
+
   bool is3D = false;
   bool isRunning = true;
-  Engine() = default;
+  Engine();
   ~Engine() = default;
 
   float deltaTime = 0.0f;
 
+  raylib::BufferedInput input;
+  InputDispatcher* m_inputDispatcher;
   std::optional<EngineShader> shader;
 };
 

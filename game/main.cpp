@@ -1,3 +1,5 @@
+#include "../src/ECS/Components/Camera/Camera3D/Camera3D.hpp"
+#include "../src/engine/Engine.hpp"
 #include "../src/rica.hpp"
 #include "camera_controller.hpp"
 #include "player.hpp"
@@ -10,7 +12,7 @@ const int screenHeight = 1080;
 
 class GameScene : public Scene {
 private:
-  Player* player;
+  Rc<Player> player;
   Rc<CameraController> cameraEntity;
   Rc<Entity> shaderEntity;
 

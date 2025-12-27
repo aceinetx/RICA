@@ -60,3 +60,14 @@ class AudioSystem;
 #include "Object/ObjectVector.hpp"
 #include "Object/PoolManager.hpp"
 #include "Object/Rc.hpp"
+
+// Ввод
+#include "Input/InputDispatcher.hpp"
+#include "Input/InputEvent.hpp"
+#include "Input/InputListener.hpp"
+#include "Input/InputListenerKeyboard.hpp"
+#include "Input/InputListenerMouseButton.hpp"
+#include "Input/InputListenerMousePosition.hpp"
+
+// Другое
+#include "macros.hpp"
