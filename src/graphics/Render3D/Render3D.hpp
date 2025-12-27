@@ -38,6 +38,14 @@ public:
         return height;
     }
 
+    Color getSkyColor() const {
+        return skyColor;
+    }
+
+    void setSkyColor(Color color) {
+        skyColor = color;
+    }
+    
 private:
     Render3DSystem() = default;
     ~Render3DSystem() {
@@ -51,7 +59,8 @@ private:
 protected:
     int width = 0;
     int height = 0;
-    
+    Color skyColor={0,0,0, 255};
+
     RenderTexture2D renderTexture = { 0 }; 
 };
 

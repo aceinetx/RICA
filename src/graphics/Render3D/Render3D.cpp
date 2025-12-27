@@ -25,7 +25,7 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
   }
   
   BeginTextureMode(renderTexture);
-  ClearBackground(SKYBLUE);
+  ClearBackground(skyColor);
   if (activeCamera) {
     BeginMode3D(activeCamera->getCamera3D());
   }

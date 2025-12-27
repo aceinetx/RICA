@@ -14,11 +14,11 @@ private:
   float rotationSpeed = 90.0f;
 
   std::shared_ptr<MeshComponent> mesh;
-
-public:
   std::shared_ptr<Transform3DComponent> trans;
 
+public:
   Player() {
+
     trans = std::make_shared<Transform3DComponent>();
     trans->setPosition({0.0f, 0.0f, 0.0f});
     trans->setScale({0.1, 0.1, 0.1});
@@ -31,25 +31,5 @@ public:
   }
 
   void update(float deltaTime) {
-    if (!trans)
-      return;
-
-    Vector3 currentRotation = trans->getRotationAngles();
-
-    currentRotation.y += rotationSpeed * deltaTime;
-    currentRotation.x += rotationSpeed * deltaTime;
-    currentRotation.z += rotationSpeed * deltaTime;
-
-    if (currentRotation.x > 360.0f) {
-      currentRotation.x -= 360.0f;
-    }
-
-    if (currentRotation.y > 360.0f) {
-      currentRotation.y -= 360.0f;
-    }
-    if (currentRotation.z > 360.0f) {
-      currentRotation.z -= 360.0f;
-    }
-    trans->setRotation(currentRotation);
   }
 };

@@ -2,6 +2,7 @@
 
 #include "../rica.hpp"
 #include "Input/InputDispatcher.hpp"
+#include "Physic/Physic3D/Physic.hpp"
 #include "Render2D/Render2D.hpp"
 #include "Render3D/Render3D.hpp"
 #include "Var/Var.hpp"
@@ -17,6 +18,8 @@ Engine& engine = Engine::getInstance();
 Engine::Engine() {
   input.keyboard_callback = CALLBACK_2(Engine::keyboardCallback, this);
   input.mouse_button_callback = CALLBACK_2(Engine::mouseButtonCallback, this);
+  input.mouse_position_callback =
+      CALLBACK_2(Engine::mousePositionCallback, this);
 }
 
 bool parseInitFile(rapidjson::Document& doc) {
@@ -169,7 +172,7 @@ void Engine::deleteVectorSceneManager() {
 
 void Engine::shutdown() {
   CloseWindow();
-  UnloadShader(engine.shader);
+  engine.shader = {}; // deletes the shader, unloading it
 }
 
 std::vector<std::shared_ptr<Scene>> Engine::vectorSceneManager;
@@ -251,6 +254,14 @@ void Engine::mouseButtonCallback(MouseButton button, bool isDown) {
   m_inputDispatcher->dispatchEvent(ev, getActiveScene());
 }
 
+void Engine::mousePositionCallback(Vector2 pos, Vector2 delta) {
+  InputEvent ev;
+  ev.type = InputEventType::MousePosition;
+  ev.mouse_position.position = pos;
+  ev.mouse_position.delta = delta;
+  m_inputDispatcher->dispatchEvent(ev, getActiveScene());
+}
+
 void Engine::keyboardCallback(KeyboardKey key, bool isDown) {
   InputEvent ev;
   ev.type = InputEventType::Keyboard;
@@ -296,11 +307,13 @@ int main() {
     // ==========================================================
     if (engine.is3Dmode()) {
       render3Dsystem.update(currentScenePtr->getAllEntities());
+      physic3DSystem.update(currentScenePtr->getAllEntities(),
+                            engine.deltaTime);
     } else {
       collider2DSystem.update(currentScenePtr->getAllEntities());
       render2Dsystem.update(currentScenePtr->getAllEntities());
-      audioSystem.update(currentScenePtr->getAllEntities());
     }
+    audioSystem.update(currentScenePtr->getAllEntities());
 
     // ==========================================================
     // 3. ON-SCREEN РЕНДЕРИНГ (Отрисовка на экран)
@@ -320,7 +333,7 @@ int main() {
 
     // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
     if (targetTexture.id > 0) {
-      BeginShaderMode(engine.shader);
+      BeginShaderMode(engine.shader->getRaylibShader());
 
       DrawTextureRec(targetTexture.texture,
                      // Используем правильные размеры и отрицательную высоту

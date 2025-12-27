@@ -3,6 +3,7 @@
 #include "../Input/InputDispatcher.hpp"
 #include "../Input/InputEvent.hpp"
 #include "BufferedRaylib.hpp"
+#include "Shader.hpp"
 #include "raylib.h"
 #include <memory>
 #include <raylib.h>
@@ -46,7 +47,7 @@ public:
     return deltaTime;
   }
 
-  Shader& getShader() {
+  std::optional<EngineShader>& getShader() {
     return shader;
   }
 
@@ -85,6 +86,7 @@ private:
   void updateCurrentScene();
   void keyboardCallback(KeyboardKey key, bool isDown);
   void mouseButtonCallback(MouseButton button, bool isDown);
+  void mousePositionCallback(Vector2 pos, Vector2 delta);
 
   bool is3D = false;
   bool isRunning = true;
@@ -95,7 +97,7 @@ private:
 
   raylib::BufferedInput input;
   InputDispatcher* m_inputDispatcher;
-  Shader shader;
+  std::optional<EngineShader> shader;
 };
 
 bool gameStart();

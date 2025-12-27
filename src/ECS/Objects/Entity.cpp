@@ -4,6 +4,7 @@
 #include "../Components/Camera/Camera3D/Camera3D.hpp"
 #include "../Components/Mesh/Mesh.hpp"
 #include "../Components/Transform/Transform3D/Transform3D.hpp"
+#include "../Components/Physic/Physic3D/Physic3D.hpp"
 
 static int globalEntityId = 0;
 
@@ -53,3 +54,5 @@ template std::shared_ptr<MeshComponent>
 Entity::getComponent<MeshComponent>();
 template std::shared_ptr<Transform3DComponent>
 Entity::getComponent<Transform3DComponent>();
+template std::shared_ptr<Physic3DComponent>
+Entity::getComponent<Physic3DComponent>();

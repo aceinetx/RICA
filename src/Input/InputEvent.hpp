@@ -25,7 +25,7 @@ struct InputEvent {
     } mouse_button;
 
     struct {
-      Vector2 position;
+      Vector2 position, delta;
     } mouse_position;
   };
 
