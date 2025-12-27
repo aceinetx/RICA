@@ -1,5 +1,5 @@
 target("EngineLib")
-set_kind("static")
+	set_kind("static")
 	add_files(
 		"Audio/*.cpp",
 		"Collider/**/*.cpp",
