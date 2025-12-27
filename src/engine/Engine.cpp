@@ -2,7 +2,11 @@
 #include "../Object/PoolManager.hpp"
 
 #include "../rica.hpp"
+#include "Physic/Physic3D/Physic.hpp"
+#include "Render2D/Render2D.hpp"
+#include "Render3D/Render3D.hpp"
 #include "Var/Var.hpp"
+#include "raylib.h"
 
 #include <cstddef>
 #include <fstream>
@@ -127,6 +131,11 @@ std::optional<RayLibVar> parseInitFileForRayLib() {
 
   SetConfigFlags(rayVar.flag);
   InitWindow(rayVar.width, rayVar.height, rayVar.title.c_str());
+  if (engine.is3Dmode())
+    render3Dsystem.init(rayVar.width, rayVar.height);
+  else
+    render2Dsystem.init(rayVar.width, rayVar.height);
+
   SetTargetFPS(rayVar.maxFPS);
 
   return rayVar;
@@ -155,6 +164,7 @@ void Engine::deleteVectorSceneManager() {
 
 void Engine::shutdown() {
   CloseWindow();
+  engine.shader = {}; // deletes the shader, unloading it
 }
 
 ObjectVector<Scene*> Engine::vectorSceneManager;
@@ -245,6 +255,7 @@ int main() {
       engine.setIsRunning(false);
 
     unsigned int currentSceneId = engine.sceneManager.getCurrentSceneID();
+    // ... (проверка на валидность сцены) ...
     if (currentSceneId >= Engine::vectorSceneManager.size() ||
         Engine::vectorSceneManager[currentSceneId] == nullptr) {
       logger.addLog(LogLevel::ERROR, basePath, "Invalid scene in main loop",
@@ -256,18 +267,57 @@ int main() {
 
     auto currentScenePtr = Engine::vectorSceneManager[currentSceneId];
 
+    // 1. ОБНОВЛЕНИЕ ЛОГИКИ СЦЕНЫ
     currentScenePtr->OnUpdate(GetFrameTime());
 
-    BeginDrawing();
-    ClearBackground(BLACK);
+    // ==========================================================
+    // 2. OFF-SCREEN РЕНДЕРИНГ (Заполнение текстур)
+    //    Этот блок должен быть ВНЕ BeginDrawing()/EndDrawing()
+    // ==========================================================
     if (engine.is3Dmode()) {
       render3Dsystem.update(currentScenePtr->getAllEntities());
+      physic3DSystem.update(currentScenePtr->getAllEntities(),
+                            engine.deltaTime);
     } else {
       collider2DSystem.update(currentScenePtr->getAllEntities());
       render2Dsystem.update(currentScenePtr->getAllEntities());
       audioSystem.update(currentScenePtr->getAllEntities());
     }
-    EndDrawing();
+
+    // ==========================================================
+    // 3. ON-SCREEN РЕНДЕРИНГ (Отрисовка на экран)
+    // ==========================================================
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    // Выбираем, какую текстуру и размеры использовать
+    RenderTexture2D& targetTexture = engine.is3Dmode()
+                                         ? render3Dsystem.getRenderTexture()
+                                         : render2Dsystem.getRenderTexture();
+
+    int width = engine.is3Dmode() ? render3Dsystem.getWidth()
+                                  : render2Dsystem.getWidth();
+    int height = engine.is3Dmode() ? render3Dsystem.getHeight()
+                                   : render2Dsystem.getHeight();
+
+    // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
+    if (targetTexture.id > 0) {
+      BeginShaderMode(engine.shader->getRaylibShader());
+
+      DrawTextureRec(targetTexture.texture,
+                     // Используем правильные размеры и отрицательную высоту
+                     (Rectangle){0, 0, (float)width, (float)-height},
+                     (Vector2){0, 0}, WHITE);
+
+      EndShaderMode();
+    }
+
+    //
+
+    // Отрисовка UI/FPS поверх сцены
+    DrawFPS(10, 10);
+
+    EndDrawing(); // <-- ЗАКРЫВАЕМ БЛОК ОТРИСОВКИ НА ЭКРАН
 
     logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
     engine.update();

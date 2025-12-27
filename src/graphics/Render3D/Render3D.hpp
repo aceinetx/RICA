@@ -1,14 +1,15 @@
 #pragma once
 
 #include "../../Object/ObjectVector.hpp"
+#include "raylib.h"
 #include <memory>
 #include <vector>
 
 class Entity;
-class SpriteComponent;
-class Camera3DComponent;
-class TransformComponent;
 class Engine;
+class Camera3DComponent;
+class Transform3DComponent;
+class MeshComponent;
 
 class Render3DSystem {
 public:
@@ -22,11 +23,48 @@ public:
     return instance;
   }
 
+  void init(int screenWidth, int screenHeight);
+
   void update(const ObjectVector<Entity*>& entities);
+
+  RenderTexture2D& getRenderTexture() {
+    return renderTexture;
+  }
+
+  friend Engine;
+
+  int getWidth() const {
+    return width;
+  }
+
+  int getHeight() const {
+    return height;
+  }
+
+  Color getSkyColor() const {
+    return skyColor;
+  }
+
+  void setSkyColor(Color color) {
+    skyColor = color;
+  }
 
 private:
   Render3DSystem() = default;
-  ~Render3DSystem() = default;
+  ~Render3DSystem() {
+    if (renderTexture.id > 0) {
+      UnloadRenderTexture(renderTexture);
+    }
+  }
+
+  friend Engine;
+
+protected:
+  int width = 0;
+  int height = 0;
+  Color skyColor = {0, 0, 0, 255};
+
+  RenderTexture2D renderTexture = {0};
 };
 
 extern Render3DSystem& render3Dsystem;

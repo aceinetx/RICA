@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../rica.hpp"
 #include "Collider2D.hpp"
 #include <memory>
 #include <vector>
@@ -21,9 +22,8 @@ public:
     return instance;
   }
 
-  void update(const std::vector<std::shared_ptr<Entity>>& entities);
-  bool isColliding(std::shared_ptr<Entity> entity1,
-                   std::shared_ptr<Entity> entity2);
+  void update(const ObjectVector<Entity*>& entities);
+  bool isColliding(Entity* entity1, Entity* entity2);
 
 private:
   Physic2D() = default;

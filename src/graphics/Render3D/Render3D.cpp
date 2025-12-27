@@ -1,11 +1,18 @@
 #include "Render3D.hpp"
-#include "../rica.hpp"
+#include "../../rica.hpp"
 #include "Camera3D/Camera3D.hpp"
 #include "Transform3D/Transform3D.hpp"
 #include "raylib.h"
 #include <iostream>
 
 Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
+
+void Render3DSystem::init(int screenWidth, int screenHeight) {
+  width = screenWidth;
+  height = screenHeight;
+  renderTexture = LoadRenderTexture(width, height);
+  SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
+}
 
 void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
   Camera3DComponent* activeCamera = nullptr;
@@ -17,6 +24,8 @@ void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
     }
   }
 
+  BeginTextureMode(renderTexture);
+  ClearBackground(skyColor);
   if (activeCamera) {
     BeginMode3D(activeCamera->getCamera3D());
   }
@@ -39,4 +48,5 @@ void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
   if (activeCamera) {
     EndMode3D();
   }
+  EndTextureMode();
 }

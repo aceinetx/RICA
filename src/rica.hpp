@@ -5,6 +5,7 @@ struct Component;
 class SpriteComponent;
 class TransformComponent;
 class Camera2DComponent;
+class Physic3DComponent;
 class Entity;
 class Player;
 class Terminal;
@@ -30,13 +31,14 @@ class AudioSystem;
 // Компоненты ECS
 #include "ECS/Components/Audio/Audio.hpp"
 #include "ECS/Components/Camera/Camera2D/Camera2D.hpp"
+#include "ECS/Components/Camera/Camera3D/Camera3D.hpp"
 #include "ECS/Components/Collider/Collider2D/Collider2D.hpp"
 #include "ECS/Components/Component.hpp"
 #include "ECS/Components/Mesh/Mesh.hpp"
+#include "ECS/Components/Physic/Physic3D/Physic3D.hpp"
 #include "ECS/Components/Sprite/Sprite.hpp"
 #include "ECS/Components/Transform/Transform2D/Transform.hpp"
 #include "ECS/Components/Transform/Transform3D/Transform3D.hpp"
-
 // Объекты ECS
 #include "ECS/Objects/Entity.hpp"
 
@@ -53,4 +55,8 @@ class AudioSystem;
 #include "engine/Engine.hpp"
 
 // Объект
+#include "Object/AutoreleasePool.hpp"
 #include "Object/Object.hpp"
+#include "Object/ObjectVector.hpp"
+#include "Object/PoolManager.hpp"
+#include "Object/Rc.hpp"

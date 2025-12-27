@@ -13,34 +13,22 @@ private:
   float speed = 5.0f;
   float rotationSpeed = 90.0f;
 
-  MeshComponent* mesh;
-  Transform3DComponent* trans;
+  Rc<MeshComponent> mesh;
+  Rc<Transform3DComponent> trans;
 
 public:
   Player() {
-    trans = make_object<Transform3DComponent>();
+    trans = make_rc<Transform3DComponent>();
     trans->setPosition({0.0f, 0.0f, 0.0f});
-    trans->setScale({0.5, 0.5, 0.5});
+    trans->setScale({0.1, 0.1, 0.1});
 
     this->addComponent(trans);
 
-    mesh = make_object<MeshComponent>();
+    mesh = make_rc<MeshComponent>();
     mesh->loadMesh("one.glb");
     this->addComponent(mesh);
   }
 
   void update(float deltaTime) {
-    if (!trans)
-      return;
-
-    Vector3 currentRotation = trans->getRotationAngles();
-
-    currentRotation.y += rotationSpeed * deltaTime;
-
-    if (currentRotation.y > 360.0f) {
-      currentRotation.y -= 360.0f;
-    }
-
-    trans->setRotation(currentRotation);
   }
 };

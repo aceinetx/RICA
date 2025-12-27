@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Object/ObjectVector.hpp"
+#include "Shader.hpp"
+#include "raylib.h"
 #include <memory>
 #include <shared_mutex>
 #include <vector>
@@ -43,6 +45,10 @@ public:
     return deltaTime;
   }
 
+  std::optional<EngineShader>& getShader() {
+    return shader;
+  }
+
   friend int main();
 
   class SceneManager {
@@ -82,6 +88,8 @@ private:
   ~Engine() = default;
 
   float deltaTime = 0.0f;
+
+  std::optional<EngineShader> shader;
 };
 
 bool gameStart();

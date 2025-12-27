@@ -2,6 +2,7 @@
 #include "../../rica.hpp"
 #include "../Components/Camera/Camera3D/Camera3D.hpp"
 #include "../Components/Mesh/Mesh.hpp"
+#include "../Components/Physic/Physic3D/Physic3D.hpp"
 #include "../Components/Transform/Transform3D/Transform3D.hpp"
 #include <iostream>
 
@@ -40,7 +41,7 @@ template TransformComponent* Entity::getComponent<TransformComponent>();
 template Collider2DComponent* Entity::getComponent<Collider2DComponent>();
 template AudioComponent* Entity::getComponent<AudioComponent>();
 template Camera2DComponent* Entity::getComponent<Camera2DComponent>();
-
 template Camera3DComponent* Entity::getComponent<Camera3DComponent>();
 template MeshComponent* Entity::getComponent<MeshComponent>();
 template Transform3DComponent* Entity::getComponent<Transform3DComponent>();
+template Physic3DComponent* Entity::getComponent<Physic3DComponent>();

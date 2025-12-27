@@ -1,5 +1,6 @@
 #include "Object.hpp"
 #include <cassert>
+#include <cstdio>
 
 Object::Object() : p_refCount(1) {
 }
