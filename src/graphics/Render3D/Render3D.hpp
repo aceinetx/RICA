@@ -8,60 +8,62 @@ class Entity;
 class Engine;
 class Camera3DComponent;
 class Transform3DComponent;
-class MeshComponent; 
+class MeshComponent;
 
 class Render3DSystem {
 public:
-    Render3DSystem(const Render3DSystem&) = delete;
-    Render3DSystem& operator=(const Render3DSystem&) = delete;
-    Render3DSystem(Render3DSystem&&) = delete;
-    Render3DSystem& operator=(Render3DSystem&&) = delete;
+  Render3DSystem(const Render3DSystem&) = delete;
+  Render3DSystem& operator=(const Render3DSystem&) = delete;
+  Render3DSystem(Render3DSystem&&) = delete;
+  Render3DSystem& operator=(Render3DSystem&&) = delete;
 
-    static Render3DSystem& getInstance() {
-        static Render3DSystem instance;
-        return instance;
-    }
+  static Render3DSystem& getInstance() {
+    static Render3DSystem instance;
+    return instance;
+  }
 
-    void init(int screenWidth, int screenHeight);
+  void init(int screenWidth, int screenHeight);
 
-    void update(const std::vector<std::shared_ptr<Entity>>& entities);
+  void update(const std::vector<std::shared_ptr<Entity>>& entities);
 
-    RenderTexture2D& getRenderTexture() { return renderTexture; }
+  RenderTexture2D& getRenderTexture() {
+    return renderTexture;
+  }
 
-    friend Engine;
+  friend Engine;
 
-    int getWidth() const {
-        return width;
-    }
+  int getWidth() const {
+    return width;
+  }
 
-    int getHeight() const {
-        return height;
-    }
+  int getHeight() const {
+    return height;
+  }
 
-    Color getSkyColor() const {
-        return skyColor;
-    }
+  Color getSkyColor() const {
+    return skyColor;
+  }
 
-    void setSkyColor(Color color) {
-        skyColor = color;
-    }
-    
+  void setSkyColor(Color color) {
+    skyColor = color;
+  }
+
 private:
-    Render3DSystem() = default;
-    ~Render3DSystem() {
-        if (renderTexture.id > 0) {
-            UnloadRenderTexture(renderTexture);
-        }
+  Render3DSystem() = default;
+  ~Render3DSystem() {
+    if (renderTexture.id > 0) {
+      UnloadRenderTexture(renderTexture);
     }
+  }
 
-    friend Engine;
+  friend Engine;
 
 protected:
-    int width = 0;
-    int height = 0;
-    Color skyColor={0,0,0, 255};
+  int width = 0;
+  int height = 0;
+  Color skyColor = {0, 0, 0, 255};
 
-    RenderTexture2D renderTexture = { 0 }; 
+  RenderTexture2D renderTexture = {0};
 };
 
 extern Render3DSystem& render3Dsystem;

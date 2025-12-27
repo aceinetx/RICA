@@ -7,7 +7,6 @@ void Collider2DSystem::update(
     const std::vector<std::shared_ptr<Entity>>& entities) {
   logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
 
-
   for (auto entity : entities) {
     auto transform = entity->getComponent<TransformComponent>();
     auto collider = entity->getComponent<Collider2DComponent>();

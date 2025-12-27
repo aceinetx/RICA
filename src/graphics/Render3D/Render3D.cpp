@@ -8,13 +8,14 @@
 Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
 
 void Render3DSystem::init(int screenWidth, int screenHeight) {
-width=screenWidth;
-height = screenHeight; 
-renderTexture = LoadRenderTexture(width, height);
-SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
+  width = screenWidth;
+  height = screenHeight;
+  renderTexture = LoadRenderTexture(width, height);
+  SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
 }
 
-void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
+void Render3DSystem::update(
+    const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera3DComponent> activeCamera = nullptr;
   for (auto entity : entities) {
     auto camera = entity->getComponent<Camera3DComponent>();
@@ -23,7 +24,7 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
       break;
     }
   }
-  
+
   BeginTextureMode(renderTexture);
   ClearBackground(skyColor);
   if (activeCamera) {
@@ -37,21 +38,16 @@ void Render3DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities
     if (!model || !transform)
       continue;
 
-    if (!model->isLoaded()) continue;
+    if (!model->isLoaded())
+      continue;
 
-       DrawModelEx(
-            model->getModel(),
-            transform->getPosition(),
-            transform->getRotationAxis(),
-            transform->getRotationAngle(), 
-            transform->getScale(),
-            model->getColor()
-        );
- }
+    DrawModelEx(model->getModel(), transform->getPosition(),
+                transform->getRotationAxis(), transform->getRotationAngle(),
+                transform->getScale(), model->getColor());
+  }
 
   if (activeCamera) {
     EndMode3D();
   }
-    EndTextureMode();
-
+  EndTextureMode();
 }

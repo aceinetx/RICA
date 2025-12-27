@@ -7,12 +7,13 @@
 Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
 
 void Render2DSystem::init(int screenWidth, int screenHeight) {
-width=screenWidth;
-height=screenHeight;
-renderTexture = LoadRenderTexture(width, height);
+  width = screenWidth;
+  height = screenHeight;
+  renderTexture = LoadRenderTexture(width, height);
 }
 
-void Render2DSystem::update(const std::vector<std::shared_ptr<Entity>>& entities) {
+void Render2DSystem::update(
+    const std::vector<std::shared_ptr<Entity>>& entities) {
   std::shared_ptr<Camera2DComponent> activeCamera = nullptr;
   for (auto entity : entities) {
     auto camera = entity->getComponent<Camera2DComponent>();

@@ -1,10 +1,10 @@
 #include "Entity.hpp"
 #include "../../rica.hpp"
-#include <iostream>
 #include "../Components/Camera/Camera3D/Camera3D.hpp"
 #include "../Components/Mesh/Mesh.hpp"
-#include "../Components/Transform/Transform3D/Transform3D.hpp"
 #include "../Components/Physic/Physic3D/Physic3D.hpp"
+#include "../Components/Transform/Transform3D/Transform3D.hpp"
+#include <iostream>
 
 static int globalEntityId = 0;
 
@@ -50,8 +50,7 @@ Entity::getComponent<Camera2DComponent>();
 
 template std::shared_ptr<Camera3DComponent>
 Entity::getComponent<Camera3DComponent>();
-template std::shared_ptr<MeshComponent>
-Entity::getComponent<MeshComponent>();
+template std::shared_ptr<MeshComponent> Entity::getComponent<MeshComponent>();
 template std::shared_ptr<Transform3DComponent>
 Entity::getComponent<Transform3DComponent>();
 template std::shared_ptr<Physic3DComponent>

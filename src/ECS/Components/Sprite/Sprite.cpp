@@ -10,9 +10,9 @@ bool SpriteComponent::LoadTextureSprite(const char* path) {
   texture = LoadTexture(path);
 
   if (texture.id == 0) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture", "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture",
+                  "logRica.txt");
     logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture");
-
 
     return false;
   }

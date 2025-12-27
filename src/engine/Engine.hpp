@@ -1,7 +1,7 @@
 #pragma once
 
-#include "raylib.h"
 #include "Shader.hpp"
+#include "raylib.h"
 #include <memory>
 #include <shared_mutex>
 #include <vector>
@@ -25,7 +25,7 @@ public:
 
   void update();
   bool init();
-  void set3Dmode(const bool& is3D){
+  void set3Dmode(const bool& is3D) {
     this->is3D = is3D;
   }
   bool is3Dmode() const {
@@ -49,7 +49,6 @@ public:
   }
 
   friend int main();
-
 
   class SceneManager {
   public:
@@ -82,7 +81,7 @@ private:
   static std::vector<std::shared_ptr<Scene>> vectorSceneManager;
 
   void updateCurrentScene();
-  bool is3D=false;
+  bool is3D = false;
   bool isRunning = true;
   Engine() = default;
   ~Engine() = default;

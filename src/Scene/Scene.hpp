@@ -20,8 +20,7 @@ public:
   }
 
   // Создание Entity (старый API)
-  std::shared_ptr<Entity>
-  createEntity(std::shared_ptr<Entity> entity);
+  std::shared_ptr<Entity> createEntity(std::shared_ptr<Entity> entity);
 
   // Создание Entity (новый API)
   template <typename T, typename... Args>
