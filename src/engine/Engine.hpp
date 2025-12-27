@@ -1,14 +1,11 @@
 #pragma once
 
 #include "../Input/InputDispatcher.hpp"
-#include "../Input/InputEvent.hpp"
 #include "../Object/ObjectVector.hpp"
 #include "BufferedRaylib.hpp"
 #include "Shader.hpp"
 #include "raylib.h"
-#include <memory>
 #include <raylib.h>
-#include <vector>
 
 class Scene;
 class Render2DSystem;

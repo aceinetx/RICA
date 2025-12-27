@@ -1,41 +1,41 @@
 target("EngineLib")
-    set_kind("static")
-    add_files(
-        "Audio/*.cpp",
-        "Collider/**/*.cpp",
-        "ECS/**/*.cpp",
-        "engine/*.cpp",
-        "graphics/**/*.cpp",
-        "Logger/*.cpp",
-        "Physic/**/*.cpp",
-        "Scene/*.cpp",
-        "UI/*.cpp",
-        "Var/*.cpp",
-        "Object/*.cpp",
-        "Input/*.cpp"
-    )
+set_kind("static")
+	add_files(
+		"Audio/*.cpp",
+		"Collider/**/*.cpp",
+		"ECS/**/*.cpp",
+		"engine/*.cpp",
+		"graphics/**/*.cpp",
+		"Logger/*.cpp",
+		"Physic/**/*.cpp",
+		"Scene/*.cpp",
+		"UI/*.cpp",
+		"Var/*.cpp",
+		"Object/*.cpp",
+		"Input/*.cpp"
+	)
 
-    add_includedirs(
-        ".",
-        "ECS/Components/",
-        "ECS/Components/Audio/",
-        "ECS/Components/Camera/",
-        "ECS/Components/Collider/Collider2D/",
-        "ECS/Components/Collider/Collider3D/",
-        "ECS/Components/Physic/",
-        "ECS/Components/Sprite/",
-        "ECS/Components/Transform/",
-        "ECS/Objects/",
-        "ECS/Systems/",
-        "Collider/",
-        "Collider/Collider2D/",
-        "engine/",
-        "graphics/",
-        "Logger/",
-        "Scene/",
-        "UI/"
-    )
+	add_includedirs(
+		".",
+		"ECS/Components/",
+		"ECS/Components/Audio/",
+		"ECS/Components/Camera/",
+		"ECS/Components/Collider/Collider2D/",
+		"ECS/Components/Collider/Collider3D/",
+		"ECS/Components/Physic/",
+		"ECS/Components/Sprite/",
+		"ECS/Components/Transform/",
+		"ECS/Objects/",
+		"ECS/Systems/",
+		"Collider/",
+		"Collider/Collider2D/",
+		"engine/",
+		"graphics/",
+		"Logger/",
+		"Scene/",
+		"UI/"
+	)
 
-    add_packages("raylib", "rapidjson")
-		add_deps("buffered-raylib::buffered-raylib", {public=true})
+	add_packages("raylib", "rapidjson")
+	add_deps("buffered-raylib::buffered-raylib", {public=true})
 target_end()

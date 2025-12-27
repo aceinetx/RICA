@@ -13,11 +13,11 @@ public:
 
   Camera3D getCamera3D() const {
     Camera3D cam;
-    cam.position=Vector3Add(target, offset);
-    cam.fovy=fovy;
-    cam.target=target;
-    cam.projection=CAMERA_PERSPECTIVE;
-    cam.up=Vector3{0.0f, 1.0f, 0.0f};
+    cam.position = Vector3Add(target, offset);
+    cam.fovy = fovy;
+    cam.target = target;
+    cam.projection = CAMERA_PERSPECTIVE;
+    cam.up = Vector3{0.0f, 1.0f, 0.0f};
 
     return cam;
   }
@@ -65,9 +65,9 @@ public:
   }
 
 private:
-Vector3 target{0.0f, 0.0f, 0.0f};
-  Vector3 offset{0.0f, 5.0f, 5.0f}; 
-  float rotation = 0.0f; 
+  Vector3 target{0.0f, 0.0f, 0.0f};
+  Vector3 offset{0.0f, 5.0f, 5.0f};
+  float rotation = 0.0f;
   float fovy = 75.0f;
   bool isActive = false;
 };

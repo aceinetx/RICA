@@ -1,12 +1,12 @@
 #pragma once
 #include "../../../Logger/Logger.hpp"
+#include "../../../rica.hpp"
 #include "../Component.hpp"
 #include <raylib.h>
 #include <raymath.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "../../../rica.hpp"
 
 class Log;
 enum LogLevel;

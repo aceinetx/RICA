@@ -3,7 +3,6 @@
 #include "Camera3D/Camera3D.hpp"
 #include "Transform3D/Transform3D.hpp"
 #include "raylib.h"
-#include <iostream>
 
 Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
 
