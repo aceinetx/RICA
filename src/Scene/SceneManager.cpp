@@ -39,7 +39,7 @@ void SceneManager::updateCurrentScene(float delta) {
     if (auto currentScene = m_scenes[m_sceneCurrent]) {
       currentScene->updateEntity();
 
-      currentScene->OnUpdate(delta);
+      currentScene->onUpdate(delta);
     }
   }
 }
