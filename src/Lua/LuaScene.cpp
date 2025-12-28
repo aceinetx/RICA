@@ -1,7 +1,7 @@
 #include "Lua/LuaScene.hpp"
 
 rica::lua::Scene::Scene(luabridge::LuaRef self) : m_self(self) {
-  self["base"]["onUpdate"] = &::Scene::onUpdate;
+  // self["base"]["onUpdate"] = &::Scene::onUpdate;
 }
 
 void rica::lua::Scene::onUpdate(float delta) {
