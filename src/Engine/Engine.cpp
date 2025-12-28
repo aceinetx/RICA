@@ -18,12 +18,13 @@ void Engine::update() {
 }
 
 bool Engine::init() {
+  rica::log::info("Engine", "Engine init");
   m_inputDispatcher = &InputDispatcher::getInstance();
 
   SetTraceLogLevel(LOG_ALL);
   InitAudioDevice();
 
-  m_isRunning = true;
+  m_isRunning = m_wasInitialized = true;
   auto var = parseInitFileForRayLib();
   // можно использовать var.has_value(), но лучше оставить так для
   // читабельности
@@ -49,8 +50,12 @@ void Engine::setIsRunning(bool isRunning) {
 }
 
 void Engine::shutdown() {
-  m_shader = {}; // deletes the shader, unloading it
-  CloseWindow();
+  rica::log::info("Engine", "Engine shutdown");
+  if (m_wasInitialized) {
+    m_shader = {}; // deletes the shader, unloading it
+    CloseWindow();
+    rica::log::info("Engine", "CloseWindow");
+  }
 }
 
 float Engine::getDeltaTime() const {

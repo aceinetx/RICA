@@ -37,8 +37,6 @@ public:
 
   SceneManager sceneManager;
 
-  void luaRunScript(std::string path);
-
   friend int main();
 
 private:
@@ -54,6 +52,7 @@ private:
 
   bool m_is3D = false;
   bool m_isRunning = true;
+  bool m_wasInitialized = false;
 
   float m_deltaTime = 0.0f;
 

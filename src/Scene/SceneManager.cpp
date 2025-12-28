@@ -76,3 +76,10 @@ Scene* SceneManager::newSceneByID(unsigned int ID) {
   return scenePtr;
 }
 */
+
+void SceneManager::addScene(Scene* scene) {
+  rica::log::info("SceneManager", "add scene {}",
+                  reinterpret_cast<void*>(scene));
+  m_scenes.push_back(scene);
+  m_sceneCurrent = m_scenes.size() - 1;
+}

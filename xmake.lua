@@ -11,7 +11,7 @@ set_policy("build.sanitizer.undefined", true)
 add_requires("raylib", {external=false})
 add_requires("rapidjson", {external=false})
 add_requires("lua", {external=false})
-add_requires("swig", {external=false})
+add_requires("luabridge3", {external=false})
 add_requires("fmt", {external=false})
 set_warnings("all") -- warns
 set_languages("c++17")

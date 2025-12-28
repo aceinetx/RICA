@@ -59,7 +59,7 @@ int main() {
                                    : render2Dsystem.getHeight();
 
     // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
-    if (targetTexture.id > 0) {
+    if (targetTexture.id > 0 && engine.m_shader.has_value()) {
       BeginShaderMode(engine.m_shader->getRaylibShader());
 
       DrawTextureRec(targetTexture.texture,

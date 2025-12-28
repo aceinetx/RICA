@@ -18,6 +18,7 @@ public:
     m_scenes.push_back(make_object<T>());
     m_sceneCurrent = m_scenes.size() - 1;
   }
+  void addScene(Scene* scene);
 
   friend class Engine;
 
