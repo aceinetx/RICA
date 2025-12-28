@@ -1,8 +1,5 @@
-#include "Render3D.hpp"
-#include "../../rica.hpp"
-#include "Camera3D/Camera3D.hpp"
-#include "Transform3D/Transform3D.hpp"
 #include "raylib.h"
+#include "rica.hpp"
 
 Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
 

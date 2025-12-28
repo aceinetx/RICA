@@ -45,14 +45,18 @@ class AudioSystem;
 // системы
 #include "Audio/Audio.hpp"
 #include "Collider/Collider2D/Collider2D.hpp"
-#include "graphics/Render2D/Render2D.hpp"
-#include "graphics/Render3D/Render3D.hpp"
+#include "Graphics/Render2D/Render2D.hpp"
+#include "Graphics/Render3D/Render3D.hpp"
 
 // Мир
 #include "Scene/Scene.hpp"
 
 // Движок
-#include "engine/Engine.hpp"
+#include "Engine/Engine.hpp"
+
+// Физика
+#include "Physic/Physic2D/Physic.hpp"
+#include "Physic/Physic3D/Physic.hpp"
 
 // Объект
 #include "Object/AutoreleasePool.hpp"

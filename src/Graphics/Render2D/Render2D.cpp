@@ -1,7 +1,4 @@
-#include "Render2D.hpp"
-#include "../rica.hpp"
-#include "Camera2D/Camera2D.hpp"
-#include "raylib.h"
+#include "rica.hpp"
 
 Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
 

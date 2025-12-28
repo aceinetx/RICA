@@ -1,6 +1,5 @@
 #include "InputDispatcher.hpp"
-#include "Engine.hpp"
-#include <iostream>
+#include "Engine/Engine.hpp"
 
 InputDispatcher& InputDispatcher::getInstance() {
   static InputDispatcher instance;
