@@ -6,6 +6,7 @@
 #include <sstream>
 
 void Engine::luaRunScript(std::string path) {
+  rica::log::debug("EngineScripting", "Running lua script {}", path);
   lua_State* L = luaL_newstate();
   luaL_openlibs(L);
 
@@ -20,7 +21,7 @@ void Engine::luaRunScript(std::string path) {
     s = sstr.str();
   }
 
-  if (luaL_dostring(L, s.c_str())) {
+  if (luaL_dostring(L, s.c_str()) != LUA_OK) {
     rica::log::error("EngineScripting", "Lua error: {}", lua_tostring(L, -1));
   }
 
