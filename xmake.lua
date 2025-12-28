@@ -9,6 +9,8 @@ set_policy("build.sanitizer.undefined", true)
 -- libs
 add_requires("raylib", {external=false})
 add_requires("rapidjson", {external=false})
+add_requires("lua", {external=false})
+add_requires("swig", {external=false})
 set_warnings("all") -- warns
 set_languages("c++17")
 
