@@ -12,43 +12,27 @@ public:
   Render2DSystem(const Render2DSystem&) = delete;
   Render2DSystem& operator=(const Render2DSystem&) = delete;
 
-  static Render2DSystem& getInstance() {
-    static Render2DSystem instance;
-    return instance;
-  }
+  static Render2DSystem& getInstance();
 
   void init(int screenWidth, int screenHeight);
 
   void update(const ObjectVector<Entity*>& entities);
 
-  RenderTexture2D& getRenderTexture() {
-    return renderTexture;
-  }
+  RenderTexture2D& getRenderTexture();
+
+  int getWidth() const;
+
+  int getHeight() const;
 
   friend Engine;
-
-  int getWidth() const {
-    return width;
-  }
-
-  int getHeight() const {
-    return height;
-  }
 
 private:
   Render2DSystem() = default;
 
-  ~Render2DSystem() {
-    if (renderTexture.id > 0) {
-      UnloadRenderTexture(renderTexture);
-    }
-  }
+  ~Render2DSystem();
 
-protected:
-  int width;
-  int height;
+  int m_width;
+  int m_height;
 
-  RenderTexture2D renderTexture = {0};
+  RenderTexture2D m_renderTexture = {0};
 };
-
-extern Render2DSystem& render2Dsystem;

@@ -1,11 +1,14 @@
 #include "rica.hpp"
 
-Render2DSystem& render2Dsystem = Render2DSystem::getInstance();
+Render2DSystem& Render2DSystem::getInstance() {
+  static Render2DSystem instance;
+  return instance;
+}
 
 void Render2DSystem::init(int screenWidth, int screenHeight) {
-  width = screenWidth;
-  height = screenHeight;
-  renderTexture = LoadRenderTexture(width, height);
+  m_width = screenWidth;
+  m_height = screenHeight;
+  m_renderTexture = LoadRenderTexture(m_width, m_height);
 }
 
 void Render2DSystem::update(const ObjectVector<Entity*>& entities) {
@@ -18,7 +21,7 @@ void Render2DSystem::update(const ObjectVector<Entity*>& entities) {
     }
   }
 
-  BeginTextureMode(renderTexture);
+  BeginTextureMode(m_renderTexture);
   if (activeCamera) {
     BeginMode2D(activeCamera->getCamera2D());
   }
@@ -40,4 +43,22 @@ void Render2DSystem::update(const ObjectVector<Entity*>& entities) {
   }
 
   EndTextureMode();
+}
+
+RenderTexture2D& Render2DSystem::getRenderTexture() {
+  return m_renderTexture;
+}
+
+int Render2DSystem::getWidth() const {
+  return m_width;
+}
+
+int Render2DSystem::getHeight() const {
+  return m_height;
+}
+
+Render2DSystem::~Render2DSystem() {
+  if (m_renderTexture.id > 0) {
+    UnloadRenderTexture(m_renderTexture);
+  }
 }

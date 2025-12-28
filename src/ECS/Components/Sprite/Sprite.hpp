@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../../../Logger/Logger.hpp"
-#include "../Component.hpp"
+#include "ECS/Components/Component.hpp"
 #include <raylib.h>
 
 #include <string>
@@ -14,28 +13,14 @@ public:
   // Функция загрузки текстуры (const char*, как требует Raylib)
   bool LoadTextureSprite(const char* path);
 
-  void setColor(Color color) {
-    this->color = color;
-  }
-  void setSource(float x, float y, float width, float height) {
-    source = {x, y, width, height};
-  }
+  void setColor(Color color);
+  void setSource(float x, float y, float width, float height);
 
-  int getHeightSprite() {
-    return texture.height;
-  }
-  int getWidthSprite() {
-    return texture.width;
-  }
-  Color getColor() {
-    return color;
-  }
-  Texture2D getTexture() {
-    return texture;
-  }
-  Rectangle getSource() {
-    return source;
-  }
+  int getHeightSprite();
+  int getWidthSprite();
+  Color getColor();
+  Texture2D getTexture();
+  Rectangle getSource();
 
 private:
   Texture2D texture{0}; // Инициализация Raylib стиля

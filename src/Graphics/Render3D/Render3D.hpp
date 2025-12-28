@@ -16,53 +16,34 @@ public:
   Render3DSystem(Render3DSystem&&) = delete;
   Render3DSystem& operator=(Render3DSystem&&) = delete;
 
-  static Render3DSystem& getInstance() {
-    static Render3DSystem instance;
-    return instance;
-  }
+  static Render3DSystem& getInstance();
 
   void init(int screenWidth, int screenHeight);
 
   void update(const ObjectVector<Entity*>& entities);
 
-  RenderTexture2D& getRenderTexture() {
-    return renderTexture;
-  }
+  RenderTexture2D& getRenderTexture();
 
   friend Engine;
 
-  int getWidth() const {
-    return width;
-  }
+  int getWidth() const;
 
-  int getHeight() const {
-    return height;
-  }
+  int getHeight() const;
 
-  Color getSkyColor() const {
-    return skyColor;
-  }
+  Color getSkyColor() const;
 
-  void setSkyColor(Color color) {
-    skyColor = color;
-  }
+  void setSkyColor(Color color);
+
+  friend Engine;
 
 private:
   Render3DSystem() = default;
-  ~Render3DSystem() {
-    if (renderTexture.id > 0) {
-      UnloadRenderTexture(renderTexture);
-    }
-  }
-
-  friend Engine;
+  ~Render3DSystem();
 
 protected:
-  int width = 0;
-  int height = 0;
-  Color skyColor = {0, 0, 0, 255};
+  int m_width = 0;
+  int m_height = 0;
+  Color m_skyColor = {0, 0, 0, 255};
 
-  RenderTexture2D renderTexture = {0};
+  RenderTexture2D m_renderTexture = {0};
 };
-
-extern Render3DSystem& render3Dsystem;

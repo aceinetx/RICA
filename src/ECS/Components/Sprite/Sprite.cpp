@@ -1,5 +1,11 @@
 #include "Sprite.hpp"
-#include "../../../rica.hpp"
+#include "Logger/Logger.hpp"
+#include "rica.hpp"
+
+// Конструктор со std::string
+SpriteComponent::SpriteComponent(const std::string& path) {
+  LoadTextureSprite(path.c_str());
+}
 
 // Загрузка текстуры
 bool SpriteComponent::LoadTextureSprite(const char* path) {
@@ -10,10 +16,7 @@ bool SpriteComponent::LoadTextureSprite(const char* path) {
   texture = LoadTexture(path);
 
   if (texture.id == 0) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture",
-                  "logRica.txt");
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load texture");
-
+    rica::log::error("SpriteComponent", "Failed to load texture from {}", path);
     return false;
   }
 
@@ -23,8 +26,30 @@ bool SpriteComponent::LoadTextureSprite(const char* path) {
 
   return true;
 }
+void SpriteComponent::setColor(Color color) {
+  this->color = color;
+}
 
-// Конструктор со std::string
-SpriteComponent::SpriteComponent(const std::string& path) {
-  LoadTextureSprite(path.c_str());
+void SpriteComponent::setSource(float x, float y, float width, float height) {
+  source = {x, y, width, height};
+}
+
+int SpriteComponent::getHeightSprite() {
+  return texture.height;
+}
+
+int SpriteComponent::getWidthSprite() {
+  return texture.width;
+}
+
+Color SpriteComponent::getColor() {
+  return color;
+}
+
+Texture2D SpriteComponent::getTexture() {
+  return texture;
+}
+
+Rectangle SpriteComponent::getSource() {
+  return source;
 }

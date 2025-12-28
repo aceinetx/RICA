@@ -1,13 +1,14 @@
-#include "../rica.hpp"
-#include "Var/Var.hpp"
-#include <algorithm>
-#include <cmath>
+#include "Audio/Audio.hpp"
+#include "rica.hpp"
 #include <linux/limits.h>
 
-AudioSystem& audioSystem = AudioSystem::getInstance();
+AudioSystem& AudioSystem::getInstance() {
+  static AudioSystem instance;
+  return instance;
+}
 
 void AudioSystem::update(const ObjectVector<Entity*>& entities) {
-  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+  rica::log::debug("AudioSystem", "update");
 
   Camera2DComponent* cameraActive = nullptr;
   TransformComponent* transformActive = nullptr;

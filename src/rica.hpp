@@ -51,12 +51,12 @@ class AudioSystem;
 // Мир
 #include "Scene/Scene.hpp"
 
-// Движок
-#include "Engine/Engine.hpp"
-
 // Физика
 #include "Physic/Physic2D/Physic.hpp"
 #include "Physic/Physic3D/Physic.hpp"
+
+// Движок
+#include "Engine/Engine.hpp"
 
 // Объект
 #include "Object/AutoreleasePool.hpp"

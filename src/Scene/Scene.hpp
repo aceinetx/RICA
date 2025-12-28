@@ -16,7 +16,7 @@ public:
   // Lifecycle методы - переопределяет пользователь
   virtual void OnLoad() {
   }
-  virtual void OnUpdate(float deltaTime) {
+  virtual void onUpdate(float deltaTime) {
   }
   virtual void OnUnload() {
   }

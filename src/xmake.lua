@@ -29,7 +29,8 @@ target("EngineLib")
 		"UI/*.cpp",
 		"Var/*.cpp",
 		"Object/*.cpp",
-		"Input/*.cpp"
+		"Input/*.cpp",
+		"main.cpp"
 	)
 
 	add_includedirs(
@@ -38,5 +39,5 @@ target("EngineLib")
 	)
 
 	add_deps("buffered-raylib::buffered-raylib", {public=true})
-	add_packages("raylib", "rapidjson", "lua", "swig", {public=true})
+	add_packages("raylib", "rapidjson", "fmt", "lua", "swig", {public=true})
 target_end()

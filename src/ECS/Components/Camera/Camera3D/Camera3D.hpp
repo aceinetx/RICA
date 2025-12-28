@@ -7,62 +7,26 @@ class Camera3DComponent : public Component {
 public:
   Camera3DComponent() = default;
 
-  Camera3DComponent(Vector3 offset, float fovy = 1.0f, bool isActive = true)
-      : offset(offset), fovy(fovy), isActive(isActive) {
-  }
+  Camera3DComponent(Vector3 offset, float fovy = 1.0f, bool isActive = true);
 
-  Camera3D getCamera3D() const {
-    Camera3D cam;
-    cam.position = Vector3Add(target, offset);
-    cam.fovy = fovy;
-    cam.target = target;
-    cam.projection = CAMERA_PERSPECTIVE;
-    cam.up = Vector3{0.0f, 1.0f, 0.0f};
+  Camera3D getCamera3D() const;
 
-    return cam;
-  }
+  void followTarget(Vector3 position);
 
-  void followTarget(Vector3 position) {
-    target = position;
-  }
+  void smoothFollow(Vector3 position, float speed);
 
-  void smoothFollow(Vector3 position, float speed) {
-    target.x += (position.x - target.x) * speed;
-    target.y += (position.y - target.y) * speed;
-  }
-
-  void setTarget(Vector3 target) {
-    this->target = target;
-  }
-  void setOffset(Vector3 offset) {
-    this->offset = offset;
-  }
-  void setRotation(float rotation) {
-    this->rotation = rotation;
-  }
-  void setFovy(float fovy) {
-    this->fovy = fovy;
-  }
-  void setActive(bool isActive) {
-    this->isActive = isActive;
-  }
+  void setTarget(Vector3 target);
+  void setOffset(Vector3 offset);
+  void setRotation(float rotation);
+  void setFovy(float fovy);
+  void setActive(bool isActive);
 
   // Getters
-  Vector3 getTarget() const {
-    return target;
-  }
-  Vector3 getOffset() const {
-    return offset;
-  }
-  float getRotation() const {
-    return rotation;
-  }
-  float getFovy() const {
-    return fovy;
-  }
-  bool isActiveCamera() const {
-    return isActive;
-  }
+  Vector3 getTarget() const;
+  Vector3 getOffset() const;
+  float getRotation() const;
+  float getFovy() const;
+  bool isActiveCamera() const;
 
 private:
   Vector3 target{0.0f, 0.0f, 0.0f};
