@@ -8,9 +8,10 @@ target("EngineBindings")
 
 	add_includedirs(
 		".",
-		"../lib/BufferedRaylib/src/"
+		"../lib/BufferedRaylib/src/" -- need to do this explicitly because xmake
 	)
 
+	add_deps("buffered-raylib::buffered-raylib", {public=true})
 	add_packages("lua", {public=true})
 target_end()
 
@@ -28,15 +29,14 @@ target("EngineLib")
 		"UI/*.cpp",
 		"Var/*.cpp",
 		"Object/*.cpp",
-		"Input/*.cpp",
-		"../lib/BufferedRaylib/src/*.cpp"
+		"Input/*.cpp"
 	)
 
 	add_includedirs(
 		".",
-		"../lib/BufferedRaylib/src/",
 		{public=true}
 	)
 
-	add_packages("raylib", "rapidjson", "lua", "swig")
+	add_deps("buffered-raylib::buffered-raylib", {public=true})
+	add_packages("raylib", "rapidjson", "lua", "swig", {public=true})
 target_end()

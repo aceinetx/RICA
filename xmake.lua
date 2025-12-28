@@ -15,4 +15,5 @@ add_requires("swig")
 set_warnings("all") -- warns
 set_languages("c++17")
 
+includes("lib/BufferedRaylib")
 includes("xmake/autoformat.lua", "src", "game")

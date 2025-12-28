@@ -3,6 +3,4 @@ target("MyGame")
     add_files("*.cpp")
 
     add_deps("EngineLib")
-
-    add_packages("raylib", "rapidjson")
 target_end()
