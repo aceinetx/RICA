@@ -1,58 +1,30 @@
 #pragma once
-#include "../../Component.hpp"
-#include "raylib.h"
+#include "ECS/Components/Component.hpp"
+#include <raymath.h>
 #include <vector>
 
 class Physic3DComponent : public Component {
 public:
-  void addForce(Vector3 f) {
-    forces.push_back(f);
-  }
-  const std::vector<Vector3>& getForces() const {
-    return forces;
-  }
-  void clearForces() {
-    forces.clear();
-  }
+  void addForce(Vector3 f);
+  const std::vector<Vector3>& getForces() const;
+  void clearForces();
 
-  bool getIsStatic() const {
-    return isStatic;
-  }
-  void setIsStatic(bool value) {
-    isStatic = value;
-  }
+  bool getIsStatic() const;
+  void setIsStatic(bool value);
 
-  float getMass() const {
-    return mass;
-  }
-  void setMass(float value) {
-    mass = value > 0 ? value : 0.0001f;
-  }
+  float getMass() const;
+  void setMass(float value);
 
-  bool isGravityActive() const {
-    return gravityActive;
-  }
-  void setGravityActive(bool value) {
-    gravityActive = value;
-  }
+  bool isGravityActive() const;
+  void setGravityActive(bool value);
 
-  float getGravityScale() const {
-    return gravityScale;
-  }
-  void setGravityScale(float value) {
-    gravityScale = value;
-  }
+  float getGravityScale() const;
+  void setGravityScale(float value);
 
-  Vector3 getVelocity() const {
-    return velocity;
-  }
-  void setVelocity(Vector3 v) {
-    velocity = v;
-  }
+  Vector3 getVelocity() const;
+  void setVelocity(Vector3 v);
 
-  float getDamping() const {
-    return damping;
-  }
+  float getDamping() const;
 
 private:
   std::vector<Vector3> forces;

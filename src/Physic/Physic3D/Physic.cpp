@@ -1,7 +1,13 @@
 #include "Physic.hpp"
 #include "../../ECS/Components/Physic/Physic3D/Physic3D.hpp"
 
-Physic3DSystem& physic3DSystem = Physic3DSystem::getInstance();
+Physic3DSystem& Physic3DSystem::getInstance() {
+  static Physic3DSystem instance;
+  return instance;
+}
+
+void Physic3DSystem::init() {
+}
 
 void Physic3DSystem::update(const ObjectVector<Entity*>& entities, float dt) {
   for (auto entity : entities) {

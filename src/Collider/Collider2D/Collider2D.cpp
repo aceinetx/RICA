@@ -1,10 +1,13 @@
 #include "Collider2D.hpp"
-#include "../../rica.hpp"
+#include "rica.hpp"
 
-Collider2DSystem& collider2DSystem = Collider2DSystem::getInstance();
+Collider2DSystem& Collider2DSystem::getInstance() {
+  static Collider2DSystem instance;
+  return instance;
+}
 
 void Collider2DSystem::update(const ObjectVector<Entity*>& entities) {
-  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+  rica::log::debug("Collider2DSystem", "update");
 
   for (auto entity : entities) {
     auto transform = entity->getComponent<TransformComponent>();

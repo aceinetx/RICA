@@ -1,13 +1,16 @@
 #include "raylib.h"
 #include "rica.hpp"
 
-Render3DSystem& render3Dsystem = Render3DSystem::getInstance();
+Render3DSystem& Render3DSystem::getInstance() {
+  static Render3DSystem instance;
+  return instance;
+}
 
 void Render3DSystem::init(int screenWidth, int screenHeight) {
-  width = screenWidth;
-  height = screenHeight;
-  renderTexture = LoadRenderTexture(width, height);
-  SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
+  m_width = screenWidth;
+  m_height = screenHeight;
+  m_renderTexture = LoadRenderTexture(m_width, m_height);
+  SetTextureFilter(m_renderTexture.texture, TEXTURE_FILTER_BILINEAR);
 }
 
 void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
@@ -20,8 +23,8 @@ void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
     }
   }
 
-  BeginTextureMode(renderTexture);
-  ClearBackground(skyColor);
+  BeginTextureMode(m_renderTexture);
+  ClearBackground(m_skyColor);
   if (activeCamera) {
     BeginMode3D(activeCamera->getCamera3D());
   }
@@ -45,4 +48,30 @@ void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
     EndMode3D();
   }
   EndTextureMode();
+}
+
+RenderTexture2D& Render3DSystem::getRenderTexture() {
+  return m_renderTexture;
+}
+
+int Render3DSystem::getWidth() const {
+  return m_width;
+}
+
+int Render3DSystem::getHeight() const {
+  return m_height;
+}
+
+Color Render3DSystem::getSkyColor() const {
+  return m_skyColor;
+}
+
+void Render3DSystem::setSkyColor(Color color) {
+  m_skyColor = color;
+}
+
+Render3DSystem::~Render3DSystem() {
+  if (m_renderTexture.id > 0) {
+    UnloadRenderTexture(m_renderTexture);
+  }
 }

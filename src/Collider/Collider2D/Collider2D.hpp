@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../../Object/ObjectVector.hpp"
-#include <memory>
-#include <vector>
 
 class Entity;
 class SpriteComponent;
@@ -16,10 +14,7 @@ public:
   Collider2DSystem(Collider2DSystem&&) = delete;
   Collider2DSystem& operator=(Collider2DSystem&&) = delete;
 
-  static Collider2DSystem& getInstance() {
-    static Collider2DSystem instance;
-    return instance;
-  }
+  static Collider2DSystem& getInstance();
 
   void update(const ObjectVector<Entity*>& entities);
   bool isColliding(Entity* entity1, Entity* entity2);
@@ -29,5 +24,3 @@ private:
 
   ~Collider2DSystem() = default;
 };
-
-extern Collider2DSystem& collider2DSystem;

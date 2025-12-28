@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../Object/ObjectVector.hpp"
-#include <memory>
-#include <vector>
 
 class Entity;
 class TransformComponent;
@@ -15,10 +13,7 @@ public:
   AudioSystem(AudioSystem&&) = delete;
   AudioSystem& operator=(AudioSystem&&) = delete;
 
-  static AudioSystem& getInstance() {
-    static AudioSystem instance;
-    return instance;
-  }
+  static AudioSystem& getInstance();
 
   void update(const ObjectVector<Entity*>& entities);
 
@@ -27,5 +22,3 @@ private:
 
   ~AudioSystem() = default;
 };
-
-extern AudioSystem& audioSystem;

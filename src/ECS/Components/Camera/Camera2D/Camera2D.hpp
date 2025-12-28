@@ -7,60 +7,26 @@ class Camera2DComponent : public Component {
 public:
   Camera2DComponent() = default;
 
-  Camera2DComponent(Vector2 offset, float zoom = 1.0f, bool isActive = true)
-      : offset(offset), zoom(zoom), isActive(isActive) {
-  }
+  Camera2DComponent(Vector2 offset, float zoom = 1.0f, bool isActive = true);
 
-  Camera2D getCamera2D() const {
-    Camera2D cam;
-    cam.target = target;
-    cam.offset = offset;
-    cam.rotation = rotation;
-    cam.zoom = zoom;
-    return cam;
-  }
+  Camera2D getCamera2D() const;
 
-  void followTarget(Vector2 position) {
-    target = position;
-  }
+  void followTarget(Vector2 position);
 
-  void smoothFollow(Vector2 position, float speed) {
-    target.x += (position.x - target.x) * speed;
-    target.y += (position.y - target.y) * speed;
-  }
+  void smoothFollow(Vector2 position, float speed);
 
-  void setTarget(Vector2 target) {
-    this->target = target;
-  }
-  void setOffset(Vector2 offset) {
-    this->offset = offset;
-  }
-  void setRotation(float rotation) {
-    this->rotation = rotation;
-  }
-  void setZoom(float zoom) {
-    this->zoom = zoom;
-  }
-  void setActive(bool isActive) {
-    this->isActive = isActive;
-  }
+  void setTarget(Vector2 target);
+  void setOffset(Vector2 offset);
+  void setRotation(float rotation);
+  void setZoom(float zoom);
+  void setActive(bool isActive);
 
   // Getters
-  Vector2 getTarget() const {
-    return target;
-  }
-  Vector2 getOffset() const {
-    return offset;
-  }
-  float getRotation() const {
-    return rotation;
-  }
-  float getZoom() const {
-    return zoom;
-  }
-  bool isActiveCamera() const {
-    return isActive;
-  }
+  Vector2 getTarget() const;
+  Vector2 getOffset() const;
+  float getRotation() const;
+  float getZoom() const;
+  bool isActiveCamera() const;
 
 private:
   Vector2 target{0, 0};

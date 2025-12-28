@@ -1,16 +1,14 @@
 #pragma once
-
 #include <vector>
 
 class Entity;
 
 struct System {
-  std::vector<Entity*> entities;
+public:
+  void addEntity(Entity* entity);
 
+private:
   virtual ~System() = default;
 
-public:
-  void addEntity(Entity* entity) {
-    entities.push_back(entity);
-  }
+  std::vector<Entity*> entities;
 };
