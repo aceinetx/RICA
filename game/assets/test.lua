@@ -1,5 +1,5 @@
+
 print("LUA START")
-print(Engine)
-print(Engine.getInstance)
-print(Engine:getInstance)
+engine = Engine.Engine_getInstance()
+print(engine:getIsRunning())
 print("LUA END")

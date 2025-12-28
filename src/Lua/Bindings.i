@@ -3,13 +3,9 @@
 %include "std_vector.i"
 
 %{
-class Engine {
-public:
-	static Engine& getInstance();
-};
+#include "Engine/Engine.hpp"
+
+int main();
 %}
 
-class Engine {
-public:
-	static Engine& getInstance();
-};
+%include "Engine/Engine.hpp"

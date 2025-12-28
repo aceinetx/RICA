@@ -8,8 +8,6 @@ AudioSystem& AudioSystem::getInstance() {
 }
 
 void AudioSystem::update(const ObjectVector<Entity*>& entities) {
-  rica::log::debug("AudioSystem", "update");
-
   Camera2DComponent* cameraActive = nullptr;
   TransformComponent* transformActive = nullptr;
 
