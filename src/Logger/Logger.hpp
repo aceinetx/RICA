@@ -43,7 +43,7 @@ namespace rica::log {
     std::string level_str = colorCode + __log_level_to_string(level);
 
     std::string log = fmt::format(
-        "[{}-{}-{} {}:{}:{}] [{}] [{}] {}", local_time->tm_year + 1900,
+        "[{}-{}-{} {}:{}:{}] [{}] [{}] {}\n", local_time->tm_year + 1900,
         local_time->tm_mon + 1, local_time->tm_mday, local_time->tm_hour,
         local_time->tm_min, local_time->tm_sec, level_str, module,
         std::forward<Args>(args)...);
