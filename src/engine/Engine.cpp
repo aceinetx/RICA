@@ -8,6 +8,7 @@
 #include "Render3D/Render3D.hpp"
 #include "Var/Var.hpp"
 #include "raylib.h"
+#include <lua.h>
 
 #include <fstream>
 #include <iostream>
@@ -175,6 +176,9 @@ void Engine::deleteVectorSceneManager() {
 void Engine::shutdown() {
   CloseWindow();
   engine.shader = {}; // deletes the shader, unloading it
+}
+
+void Engine::luaRunScript(std::string path) {
 }
 
 ObjectVector<Scene*> Engine::vectorSceneManager;

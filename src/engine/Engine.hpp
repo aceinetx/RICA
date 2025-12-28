@@ -49,6 +49,8 @@ public:
     return shader;
   }
 
+  void luaRunScript(std::string path);
+
   friend int main();
 
   class SceneManager {

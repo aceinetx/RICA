@@ -1,3 +1,19 @@
+target("EngineBindings")
+	set_kind("static")
+	add_rules("swig.cpp", {moduletype="lua"})
+
+	add_files(
+		"Lua/*.i"
+	)
+
+	add_includedirs(
+		".",
+		"../lib/BufferedRaylib/src/"
+	)
+
+	add_packages("lua", {public=true})
+target_end()
+
 target("EngineLib")
 	set_kind("static")
 	add_files(
@@ -12,7 +28,8 @@ target("EngineLib")
 		"UI/*.cpp",
 		"Var/*.cpp",
 		"Object/*.cpp",
-		"Input/*.cpp"
+		"Input/*.cpp",
+		"../lib/BufferedRaylib/src/*.cpp"
 	)
 
 	add_includedirs(
@@ -21,7 +38,6 @@ target("EngineLib")
 		"ECS/Components/Audio/",
 		"ECS/Components/Camera/",
 		"ECS/Components/Collider/Collider2D/",
-		"ECS/Components/Collider/Collider3D/",
 		"ECS/Components/Physic/",
 		"ECS/Components/Sprite/",
 		"ECS/Components/Transform/",
@@ -33,9 +49,10 @@ target("EngineLib")
 		"graphics/",
 		"Logger/",
 		"Scene/",
-		"UI/"
+		"UI/",
+		"../lib/BufferedRaylib/src/",
+		{public=true}
 	)
 
-	add_packages("raylib", "rapidjson")
-	add_deps("buffered-raylib::buffered-raylib", {public=true})
+	add_packages("raylib", "rapidjson", "lua", "swig")
 target_end()
