@@ -15,5 +15,7 @@ bool gameStart() {
 
   render3Dsystem.setSkyColor({100, 100, 100, 100});
 
+  engine.luaRunScript("assets/test.lua");
+
   return true;
 }

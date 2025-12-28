@@ -1,5 +1,4 @@
 target("EngineBindings")
-	set_kind("static")
 	add_rules("swig.cpp", {moduletype="lua"})
 
 	add_files(
@@ -7,9 +6,15 @@ target("EngineBindings")
 	)
 
 	add_includedirs(
-		".",
-		"../lib/BufferedRaylib/src/" -- need to do this explicitly because xmake
+		"."
+		-- "../lib/BufferedRaylib/src/" -- need to do this explicitly because xmake
 	)
+
+	on_load(function (target)
+		if not target:is_plat("windows", "mingw")  then
+			target:set("prefixname", "lib")
+		end
+	end)
 
 	add_deps("buffered-raylib::buffered-raylib", {public=true})
 	add_packages("lua", {public=true})
@@ -17,6 +22,7 @@ target_end()
 
 target("EngineLib")
 	set_kind("static")
+
 	add_files(
 		"Audio/*.cpp",
 		"Collider/**/*.cpp",
@@ -38,6 +44,6 @@ target("EngineLib")
 		{public=true}
 	)
 
-	add_deps("buffered-raylib::buffered-raylib", {public=true})
+	add_deps("EngineBindings", "buffered-raylib::buffered-raylib", {public=true})
 	add_packages("raylib", "rapidjson", "fmt", "lua", "swig", {public=true})
 target_end()
