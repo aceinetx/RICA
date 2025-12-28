@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release", "mode.asan", "mode.lsan")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "build"}) -- generate compile commands
 add_rules("rica.autoformat")
--- add_rules("swig.cpp", {moduletype="lua"})
+set_policy("build.progress_style", "multirow")
 
 set_policy("build.sanitizer.address", true)
 set_policy("build.sanitizer.leak", true)
