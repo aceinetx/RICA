@@ -1,9 +1,7 @@
 #pragma once
 
-#include "../src/ECS/Components/Mesh/Mesh.hpp"
-#include "../src/ECS/Components/Transform/Transform3D/Transform3D.hpp"
-#include "../src/rica.hpp"
 #include "raylib.h"
+#include "rica.hpp"
 
 #include <iostream>
 #include <memory>

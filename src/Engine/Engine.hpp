@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Input/InputDispatcher.hpp"
-#include "../Object/ObjectVector.hpp"
 #include "BufferedRaylib.hpp"
+#include "Input/InputDispatcher.hpp"
+#include "Object/ObjectVector.hpp"
 #include "Shader.hpp"
 #include "raylib.h"
 #include <raylib.h>

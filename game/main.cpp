@@ -1,9 +1,7 @@
-#include "../src/ECS/Components/Camera/Camera3D/Camera3D.hpp"
-#include "../src/engine/Engine.hpp"
-#include "../src/rica.hpp"
 #include "camera_controller.hpp"
 #include "player.hpp"
 #include "raylib.h"
+#include "rica.hpp"
 #include <iostream>
 #include <memory>
 

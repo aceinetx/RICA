@@ -1,16 +1,7 @@
-#include "Engine.hpp"
-#include "../Object/PoolManager.hpp"
-
-#include "../rica.hpp"
-#include "Input/InputDispatcher.hpp"
-#include "Physic/Physic3D/Physic.hpp"
-#include "Render2D/Render2D.hpp"
-#include "Render3D/Render3D.hpp"
-#include "Var/Var.hpp"
 #include "raylib.h"
+#include "rica.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <string> // Добавлен для std::stoi
 
 // Глобальная переменная движка (Engine Singleton)
