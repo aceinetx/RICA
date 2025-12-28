@@ -1,4 +1,5 @@
 #pragma once
+#include "Logger/ClassFormatters.hpp"
 #include <chrono>
 #include <fmt/format.h>
 #include <fstream>

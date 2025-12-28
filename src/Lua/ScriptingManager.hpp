@@ -12,14 +12,12 @@ namespace rica::lua {
     static ScriptingManager& getInstance();
 
     void runScript(std::string path);
-    bool isRunning();
 
   private:
     ScriptingManager();
     ~ScriptingManager();
 
     void luaRoutine(std::string code);
-    void waitToFinish();
 
     std::thread m_luaThread;
     bool m_isRunning;

@@ -3,27 +3,27 @@
 #include <Graphics/Render3D/Render3D.hpp>
 #include <Lua/ScriptingManager.hpp>
 
-std::vector<int*> x;
-
-bool gameStart() {
+int main() {
 #if 1
   static auto& scripting = rica::lua::ScriptingManager::getInstance();
 
-  scripting.runScript("assets/test.lua");
-  while (scripting.isRunning())
-    ;
+  scripting.runScript("assets/main.lua");
 #else
   static auto& engine = Engine::getInstance();
   engine.set3Dmode(true);
-  static auto& render3d = Render3DSystem::getInstance();
-  render3d.setSkyColor({255, 0, 0, 255});
 
   if (!engine.init())
-    return false;
+    return 1;
+
+  static auto& render3d = Render3DSystem::getInstance();
 
   auto scene = make_object<Scene>();
   engine.sceneManager.addScene(scene);
+
+  render3d.setSkyColor({255, 255, 0, 255});
+
+  engine.mainLoop();
 #endif
 
-  return true;
+  return 0;
 }

@@ -35,9 +35,9 @@ public:
 
   std::optional<EngineShader>& getShader();
 
-  SceneManager sceneManager;
+  void mainLoop();
 
-  friend int main();
+  SceneManager sceneManager;
 
 private:
   Engine();

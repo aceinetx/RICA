@@ -14,8 +14,7 @@ target("EngineLib")
 		"Var/*.cpp",
 		"Object/*.cpp",
 		"Input/*.cpp",
-		"Lua/*.cpp",
-		"main.cpp"
+		"Lua/*.cpp"
 	)
 
 	add_includedirs(

@@ -24,6 +24,8 @@ void Render3DSystem::update(const ObjectVector<Entity*>& entities) {
   }
 
   BeginTextureMode(m_renderTexture);
+
+  rica::log::info("render3d", "{}", m_skyColor);
   ClearBackground(m_skyColor);
   if (activeCamera) {
     BeginMode3D(activeCamera->getCamera3D());

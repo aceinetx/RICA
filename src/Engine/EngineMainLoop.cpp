@@ -1,38 +1,33 @@
 #include "rica.hpp"
 
-int main() {
-  if (!gameStart())
-    return 1;
-
+void Engine::mainLoop() {
   static auto& audioSystem = AudioSystem::getInstance();
   static auto& collider2DSystem = Collider2DSystem::getInstance();
-  static auto& engine = Engine::getInstance();
   static auto& render3Dsystem = Render3DSystem::getInstance();
   static auto& render2Dsystem = Render2DSystem::getInstance();
   static auto& physic3DSystem = Physic3DSystem::getInstance();
 
-  while (engine.getIsRunning() && !WindowShouldClose()) {
-    engine.m_deltaTime = GetFrameTime();
+  while (getIsRunning() && !WindowShouldClose()) {
+    m_deltaTime = GetFrameTime();
     if (IsKeyPressed(KEY_ESCAPE)) {
-      engine.setIsRunning(false);
+      setIsRunning(false);
       break;
     }
 
-    engine.m_input.PollEvents();
+    m_input.PollEvents();
 
     // 1. ОБНОВЛЕНИЕ ЛОГИКИ СЦЕНЫ
-    engine.sceneManager.updateCurrentScene(GetFrameTime());
+    sceneManager.updateCurrentScene(GetFrameTime());
 
     // ==========================================================
     // 2. OFF-SCREEN РЕНДЕРИНГ (Заполнение текстур)
     //    Этот блок должен быть ВНЕ BeginDrawing()/EndDrawing()
     // ==========================================================
-    auto currentScene = engine.sceneManager.getCurrentScene();
+    auto currentScene = sceneManager.getCurrentScene();
     if (currentScene) {
-      if (engine.is3Dmode()) {
+      if (is3Dmode()) {
         render3Dsystem.update(currentScene->getAllEntities());
-        physic3DSystem.update(currentScene->getAllEntities(),
-                              engine.m_deltaTime);
+        physic3DSystem.update(currentScene->getAllEntities(), m_deltaTime);
       } else {
         collider2DSystem.update(currentScene->getAllEntities());
         render2Dsystem.update(currentScene->getAllEntities());
@@ -49,25 +44,27 @@ int main() {
     ClearBackground(BLACK);
 
     // Выбираем, какую текстуру и размеры использовать
-    RenderTexture2D& targetTexture = engine.is3Dmode()
+    RenderTexture2D& targetTexture = is3Dmode()
                                          ? render3Dsystem.getRenderTexture()
                                          : render2Dsystem.getRenderTexture();
 
-    int width = engine.is3Dmode() ? render3Dsystem.getWidth()
-                                  : render2Dsystem.getWidth();
-    int height = engine.is3Dmode() ? render3Dsystem.getHeight()
-                                   : render2Dsystem.getHeight();
+    int width =
+        is3Dmode() ? render3Dsystem.getWidth() : render2Dsystem.getWidth();
+    int height =
+        is3Dmode() ? render3Dsystem.getHeight() : render2Dsystem.getHeight();
 
     // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
-    if (targetTexture.id > 0 && engine.m_shader.has_value()) {
-      BeginShaderMode(engine.m_shader->getRaylibShader());
+    if (targetTexture.id > 0) {
+      if (m_shader.has_value())
+        BeginShaderMode(m_shader->getRaylibShader());
 
       DrawTextureRec(targetTexture.texture,
                      // Используем правильные размеры и отрицательную высоту
                      (Rectangle){0, 0, (float)width, (float)-height},
                      (Vector2){0, 0}, WHITE);
 
-      EndShaderMode();
+      if (m_shader.has_value())
+        EndShaderMode();
     }
 
     // Отрисовка UI/FPS поверх сцены
@@ -75,9 +72,8 @@ int main() {
 
     EndDrawing(); // <-- ЗАКРЫВАЕМ БЛОК ОТРИСОВКИ НА ЭКРАН
 
-    engine.update();
+    update();
   }
 
-  engine.shutdown();
-  return 0;
+  shutdown();
 }

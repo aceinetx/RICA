@@ -4,16 +4,9 @@
 #include <lua.hpp>
 #include <sstream>
 
-rica::lua::ScriptingManager::ScriptingManager() {
-}
+rica::lua::ScriptingManager::ScriptingManager() = default;
 
-rica::lua::ScriptingManager::~ScriptingManager() {
-  if (isRunning()) {
-    rica::log::warning("lua::ScriptingManager",
-                       "Thread still running in destructor");
-    waitToFinish();
-  }
-}
+rica::lua::ScriptingManager::~ScriptingManager() = default;
 
 rica::lua::ScriptingManager& rica::lua::ScriptingManager::getInstance() {
   static ScriptingManager instance;
@@ -21,12 +14,6 @@ rica::lua::ScriptingManager& rica::lua::ScriptingManager::getInstance() {
 }
 
 void rica::lua::ScriptingManager::runScript(std::string path) {
-  if (isRunning()) {
-    rica::log::error("lua::ScriptingManager",
-                     "Cannot run script while another lua thread is running");
-    return;
-  }
-
   rica::log::info("lua::ScriptingManager", "Running lua script {}", path);
 
   std::string s;
@@ -38,10 +25,6 @@ void rica::lua::ScriptingManager::runScript(std::string path) {
   }
 
   luaRoutine(s);
-}
-
-bool rica::lua::ScriptingManager::isRunning() {
-  return m_isRunning;
 }
 
 void rica::lua::ScriptingManager::luaRoutine(std::string code) {
@@ -60,11 +43,4 @@ void rica::lua::ScriptingManager::luaRoutine(std::string code) {
   rica::log::info("lua::ScriptingManager", "Lua script finished");
   lua_close(L);
   m_isRunning = false;
-}
-
-void rica::lua::ScriptingManager::waitToFinish() {
-  rica::log::info("lua::ScriptingManager",
-                  "Waiting for lua script to finish...");
-  while (isRunning())
-    ;
 }

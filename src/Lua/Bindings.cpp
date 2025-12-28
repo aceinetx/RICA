@@ -25,6 +25,7 @@ void rica::lua::bindEngine(lua_State* L) {
       .addFunction("getIsRunning", &Engine::getIsRunning)
       .addFunction("set3Dmode", &Engine::set3Dmode)
       .addFunction("init", &Engine::init)
+      .addFunction("mainLoop", &Engine::mainLoop)
       .addProperty("sceneManager", &Engine::sceneManager)
       .endClass();
 }
@@ -60,24 +61,10 @@ void rica::lua::bindRender3DSystem(lua_State* L) {
 void rica::lua::bindScene(lua_State* L) {
   getGlobalNamespace(L)
       .beginClass<Scene>("Scene")
-      //.addConstructor([](void* ptr) { return new (ptr) Scene(); })
       .addStaticFunction("create",
                          []() -> Scene* { return make_object<Scene>(); })
       .addFunction("updateEntity", &Scene::updateEntity)
       .addFunction("onUpdate", &Scene::onUpdate);
-}
-
-void a() {
-  static auto& engine = Engine::getInstance();
-  engine.set3Dmode(true);
-  static auto& render3d = Render3DSystem::getInstance();
-  render3d.setSkyColor({255, 0, 0, 255});
-
-  if (!engine.init())
-    return;
-
-  auto scene = make_object<Scene>();
-  engine.sceneManager.addScene(scene);
 }
 
 void rica::lua::bindAll(lua_State* L) {
@@ -86,6 +73,4 @@ void rica::lua::bindAll(lua_State* L) {
   bindColor(L);
   bindRender3DSystem(L);
   bindScene(L);
-
-  getGlobalNamespace(L).addFunction("test", []() -> void { a(); });
 }
