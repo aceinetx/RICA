@@ -3,7 +3,7 @@
 %include "std_vector.i"
 
 %{
-#include "engine/Engine.hpp"
+#include "Engine/Engine.hpp"
 %}
 
-#include "engine/Engine.hpp"
+#include "Engine/Engine.hpp"

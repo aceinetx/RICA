@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../src/rica.hpp"
 #include "raylib.h"
+#include "rica.hpp"
 
 #include <cmath>
 #include <iostream>

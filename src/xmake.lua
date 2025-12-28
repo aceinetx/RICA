@@ -20,8 +20,8 @@ target("EngineLib")
 		"Audio/*.cpp",
 		"Collider/**/*.cpp",
 		"ECS/**/*.cpp",
-		"engine/*.cpp",
-		"graphics/**/*.cpp",
+		"Engine/*.cpp",
+		"Graphics/**/*.cpp",
 		"Logger/*.cpp",
 		"Physic/**/*.cpp",
 		"Scene/*.cpp",
@@ -34,22 +34,6 @@ target("EngineLib")
 
 	add_includedirs(
 		".",
-		"ECS/Components/",
-		"ECS/Components/Audio/",
-		"ECS/Components/Camera/",
-		"ECS/Components/Collider/Collider2D/",
-		"ECS/Components/Physic/",
-		"ECS/Components/Sprite/",
-		"ECS/Components/Transform/",
-		"ECS/Objects/",
-		"ECS/Systems/",
-		"Collider/",
-		"Collider/Collider2D/",
-		"engine/",
-		"graphics/",
-		"Logger/",
-		"Scene/",
-		"UI/",
 		"../lib/BufferedRaylib/src/",
 		{public=true}
 	)

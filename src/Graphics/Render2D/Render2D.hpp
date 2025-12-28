@@ -1,9 +1,7 @@
 #pragma once
 
-#include "../../Object/ObjectVector.hpp"
+#include "Object/ObjectVector.hpp"
 #include "raylib.h"
-#include <memory>
-#include <vector>
 
 // ... (остальные forward declarations)
 class Entity;

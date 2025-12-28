@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../../rica.hpp"
-#include "Collider2D.hpp"
-#include <memory>
-#include <vector>
+#include "rica.hpp"
 
 class Entity;
 class TransformComponent;
