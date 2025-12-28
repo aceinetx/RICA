@@ -50,5 +50,5 @@ compile_commands.json
 # clangd cache
 .cache/*
 
-# rica log
-logRica.txt
+# logs
+*.log

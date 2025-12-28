@@ -6,8 +6,6 @@ class Physic2DComponent : public Component {
 public:
   Physic2DComponent();
 
-  friend class Physic2DComponent;
-
 private:
   // Если true, объект не движется (как стена)
   bool isStatic = false;
