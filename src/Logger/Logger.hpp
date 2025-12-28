@@ -2,6 +2,7 @@
 #include <chrono>
 #include <fmt/format.h>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 enum class LogLevel { DEBUG, INFO, WARNING, ERROR, CRITICAL };
@@ -40,7 +41,8 @@ namespace rica::log {
       break;
     }
 
-    std::string level_str = colorCode + __log_level_to_string(level);
+    std::string level_str =
+        colorCode + __log_level_to_string(level) + "\033[0m";
 
     std::string log = fmt::format(
         "[{}-{}-{} {}:{}:{}] [{}] [{}] {}\n", local_time->tm_year + 1900,
@@ -51,6 +53,8 @@ namespace rica::log {
     file << log;
 
     file.close();
+
+    std::cout << log;
     return true;
   }
   template <typename... Args> void debug(std::string module, Args&&... args) {
