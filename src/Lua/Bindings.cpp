@@ -1,6 +1,7 @@
 #include "Lua/Bindings.hpp"
 #include "Engine/Engine.hpp"
 #include "Graphics/Render3D/Render3D.hpp"
+#include "Lua/LuaScene.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/SceneManager.hpp"
 #include <LuaBridge/LuaBridge.h>
@@ -34,7 +35,8 @@ void rica::lua::bindSceneManager(lua_State* L) {
   getGlobalNamespace(L)
       .beginClass<SceneManager>("SceneManager")
       .addFunction("setSceneLimit", &SceneManager::setSceneLimit)
-      .addFunction("addScene", &SceneManager::addScene)
+      .addFunction("addScene", [](SceneManager* self,
+                                  Scene* scene) { self->addScene(scene); })
       .endClass();
 }
 
@@ -61,16 +63,31 @@ void rica::lua::bindRender3DSystem(lua_State* L) {
 void rica::lua::bindScene(lua_State* L) {
   getGlobalNamespace(L)
       .beginClass<Scene>("Scene")
-      .addStaticFunction("create",
-                         []() -> Scene* { return make_object<Scene>(); })
+      //.addStaticFunction("create",
+      //[]() -> Scene* { return make_object<::Scene>(); })
+      .addStaticFunction(
+          "create",
+          [](LuaRef obj) -> Scene* { return make_object<lua::Scene>(obj); })
       .addFunction("updateEntity", &Scene::updateEntity)
       .addFunction("onUpdate", &Scene::onUpdate);
 }
 
 void rica::lua::bindAll(lua_State* L) {
+  bindScene(L);
   bindEngine(L);
   bindSceneManager(L);
   bindColor(L);
   bindRender3DSystem(L);
-  bindScene(L);
+
+  getGlobalNamespace(L).addFunction("import", [L](std::string s) {
+    int status;
+    status = luaL_loadfilex(L, s.c_str(), NULL);
+
+    if (status != LUA_OK)
+      return;
+
+    status = lua_pcall(L, 0, 1, 0);
+    if (status != LUA_OK)
+      return;
+  });
 }

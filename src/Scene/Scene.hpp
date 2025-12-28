@@ -1,10 +1,10 @@
 #pragma once
 #include "../Object/Object.hpp"
 #include "../Object/ObjectVector.hpp"
+#include "Logger/Logger.hpp"
 #include <memory>
 #include <optional>
 #include <string>
-#include <vector>
 
 class Entity;
 
@@ -17,6 +17,7 @@ public:
   virtual void OnLoad() {
   }
   virtual void onUpdate(float deltaTime) {
+    rica::log::info("Scene", "base onupdate {}", deltaTime);
   }
   virtual void OnUnload() {
   }

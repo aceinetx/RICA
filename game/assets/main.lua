@@ -1,3 +1,5 @@
+MainScene = require("assets/mainscene")
+
 engine = Engine.getInstance()
 engine:set3Dmode(true)
 
@@ -9,7 +11,8 @@ end
 render3d = Render3DSystem.getInstance()
 render3d:setSkyColor(Color(100, 100, 100, 255))
 
-local scene = Scene.create()
+local scene = Scene.create(MainScene)
+
 engine.sceneManager:addScene(scene)
 
 engine:mainLoop()
