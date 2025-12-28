@@ -33,13 +33,13 @@ CameraController::CameraController() {
 }
 
 bool CameraController::onKeyDown(KeyboardKey key) {
-  rica::log::debug("key down {}", static_cast<int>(key));
+  rica::log::debug("game", "key down {}", static_cast<int>(key));
   m_downKeys.insert(key);
   return true;
 }
 
 bool CameraController::onKeyUp(KeyboardKey key) {
-  rica::log::debug("key up {}", static_cast<int>(key));
+  rica::log::debug("game", "key up {}", static_cast<int>(key));
   m_downKeys.erase(key);
   return true;
 }
