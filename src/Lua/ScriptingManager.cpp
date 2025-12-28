@@ -37,9 +37,7 @@ void rica::lua::ScriptingManager::runScript(std::string path) {
     s = sstr.str();
   }
 
-  m_luaThread = std::thread([this, s]() -> void { luaRoutine(s); });
-  m_isRunning = true;
-  m_luaThread.detach();
+  luaRoutine(s);
 }
 
 bool rica::lua::ScriptingManager::isRunning() {

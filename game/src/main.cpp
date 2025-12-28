@@ -3,6 +3,8 @@
 #include <Graphics/Render3D/Render3D.hpp>
 #include <Lua/ScriptingManager.hpp>
 
+std::vector<int*> x;
+
 bool gameStart() {
 #if 1
   static auto& scripting = rica::lua::ScriptingManager::getInstance();
