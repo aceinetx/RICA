@@ -68,22 +68,22 @@ namespace rica::py::bindings {
   }
 
   static void bindScene(pyb::module& m) {
-#if 0
-    pyb::class_<Scene, Object, Rc<Scene>>(m, "Scene")
-        .def("onUpdate", &Scene::onUpdate)
-        .def(pyb::init<>());
-#else
     pyb::class_<Scene, PyScene, Object, Rc<Scene>>(m, "Scene")
         .def("onUpdate", &Scene::onUpdate)
         .def(pyb::init<>());
-#endif
   }
 
   static void bindSceneManager(pyb::module& m) {
     pyb::class_<SceneManager, std::unique_ptr<SceneManager, pyb::nodelete>>(
         m, "SceneManager")
         .def("addScene",
-             [](SceneManager* self, PyScene* scene) { self->addScene(scene); });
+             [](SceneManager* self, PyScene* scene) { self->addScene(scene); })
+        .def("setSceneByID", &SceneManager::setSceneByID)
+        .def("setSceneLimit", &SceneManager::setSceneLimit)
+        .def("getCurrentSceneID", &SceneManager::getCurrentSceneID)
+        .def("updateCurrentScene", &SceneManager::updateCurrentScene)
+        .def("deleteAllScenes", &SceneManager::deleteAllScenes)
+        .def("getCurrentScene", &SceneManager::getCurrentScene);
   }
 
   static void bindRender3DSystem(pyb::module& m) {
