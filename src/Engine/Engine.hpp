@@ -60,5 +60,3 @@ private:
   InputDispatcher* m_inputDispatcher;
   std::optional<EngineShader> m_shader;
 };
-
-bool gameStart();

@@ -17,12 +17,40 @@ namespace rica::py::bindings {
     }
   };
 
+  class PyLog {
+  public:
+    static void debug(std::string module, std::string text) {
+      rica::log::debug(module, text);
+    }
+
+    static void info(std::string module, std::string text) {
+      rica::log::info(module, text);
+    }
+
+    static void warning(std::string module, std::string text) {
+      rica::log::warning(module, text);
+    }
+
+    static void error(std::string module, std::string text) {
+      rica::log::error(module, text);
+    }
+
+    static void critical(std::string module, std::string text) {
+      rica::log::critical(module, text);
+    }
+  };
+
   static void bindEngine(pyb::module& m) {
     pyb::class_<Engine, std::unique_ptr<Engine, pyb::nodelete>>(m, "Engine")
         .def_static("getInstance", &Engine::getInstance,
                     pyb::return_value_policy::reference)
         .def("set3Dmode", &Engine::set3Dmode)
+        .def("is3Dmode", &Engine::is3Dmode)
+        .def("setIsRunning", &Engine::setIsRunning)
+        .def("getIsRunning", &Engine::getIsRunning)
         .def("init", &Engine::init)
+        .def("shutdown", &Engine::shutdown)
+        .def("getDeltaTime", &Engine::getDeltaTime)
         .def("mainLoop", &Engine::mainLoop)
         .def_readwrite("sceneManager", &Engine::sceneManager);
   }
@@ -32,8 +60,11 @@ namespace rica::py::bindings {
         .def(pyb::init<>())
         .def("autorelease",
              [](Rc<Object> self) { PoolManager::getInstance().add(self); })
+        .def("init",
+             [](Rc<Object> self) { PoolManager::getInstance().add(self); })
         .def("release", &Object::retain)
-        .def("retain", &Object::release);
+        .def("retain", &Object::release)
+        .def_property_readonly("reference_count", &Object::referenceCount);
   }
 
   static void bindScene(pyb::module& m) {
@@ -60,18 +91,39 @@ namespace rica::py::bindings {
         m, "Render3DSystem")
         .def_static("getInstance", &Render3DSystem::getInstance,
                     pyb::return_value_policy::reference)
-        .def("setSkyColor", &Render3DSystem::setSkyColor);
+        .def("setSkyColor", &Render3DSystem::setSkyColor)
+        .def("getSkyColor", &Render3DSystem::getSkyColor)
+        .def("getWidth", &Render3DSystem::getWidth)
+        .def("getHeight", &Render3DSystem::getHeight);
   }
 
   static void bindColor(pyb::module& m) {
     pyb::class_<::Color>(m, "Color")
-        .def("__init__", [](Color& self, int r, int g, int b, int a) {
-          self.r = static_cast<unsigned char>(r);
-          self.g = static_cast<unsigned char>(g);
-          self.b = static_cast<unsigned char>(b);
-          self.a = static_cast<unsigned char>(a);
-        });
-    ;
+        .def(pyb::init([](int r, int g, int b, int a) -> Color {
+          Color c;
+          c.r = static_cast<unsigned char>(r);
+          c.g = static_cast<unsigned char>(g);
+          c.b = static_cast<unsigned char>(b);
+          c.a = static_cast<unsigned char>(a);
+          return c;
+        }))
+        .def("__repr__",
+             [](const Color& self) -> std::string {
+               return fmt::format("{}", self);
+             })
+        .def_readwrite("r", &Color::r)
+        .def_readwrite("g", &Color::g)
+        .def_readwrite("b", &Color::b)
+        .def_readwrite("a", &Color::a);
+  }
+
+  static void bindLogger(pyb::module& m) {
+    pyb::class_<PyLog>(m, "log")
+        .def_static("debug", &PyLog::debug)
+        .def_static("info", &PyLog::info)
+        .def_static("warning", &PyLog::warning)
+        .def_static("error", &PyLog::error)
+        .def_static("critical", &PyLog::critical);
   }
 } // namespace rica::py::bindings
 
@@ -82,4 +134,5 @@ void rica::py::bindings::bindAll(pyb::module& m) {
   bindRender3DSystem(m);
   bindColor(m);
   bindScene(m);
+  bindLogger(m);
 }

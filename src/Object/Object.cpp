@@ -1,24 +1,27 @@
 #include "Object.hpp"
 #include <cassert>
-#include <cstdio>
 
-Object::Object() : p_refCount(1) {
+Object::Object() : m_refCount(1) {
 }
 
 Object::~Object() = default;
 
 void Object::retain() {
-  assert(p_refCount > 0);
-  p_refCount++;
+  assert(m_refCount > 0);
+  m_refCount++;
   // std::cout << "retain " << this << "\n";
 }
 
 void Object::release() {
-  assert(p_refCount > 0);
-  p_refCount--;
+  assert(m_refCount > 0);
+  m_refCount--;
   // std::cout << "release " << this << "\n";
-  if (p_refCount == 0) {
+  if (m_refCount == 0) {
     // std::cout << "delete\n";
     delete this;
   }
+}
+
+unsigned int Object::referenceCount() {
+  return m_refCount;
 }

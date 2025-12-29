@@ -3,15 +3,17 @@
 #include <utility>
 
 class Object {
-protected:
-  unsigned int p_refCount;
-
 public:
   Object();
   virtual ~Object();
 
   void retain();
   void release();
+
+  unsigned int referenceCount();
+
+private:
+  unsigned int m_refCount;
 };
 
 template <typename T, typename... Args> T* make_object(Args&&... args) {
