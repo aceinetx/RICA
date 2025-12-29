@@ -14,7 +14,8 @@ target("EngineLib")
 		"Var/*.cpp",
 		"Object/*.cpp",
 		"Input/*.cpp",
-		"Lua/*.cpp"
+		"Util/*.cpp",
+		"Python/*.cpp"
 	)
 
 	add_includedirs(
@@ -22,6 +23,6 @@ target("EngineLib")
 		{public=true}
 	)
 
-	add_deps("buffered-raylib::buffered-raylib", "luabridge3", {public=true})
-	add_packages("raylib", "rapidjson", "fmt", "lua", {public=true})
+	add_deps("buffered-raylib::buffered-raylib", {public=true})
+	add_packages("raylib", "rapidjson", "fmt", "pybind11", "python", {public=true})
 target_end()

@@ -1,13 +1,13 @@
 #include "GameScene.hpp"
 #include <Engine/Engine.hpp>
 #include <Graphics/Render3D/Render3D.hpp>
-#include <Lua/ScriptingManager.hpp>
+#include <Python/ScriptingManager.hpp>
+#include <pybind11/pybind11.h>
 
 int main() {
 #if 1
-  static auto& scripting = rica::lua::ScriptingManager::getInstance();
-
-  scripting.runScript("assets/main.lua");
+  auto& scripting = rica::py::ScriptingManager::getInstance();
+  scripting.runPythonScript("assets/main.py");
 #else
   static auto& engine = Engine::getInstance();
   engine.set3Dmode(true);

@@ -9,6 +9,8 @@ Scene::~Scene() = default;
 Entity* Scene::createEntity(Entity* entityPtr) {
   assert(entityPtr);
   entities.push_back(entityPtr);
+  rica::log::info("Scene", "createEntity {}",
+                  reinterpret_cast<void*>(entityPtr));
   return entityPtr;
 }
 

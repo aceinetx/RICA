@@ -1,7 +1,7 @@
 #pragma once
-#include <thread>
+#include <string>
 
-namespace rica::lua {
+namespace rica::py {
   class ScriptingManager {
   public:
     ScriptingManager(const ScriptingManager&) = delete;
@@ -11,15 +11,10 @@ namespace rica::lua {
 
     static ScriptingManager& getInstance();
 
-    void runScript(std::string path);
+    void runPythonScript(std::string path);
 
   private:
     ScriptingManager();
     ~ScriptingManager();
-
-    void luaRoutine(std::string code);
-
-    std::thread m_luaThread;
-    bool m_isRunning;
   };
-} // namespace rica::lua
+} // namespace rica::py
