@@ -5,9 +5,9 @@
 #include <iostream>
 #include <string>
 
-enum class LogLevel { DEBUG, INFO, WARNING, ERROR, CRITICAL };
-
 namespace rica::log {
+  enum class LogLevel { DEBUG, INFO, WARNING, ERROR, CRITICAL };
+
   std::string __log_level_to_string(LogLevel level);
 
   template <typename... Args>
