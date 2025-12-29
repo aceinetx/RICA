@@ -13,7 +13,7 @@ namespace rica::py::bindings {
     using Scene::Scene;
 
     void onUpdate(float dt) override {
-      PYBIND11_OVERLOAD_PURE(void, Scene, onUpdate, dt);
+      PYBIND11_OVERLOAD(void, Scene, onUpdate, dt);
     }
   };
 
@@ -37,15 +37,22 @@ namespace rica::py::bindings {
   }
 
   static void bindScene(pyb::module& m) {
+#if 0
     pyb::class_<Scene, Object, Rc<Scene>>(m, "Scene")
         .def("onUpdate", &Scene::onUpdate)
         .def(pyb::init<>());
+#else
+    pyb::class_<PyScene, Object, Rc<PyScene>>(m, "Scene")
+        .def("onUpdate", &PyScene::onUpdate)
+        .def(pyb::init<>());
+#endif
   }
 
   static void bindSceneManager(pyb::module& m) {
     pyb::class_<SceneManager, std::unique_ptr<SceneManager, pyb::nodelete>>(
         m, "SceneManager")
-        .def("addScene", &SceneManager::addScene);
+        .def("addScene",
+             [](SceneManager* self, PyScene* scene) { self->addScene(scene); });
   }
 
   static void bindRender3DSystem(pyb::module& m) {
