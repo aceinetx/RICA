@@ -1,10 +1,18 @@
 #include "Scene.hpp"
-#include "../rica.hpp"
+#include "rica.hpp"
 
 Scene::Scene() {
 }
 
 Scene::~Scene() = default;
+
+void Scene::onLoad() {
+}
+void Scene::onUpdate(float deltaTime) {
+  rica::log::info("Scene", "base onupdate {}", deltaTime);
+}
+void Scene::onUnload() {
+}
 
 Entity* Scene::createEntity(Entity* entityPtr) {
   assert(entityPtr);

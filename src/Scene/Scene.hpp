@@ -1,8 +1,6 @@
 #pragma once
 #include "../Object/Object.hpp"
 #include "../Object/ObjectVector.hpp"
-#include "Logger/Logger.hpp"
-#include <memory>
 #include <optional>
 #include <string>
 
@@ -14,13 +12,9 @@ public:
   virtual ~Scene();
 
   // Lifecycle методы - переопределяет пользователь
-  virtual void OnLoad() {
-  }
-  virtual void onUpdate(float deltaTime) {
-    rica::log::info("Scene", "base onupdate {}", deltaTime);
-  }
-  virtual void OnUnload() {
-  }
+  virtual void onLoad();
+  virtual void onUpdate(float deltaTime);
+  virtual void onUnload();
 
   // Создание Entity (старый API)
   Entity* createEntity(Entity* entity);
