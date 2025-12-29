@@ -50,7 +50,7 @@ bool RayLibVar::parseInitFile(rapidjson::Document& doc) {
   return true;
 }
 
-std::optional<RayLibVar> RayLibVar::parseInitFileForRayLib() {
+std::optional<RayLibVar> RayLibVar::parseInitFile() {
   RayLibVar rayVar;
   rayVar.flag = 0;
   rapidjson::Document doc;
