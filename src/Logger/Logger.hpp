@@ -27,19 +27,19 @@ namespace rica::log {
     std::string colorCode = "\033[0m";
     switch (level) {
     case LogLevel::DEBUG:
-      colorCode = "";
+      colorCode = "\033[38;2;150;150;150m";
       break;
     case LogLevel::INFO:
-      colorCode = "";
+      colorCode = "\033[38;2;100;200;100m";
       break;
     case LogLevel::WARNING:
-      colorCode = "";
+      colorCode = "\033[38;2;255;200;0m";
       break;
     case LogLevel::ERROR:
-      colorCode = "";
+      colorCode = "\033[38;2;255;100;100m";
       break;
     case LogLevel::CRITICAL:
-      colorCode = "";
+      colorCode = "\033[38;2;255;0;0m";
       break;
     }
 
