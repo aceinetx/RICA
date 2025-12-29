@@ -6,6 +6,13 @@ Scene::Scene() {
 
 Scene::~Scene() = default;
 
+void Scene::onLoad() {
+}
+void Scene::onUpdate(float deltaTime) {
+}
+void Scene::onUnload() {
+}
+
 Entity* Scene::createEntity(Entity* entityPtr) {
   assert(entityPtr);
   entities.push_back(entityPtr);
