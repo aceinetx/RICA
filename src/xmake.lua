@@ -22,6 +22,6 @@ target("EngineLib")
 		{public=true}
 	)
 
-	add_deps("buffered-raylib::buffered-raylib", {public=true})
-	add_packages("raylib", "rapidjson", "fmt", "lua", "luabridge3", {public=true})
+	add_deps("buffered-raylib::buffered-raylib", "luabridge3", {public=true})
+	add_packages("raylib", "rapidjson", "fmt", "lua", {public=true})
 target_end()

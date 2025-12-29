@@ -66,8 +66,8 @@ void rica::lua::bindScene(lua_State* L) {
       //.addStaticFunction("create",
       //[]() -> Scene* { return make_object<::Scene>(); })
       .addStaticFunction(
-          "create",
-          [](LuaRef obj) -> Scene* { return make_object<lua::Scene>(obj); })
+          "from",
+          [L](LuaRef obj) -> Scene* { return make_object<lua::Scene>(obj, L); })
       .addFunction("updateEntity", &Scene::updateEntity)
       .addFunction("onUpdate", &Scene::onUpdate);
 }
@@ -78,16 +78,4 @@ void rica::lua::bindAll(lua_State* L) {
   bindSceneManager(L);
   bindColor(L);
   bindRender3DSystem(L);
-
-  getGlobalNamespace(L).addFunction("import", [L](std::string s) {
-    int status;
-    status = luaL_loadfilex(L, s.c_str(), NULL);
-
-    if (status != LUA_OK)
-      return;
-
-    status = lua_pcall(L, 0, 1, 0);
-    if (status != LUA_OK)
-      return;
-  });
 }

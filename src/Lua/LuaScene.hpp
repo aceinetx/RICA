@@ -8,7 +8,7 @@
 namespace rica::lua {
   class Scene : public ::Scene {
   public:
-    Scene(luabridge::LuaRef self);
+    Scene(luabridge::LuaRef self, lua_State* L);
 
     void onUpdate(float delta);
 

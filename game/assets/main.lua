@@ -11,7 +11,7 @@ end
 render3d = Render3DSystem.getInstance()
 render3d:setSkyColor(Color(100, 100, 100, 255))
 
-local scene = Scene.create(MainScene)
+local scene = MainScene:new()
 
 engine.sceneManager:addScene(scene)
 

@@ -24,7 +24,7 @@ void rica::lua::ScriptingManager::runScript(std::string path) {
     s = sstr.str();
   }
 
-  luaRoutine(s);
+  luaRoutine(path);
 }
 
 void rica::lua::ScriptingManager::luaRoutine(std::string code) {
@@ -35,7 +35,7 @@ void rica::lua::ScriptingManager::luaRoutine(std::string code) {
   rica::lua::bindAll(L);
 
   rica::log::info("lua::ScriptingManager", "Calling luaL_dostring");
-  if (luaL_dostring(L, code.c_str()) != LUA_OK) {
+  if (luaL_dofile(L, code.c_str()) != LUA_OK) {
     rica::log::error("lua::ScriptingManager", "Lua error: {}",
                      lua_tostring(L, -1));
   }
