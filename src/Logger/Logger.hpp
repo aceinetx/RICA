@@ -1,16 +1,21 @@
 #pragma once
-#include <array>
 #include <chrono>
 #include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 
+/// @brief Logger functions
 namespace rica::log {
   enum class LogLevel { DEBUG, INFO, WARNING, ERROR, CRITICAL };
 
+  /// @brief Convert a log level enum to string
   std::string __log_level_to_string(LogLevel level);
 
+  /// @brief Log text with a log level
+  /// @param module From which module is this log coming from?
+  /// @param text Log text
+  /// @param args Format args
   template <typename... Args>
   bool __log_level(LogLevel level, std::string module, std::string text,
                    Args&&... args) {
@@ -59,22 +64,42 @@ namespace rica::log {
     return true;
   }
 
+  /// @brief Log text with a debug level
+  /// @param module From which module is this log coming from?
+  /// @param text Log text
+  /// @param args Format args
   template <typename... Args>
   void debug(std::string module, std::string text, Args&&... args) {
     __log_level(LogLevel::DEBUG, module, text, args...);
   }
+  /// @brief Log text with a info level
+  /// @param module From which module is this log coming from?
+  /// @param text Log text
+  /// @param args Format args
   template <typename... Args>
   void info(std::string module, std::string text, Args&&... args) {
     __log_level(LogLevel::INFO, module, text, args...);
   }
+  /// @brief Log text with a warning level
+  /// @param module From which module is this log coming from?
+  /// @param text Log text
+  /// @param args Format args
   template <typename... Args>
   void warning(std::string module, std::string text, Args&&... args) {
     __log_level(LogLevel::WARNING, module, text, args...);
   }
+  /// @brief Log text with a error level
+  /// @param module From which module is this log coming from?
+  /// @param text Log text
+  /// @param args Format args
   template <typename... Args>
   void error(std::string module, std::string text, Args&&... args) {
     __log_level(LogLevel::ERROR, module, text, args...);
   }
+  /// @brief Log text with a critical level
+  /// @param module From which module is this log coming from?
+  /// @param text Log text
+  /// @param args Format args
   template <typename... Args>
   void critical(std::string module, std::string text, Args&&... args) {
     __log_level(LogLevel::CRITICAL, module, text, args...);
