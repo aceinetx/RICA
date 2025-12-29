@@ -10,10 +10,10 @@ render3d = rica.Render3DSystem.getInstance()
 render3d.setSkyColor(rica.Color(255, 0, 0, 255))
 
 class MainScene(rica.Scene):
-	def onUpdate(delta):
+	def onUpdate(self, delta):
 		print(f"onUpdate {delta}")
 
-scene = rica.Scene()
+scene = MainScene()
 scene.autorelease()
 
 engine.sceneManager.addScene(scene)

@@ -42,8 +42,8 @@ namespace rica::py::bindings {
         .def("onUpdate", &Scene::onUpdate)
         .def(pyb::init<>());
 #else
-    pyb::class_<PyScene, Object, Rc<PyScene>>(m, "Scene")
-        .def("onUpdate", &PyScene::onUpdate)
+    pyb::class_<Scene, PyScene, Object, Rc<Scene>>(m, "Scene")
+        .def("onUpdate", &Scene::onUpdate)
         .def(pyb::init<>());
 #endif
   }
