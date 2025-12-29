@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <chrono>
 #include <fmt/format.h>
 #include <fstream>
@@ -26,38 +27,38 @@ namespace rica::log {
     std::string colorCode = "\033[0m";
     switch (level) {
     case LogLevel::DEBUG:
-      colorCode = "\033[38;2;150;150;150m";
+      colorCode = "";
       break;
     case LogLevel::INFO:
-      colorCode = "\033[38;2;100;200;100m";
+      colorCode = "";
       break;
     case LogLevel::WARNING:
-      colorCode = "\033[38;2;255;200;0m";
+      colorCode = "";
       break;
     case LogLevel::ERROR:
-      colorCode = "\033[38;2;255;100;100m";
+      colorCode = "";
       break;
     case LogLevel::CRITICAL:
-      colorCode = "\033[38;2;255;0;0m";
+      colorCode = "";
       break;
     }
 
-    std::string level_str =
-        colorCode + __log_level_to_string(level) + "\033[0m";
+    const auto format = [&](std::string level_string) {
+      return fmt::format("[{}-{}-{} {}:{}:{}] [{}] [{}] " + text + "\n",
+                         local_time->tm_year + 1900, local_time->tm_mon + 1,
+                         local_time->tm_mday, local_time->tm_hour,
+                         local_time->tm_min, local_time->tm_sec, level_string,
+                         module, std::forward<Args>(args)...);
+    };
 
-    std::string log = fmt::format(
-        "[{}-{}-{} {}:{}:{}] [{}] [{}] " + text + "\n",
-        local_time->tm_year + 1900, local_time->tm_mon + 1, local_time->tm_mday,
-        local_time->tm_hour, local_time->tm_min, local_time->tm_sec, level_str,
-        module, std::forward<Args>(args)...);
-
-    file << log;
+    file << format(__log_level_to_string(level));
 
     file.close();
 
-    std::cout << log;
+    std::cout << format(colorCode + __log_level_to_string(level) + "\033[0m");
     return true;
   }
+
   template <typename... Args>
   void debug(std::string module, std::string text, Args&&... args) {
     __log_level(LogLevel::DEBUG, module, text, args...);
