@@ -55,7 +55,7 @@ void Engine::mainLoop() {
 
     // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
     if (targetTexture.id > 0) {
-      if (m_shader.has_value())
+      if (m_shader)
         BeginShaderMode(m_shader->getRaylibShader());
 
       DrawTextureRec(targetTexture.texture,
@@ -63,8 +63,10 @@ void Engine::mainLoop() {
                      (Rectangle){0, 0, (float)width, (float)-height},
                      (Vector2){0, 0}, WHITE);
 
-      if (m_shader.has_value())
+      if (m_shader)
         EndShaderMode();
+    } else {
+      rica::log::error("Main loop", "targetTexture.id > 0 failed");
     }
 
     // Отрисовка UI/FPS поверх сцены

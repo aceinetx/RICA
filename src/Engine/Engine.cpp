@@ -25,12 +25,21 @@ bool Engine::init() {
   InitAudioDevice();
 
   m_isRunning = m_wasInitialized = true;
-  auto var = parseInitFileForRayLib();
-  // можно использовать var.has_value(), но лучше оставить так для
-  // читабельности
-  if (!var)
+  if (auto var = RayLibVar::parseInitFile()) {
+    static auto& render3Dsystem = Render3DSystem::getInstance();
+    static auto& render2Dsystem = Render3DSystem::getInstance();
+    SetConfigFlags(var->flag);
+    InitWindow(var->width, var->height, var->title.c_str());
+
+    if (is3Dmode())
+      render3Dsystem.init(var->width, var->height);
+    else
+      render2Dsystem.init(var->width, var->height);
+
+    SetTargetFPS(var->maxFPS);
+    return true;
+  } else
     return false;
-  return true;
 }
 
 void Engine::set3Dmode(const bool& is3D) {

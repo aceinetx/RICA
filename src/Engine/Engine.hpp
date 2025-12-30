@@ -6,7 +6,6 @@
 #include "Input/InputDispatcher.hpp"
 #include "Scene/SceneManager.hpp"
 #include "raylib.h"
-#include <rapidjson/document.h>
 #include <raylib.h>
 
 class Scene;
@@ -42,9 +41,6 @@ public:
 private:
   Engine();
   ~Engine() = default;
-
-  bool parseInitFile(rapidjson::Document& doc);
-  std::optional<RayLibVar> parseInitFileForRayLib();
 
   void keyboardCallback(KeyboardKey key, bool isDown);
   void mouseButtonCallback(MouseButton button, bool isDown);
