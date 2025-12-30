@@ -18,6 +18,7 @@ void Object::release() {
   // std::cout << "release " << this << "\n";
   if (m_refCount == 0) {
     // std::cout << "delete\n";
+    // if (!keepalive.has_value())
     delete this;
   }
 }

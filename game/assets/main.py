@@ -13,7 +13,8 @@ render3d.setSkyColor(rica.Color(255, 0, 0, 255))
 print(render3d.getSkyColor())
 
 scene = MainScene()
-scene.autorelease()
+scene.init()
 engine.sceneManager.addScene(scene)
+del scene
 
 engine.mainLoop()
