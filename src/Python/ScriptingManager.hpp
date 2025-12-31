@@ -1,4 +1,5 @@
 #pragma once
+#include <pybind11/embed.h>
 #include <string>
 
 namespace rica::py {
@@ -13,8 +14,14 @@ namespace rica::py {
 
     void runPythonScript(std::string path);
 
+    bool isRunning();
+
   private:
     ScriptingManager();
     ~ScriptingManager();
+
+    bool m_isRunning;
+
+    pybind11::scoped_interpreter m_guard{};
   };
 } // namespace rica::py

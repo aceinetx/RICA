@@ -2,7 +2,6 @@
 #include "Logger/Logger.hpp"
 #include "Python/Bindings.hpp"
 #include "Util/Util.hpp"
-#include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
@@ -23,8 +22,6 @@ rica::py::ScriptingManager& rica::py::ScriptingManager::getInstance() {
 }
 
 void rica::py::ScriptingManager::runPythonScript(std::string path) {
-  ::py::scoped_interpreter guard{};
-
   auto result = util::readFile(path);
   if (!result.has_value()) {
     rica::log::error("py::ScriptingManager", result.error());
@@ -34,6 +31,7 @@ void rica::py::ScriptingManager::runPythonScript(std::string path) {
 
   rica::log::info("py::ScriptingManager", "Running script {}", path);
   try {
+    m_isRunning = true;
     ::py::exec(code);
   } catch (::py::error_already_set e) {
     rica::log::error("py::ScriptingManager", "Python error: {}", e.what());
@@ -45,4 +43,8 @@ void rica::py::ScriptingManager::runPythonScript(std::string path) {
       "leaked memory, e.g. a false positive. Just ignore it, but remember that "
       "any leaks other than _PyObject_Malloc should *not* be ignored and "
       "addressed immediately");
+  m_isRunning = false;
+}
+bool rica::py::ScriptingManager::isRunning() {
+  return m_isRunning;
 }
