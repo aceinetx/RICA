@@ -20,6 +20,7 @@ void Entity::update(float deltaTime) {
 
 void Entity::addComponent(Component* comp) {
   assert(comp);
+  comp->setOwner(this);
   components.push_back(comp);
 }
 
