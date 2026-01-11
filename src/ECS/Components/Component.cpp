@@ -2,6 +2,6 @@
 #include <cassert>
 
 void Component::setOwner(Entity* owner) {
-  assert(m_owner);
+  assert(owner);
   m_owner = owner;
 }
