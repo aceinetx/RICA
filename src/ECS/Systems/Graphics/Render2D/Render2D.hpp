@@ -1,13 +1,12 @@
 #pragma once
-
-#include "Object/ObjectVector.hpp"
+#include "ECS/Systems/System.hpp"
 #include "raylib.h"
 
 // ... (остальные forward declarations)
 class Entity;
 class Engine;
 
-class Render2DSystem {
+class Render2DSystem : public System {
 public:
   Render2DSystem(const Render2DSystem&) = delete;
   Render2DSystem& operator=(const Render2DSystem&) = delete;
@@ -16,7 +15,7 @@ public:
 
   void init(int screenWidth, int screenHeight);
 
-  void update(const ObjectVector<Entity*>& entities);
+  void update(const ObjectVector<Entity*>& entities) override;
 
   RenderTexture2D& getRenderTexture();
 
@@ -28,7 +27,6 @@ public:
 
 private:
   Render2DSystem() = default;
-
   ~Render2DSystem();
 
   int m_width;

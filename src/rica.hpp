@@ -43,10 +43,10 @@ class AudioSystem;
 #include "ECS/Objects/Entity.hpp"
 
 // системы
-#include "Audio/Audio.hpp"
-#include "Collider/Collider2D/Collider2D.hpp"
-#include "Graphics/Render2D/Render2D.hpp"
-#include "Graphics/Render3D/Render3D.hpp"
+#include "ECS/Systems/Audio/Audio.hpp"
+#include "ECS/Systems/Collider/Collider2D/Collider2D.hpp"
+#include "ECS/Systems/Graphics/Render2D/Render2D.hpp"
+#include "ECS/Systems/Graphics/Render3D/Render3D.hpp"
 
 // Мир
 #include "Scene/Scene.hpp"

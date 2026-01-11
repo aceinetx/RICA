@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Object/ObjectVector.hpp"
+#include "ECS/Systems/System.hpp"
 #include "raylib.h"
 
 class Entity;
@@ -9,7 +8,7 @@ class Camera3DComponent;
 class Transform3DComponent;
 class MeshComponent;
 
-class Render3DSystem {
+class Render3DSystem : public System {
 public:
   Render3DSystem(const Render3DSystem&) = delete;
   Render3DSystem& operator=(const Render3DSystem&) = delete;
@@ -20,7 +19,7 @@ public:
 
   void init(int screenWidth, int screenHeight);
 
-  void update(const ObjectVector<Entity*>& entities);
+  void update(const ObjectVector<Entity*>& entities) override;
 
   RenderTexture2D& getRenderTexture();
 

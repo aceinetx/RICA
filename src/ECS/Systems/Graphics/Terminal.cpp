@@ -87,4 +87,3 @@ Terminal::~Terminal() {
   showCursor();
   fflush(stdout);
 }
-

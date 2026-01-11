@@ -1,14 +1,12 @@
 #pragma once
-#include <vector>
+#include "Object/ObjectVector.hpp"
 
 class Entity;
 
-struct System {
+class System {
 public:
-  void addEntity(Entity* entity);
+  virtual void update(const ObjectVector<Entity*>& entities) = 0;
 
-private:
+protected:
   virtual ~System() = default;
-
-  std::vector<Entity*> entities;
 };

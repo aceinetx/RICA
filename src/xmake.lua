@@ -1,11 +1,8 @@
 target("EngineLib")
 	set_kind("static")
 	add_files(
-		"Audio/*.cpp",
-		"Collider/**/*.cpp",
 		"ECS/**/*.cpp",
 		"Engine/*.cpp",
-		"Graphics/**/*.cpp",
 		"Logger/*.cpp",
 		"Physic/**/*.cpp",
 		"Scene/*.cpp",
