@@ -7,7 +7,8 @@ struct Component : public Object {
 public:
   virtual ~Component() = default;
 
-  void setOwner(Entity* owner);
+  virtual void setOwner(Entity* owner);
+  [[nodiscard]] virtual Entity* getOwner();
 
 private:
   Entity* m_owner;

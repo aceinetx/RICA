@@ -26,14 +26,12 @@ bool Engine::init() {
   m_isRunning = true;
   if (auto var = RayLibVar::parseInitFile()) {
     static auto& render3Dsystem = Render3DSystem::getInstance();
-    static auto& render2Dsystem = Render3DSystem::getInstance();
+    static auto& render2Dsystem = Render2DSystem::getInstance();
     SetConfigFlags(var->flag);
     InitWindow(var->width, var->height, var->title.c_str());
 
-    if (is3Dmode())
-      render3Dsystem.init(var->width, var->height);
-    else
-      render2Dsystem.init(var->width, var->height);
+    render3Dsystem.init(var->width, var->height);
+    render2Dsystem.init(var->width, var->height);
 
     SetTargetFPS(var->maxFPS);
     return true;

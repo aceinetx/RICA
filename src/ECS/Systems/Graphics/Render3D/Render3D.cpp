@@ -7,6 +7,7 @@ Render3DSystem& Render3DSystem::getInstance() {
 }
 
 void Render3DSystem::init(int screenWidth, int screenHeight) {
+  rica::log::info("Render3DSystem", "initialize");
   m_width = screenWidth;
   m_height = screenHeight;
   m_renderTexture = LoadRenderTexture(m_width, m_height);

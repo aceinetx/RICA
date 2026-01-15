@@ -41,6 +41,8 @@ public:
 
   void setHeight(float height);
 
+  void setSize(const Vector2& size);
+
 private:
   Vector2 position;
   float rotation;

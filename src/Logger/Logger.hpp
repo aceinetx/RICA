@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include <chrono>
 #include <fmt/format.h>
 #include <fstream>
@@ -10,6 +9,19 @@ namespace rica::log {
   enum class LogLevel { DEBUG, INFO, WARNING, ERROR, CRITICAL };
 
   std::string __log_level_to_string(LogLevel level);
+
+  template <typename... Args>
+  std::string fmt_string(std::string level_string, std::tm* local_time,
+                         std::string text, std::string module, Args&&... args) {
+    auto fmt_string = "[{}-{}-{} {}:{}:{}] [{}] [{}] " + text + "\n";
+    auto year = local_time->tm_year + 1900;
+    auto month = local_time->tm_mon + 1;
+    return fmt::vformat(fmt_string, fmt::make_format_args(
+                                        year, month, local_time->tm_mday,
+                                        local_time->tm_hour, local_time->tm_min,
+                                        local_time->tm_sec, level_string,
+                                        module, std::forward<Args>(args)...));
+  };
 
   template <typename... Args>
   bool __log_level(LogLevel level, std::string module, std::string text,
@@ -43,19 +55,14 @@ namespace rica::log {
       break;
     }
 
-    const auto format = [&](std::string level_string) {
-      return fmt::format("[{}-{}-{} {}:{}:{}] [{}] [{}] " + text + "\n",
-                         local_time->tm_year + 1900, local_time->tm_mon + 1,
-                         local_time->tm_mday, local_time->tm_hour,
-                         local_time->tm_min, local_time->tm_sec, level_string,
-                         module, std::forward<Args>(args)...);
-    };
-
-    file << format(__log_level_to_string(level));
+    file << fmt_string(__log_level_to_string(level), local_time, text, module,
+                       args...);
 
     file.close();
 
-    std::cout << format(colorCode + __log_level_to_string(level) + "\033[0m");
+    std::cout << fmt_string(colorCode + __log_level_to_string(level) +
+                                "\033[0m",
+                            local_time, text, module, args...);
     return true;
   }
 

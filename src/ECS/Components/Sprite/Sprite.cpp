@@ -13,7 +13,9 @@ bool SpriteComponent::LoadTextureSprite(const char* path) {
   if (texture.id != 0)
     UnloadTexture(texture);
 
-  texture = LoadTexture(path);
+  auto image = LoadImage(path);
+  texture = LoadTextureFromImage(image);
+  UnloadImage(image);
 
   if (texture.id == 0) {
     rica::log::error("SpriteComponent", "Failed to load texture from {}", path);

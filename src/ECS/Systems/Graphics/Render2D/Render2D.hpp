@@ -23,6 +23,10 @@ public:
 
   int getHeight() const;
 
+  Color getSkyColor() const;
+
+  void setSkyColor(Color color);
+
   friend Engine;
 
 private:
@@ -31,6 +35,8 @@ private:
 
   int m_width;
   int m_height;
+
+  Color m_skyColor;
 
   RenderTexture2D m_renderTexture = {0};
 };

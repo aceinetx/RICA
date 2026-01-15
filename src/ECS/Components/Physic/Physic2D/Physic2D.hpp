@@ -1,12 +1,59 @@
 #pragma once
 #include "ECS/Components/Component.hpp"
-#include <raymath.h>
+#include <box2cpp.h>
+#include <raylib.h>
+
+class Scene;
 
 class Physic2DComponent : public Component {
 public:
-  Physic2DComponent();
+  Physic2DComponent(Scene* scene);
+
+  void setOwner(Entity* owner) override;
+
+  virtual void setIsStatic(bool isStatic);
+
+  [[nodiscard]] virtual bool getIsStatic();
+
+  virtual void setMass(float mass);
+
+  [[nodiscard]] virtual float getMass();
+
+  virtual void setCenterOfMassOffset(Vector2 offset);
+
+  [[nodiscard]] virtual Vector2 getCenterOfMassOffset();
+
+  virtual void setGravityScale(float gravityScale);
+
+  [[nodiscard]] virtual float getGravityScale();
+
+  virtual void getGravityActive(bool active);
+
+  [[nodiscard]] virtual bool setGravityActive();
+
+  virtual void setRestitution(float restitution);
+
+  [[nodiscard]] virtual float getRestitution();
+
+  virtual void setFriction(float friction);
+
+  [[nodiscard]] virtual float getFriction();
+
+  virtual void setForce(float force);
+
+  [[nodiscard]] virtual float getForce();
+
+  virtual void setTemperature(float temperature);
+
+  [[nodiscard]] virtual float getTemperature();
+
+  [[nodiscard]] virtual b2::Body& getBody();
+
+  [[nodiscard]] virtual b2::ShapeRef& getShape();
 
 private:
+  void syncWithBodyTransform();
+
   // Если true, объект не движется (как стена)
   bool isStatic = false;
 
@@ -31,4 +78,7 @@ private:
 
   // температура
   float temperature = 0;
+
+  b2::Body m_body;
+  b2::ShapeRef m_shape;
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include "../Object/Object.hpp"
 #include "../Object/ObjectVector.hpp"
+#include <box2cpp.h>
 #include <optional>
 #include <string>
 
@@ -30,8 +31,11 @@ public:
   // Обновление
   void updateEntity();
 
+  [[nodiscard]] b2::World& getBox2DWorld();
+
 private:
   ObjectVector<Entity*> entities;
+  b2::World m_b2world;
 };
 
 #include "Scene.inl"

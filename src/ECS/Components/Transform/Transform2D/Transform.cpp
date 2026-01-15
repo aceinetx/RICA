@@ -62,3 +62,7 @@ void TransformComponent::setWidth(float width) {
 void TransformComponent::setHeight(float height) {
   this->height = height;
 }
+void TransformComponent::setSize(const Vector2& size) {
+  this->width = size.x;
+  this->height = size.y;
+}

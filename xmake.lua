@@ -11,8 +11,9 @@ set_policy("build.sanitizer.undefined", true)
 add_requires("raylib", {external=false})
 add_requires("rapidjson", {external=false})
 add_requires("fmt", {external=false})
+add_requires("box2d", {external=false})
 set_warnings("all") -- warns
-set_languages("c++17")
+set_languages("c++20")
 
 includes("lib/BufferedRaylib")
 includes("xmake/autoformat.lua", "src", "game")

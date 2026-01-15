@@ -5,7 +5,7 @@ int main() {
     return 1;
 
   static auto& audioSystem = AudioSystem::getInstance();
-  static auto& collider2DSystem = Collider2DSystem::getInstance();
+  static auto& physics2DSystem = Physics2DSystem::getInstance();
   static auto& engine = Engine::getInstance();
   static auto& render3Dsystem = Render3DSystem::getInstance();
   static auto& render2Dsystem = Render2DSystem::getInstance();
@@ -34,7 +34,7 @@ int main() {
         physic3DSystem.update(currentScene->getAllEntities(),
                               engine.m_deltaTime);
       } else {
-        collider2DSystem.update(currentScene->getAllEntities());
+        physics2DSystem.update(currentScene->getAllEntities());
         render2Dsystem.update(currentScene->getAllEntities());
       }
       audioSystem.update(currentScene->getAllEntities());

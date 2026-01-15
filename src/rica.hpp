@@ -10,7 +10,7 @@ class Entity;
 class Player;
 class Terminal;
 class Log;
-class Collider2DSystem;
+class Physics2DSystem;
 class Render2DSystem;
 class AudioSystem;
 
@@ -32,9 +32,9 @@ class AudioSystem;
 #include "ECS/Components/Audio/Audio.hpp"
 #include "ECS/Components/Camera/Camera2D/Camera2D.hpp"
 #include "ECS/Components/Camera/Camera3D/Camera3D.hpp"
-#include "ECS/Components/Collider/Collider2D/Collider2D.hpp"
 #include "ECS/Components/Component.hpp"
 #include "ECS/Components/Mesh/Mesh.hpp"
+#include "ECS/Components/Physic/Physic2D/Physic2D.hpp"
 #include "ECS/Components/Physic/Physic3D/Physic3D.hpp"
 #include "ECS/Components/Sprite/Sprite.hpp"
 #include "ECS/Components/Transform/Transform2D/Transform.hpp"
@@ -44,9 +44,9 @@ class AudioSystem;
 
 // системы
 #include "ECS/Systems/Audio/Audio.hpp"
-#include "ECS/Systems/Collider/Collider2D/Collider2D.hpp"
 #include "ECS/Systems/Graphics/Render2D/Render2D.hpp"
 #include "ECS/Systems/Graphics/Render3D/Render3D.hpp"
+#include "ECS/Systems/Physics/Physics2D/Physics2D.hpp"
 
 // Мир
 #include "Scene/Scene.hpp"
