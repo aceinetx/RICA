@@ -9,15 +9,16 @@ PhysicsScene::PhysicsScene() {
   m_player->addComponent(spriteComponent);
 
   auto transform = make_rc<TransformComponent>();
-  transform->setPosition(100, 100);
+  transform->setPosition(300, 100);
   transform->setSize({static_cast<float>(spriteComponent->getWidthSprite()),
                       static_cast<float>(spriteComponent->getHeightSprite())});
   transform->setScale(0.2f);
   m_player->addComponent(transform);
 
   auto physics = make_rc<Physic2DComponent>(this);
-  physics->setIsStatic(false);
   m_player->addComponent(physics);
+  physics->setIsStatic(false);
+  physics->setRestitution(0);
 
   {
     auto listener = make_rc<InputListenerKeyboard>();
@@ -48,7 +49,7 @@ PhysicsScene::PhysicsScene() {
         {static_cast<float>(spriteComponent->getWidthSprite()),
          static_cast<float>(spriteComponent->getHeightSprite())});
     transform->setScale(0.2f);
-    transform->setPosition((transform->getScaledWidth() + 1) * i,
+    transform->setPosition((transform->getScaledWidth() + 1) * (i + 2),
                            render.getHeight() - 300);
     entity->addComponent(transform);
 
@@ -69,11 +70,13 @@ void PhysicsScene::onUpdate(float dt) {
       m_player->getComponent<TransformComponent>()->getPosition().y);
 
   auto& body = m_player->getComponent<Physic2DComponent>()->getBody();
-  body.SetLinearVelocity({0, 0});
+
+  float vel_x = 0;
   if (m_downKeys.contains(KEY_A)) {
-    body.SetLinearVelocity({-1, 0});
+    vel_x = -1;
   }
   if (m_downKeys.contains(KEY_D)) {
-    body.SetLinearVelocity({1, 0});
+    vel_x = 1;
   }
+  body.SetLinearVelocity({vel_x * 1000 * dt, body.GetLinearVelocity().y});
 }

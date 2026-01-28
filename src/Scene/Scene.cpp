@@ -3,7 +3,8 @@
 
 Scene::Scene() {
   b2::World::Params params{};
-  params.gravity = {0, 100};
+  params.gravity = {0, 1000};
+  params.enableContinuous = true;
   m_b2world = b2::World(params);
 }
 
@@ -21,7 +22,8 @@ void Scene::onLoad() {
 }
 void Scene::onUpdate(float deltaTime) {
   m_b2world.Step(
-      deltaTime, /* NOTE: We probably shouldn't use deltaTime but it works rn */
+      deltaTime /
+          10, /* NOTE: We probably shouldn't use deltaTime but it works rn */
       4);
   rica::log::info("Scene", "update world");
 }
