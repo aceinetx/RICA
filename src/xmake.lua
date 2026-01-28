@@ -1,3 +1,15 @@
+target("rlImGui")
+		set_kind("static")
+
+		add_files(
+				"../lib/rlImGui/*.cpp"
+		)
+
+		add_includedirs("../lib/rlImGui", {public=true})
+
+		add_packages("imgui", {public=true})
+target_end()
+
 target("EngineLib")
     set_kind("static")
     add_files(
@@ -19,7 +31,6 @@ target("EngineLib")
         "ECS/Components/Audio/",
         "ECS/Components/Camera/",
         "ECS/Components/Collider/Collider2D/",
-        "ECS/Components/Collider/Collider3D/",
         "ECS/Components/Physic/",
         "ECS/Components/Sprite/",
         "ECS/Components/Transform/",
@@ -34,5 +45,6 @@ target("EngineLib")
         "UI/"
     )
 
-    add_packages("raylib", "rapidjson")
+    add_packages("raylib", "rapidjson", "imgui", {public=true})
+		add_deps("rlImGui", {public=true})
 target_end()

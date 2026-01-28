@@ -6,6 +6,7 @@
 #include "Render3D/Render3D.hpp"
 #include "Var/Var.hpp"
 #include "raylib.h"
+#include <rlImGui.h>
 
 #include <cstddef>
 #include <fstream>
@@ -17,7 +18,8 @@ Engine& engine = Engine::getInstance();
 bool parseInitFile(rapidjson::Document& doc) {
   std::fstream initFile("initEngine.json");
   if (!initFile.is_open()) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json", "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json",
+                  "logRica.txt");
     logger.addLog(LogLevel::ERROR, basePath, "Failed to load initEngine.json");
 
     return false;
@@ -26,8 +28,13 @@ bool parseInitFile(rapidjson::Document& doc) {
                          std::istreambuf_iterator<char>());
   doc.Parse(initString.c_str());
   if (doc.HasParseError()) {
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to parse JSON for position"+std::to_string(doc.GetErrorOffset()), "logRica.txt");
-    logger.addLog(LogLevel::ERROR, basePath, "Failed to parse JSON for position"+std::to_string(doc.GetErrorOffset()));
+    logger.addLog(LogLevel::ERROR, basePath,
+                  "Failed to parse JSON for position" +
+                      std::to_string(doc.GetErrorOffset()),
+                  "logRica.txt");
+    logger.addLog(LogLevel::ERROR, basePath,
+                  "Failed to parse JSON for position" +
+                      std::to_string(doc.GetErrorOffset()));
 
     return false;
   }
@@ -124,13 +131,14 @@ std::optional<RayLibVar> parseInitFileForRayLib() {
 
   SetConfigFlags(rayVar.flag);
   InitWindow(rayVar.width, rayVar.height, rayVar.title.c_str());
-  if(engine.is3Dmode())
+  if (engine.is3Dmode())
     render3Dsystem.init(rayVar.width, rayVar.height);
-  else 
+  else
     render2Dsystem.init(rayVar.width, rayVar.height);
-  
 
   SetTargetFPS(rayVar.maxFPS);
+
+  rlImGuiSetup(true);
 
   return rayVar;
 }
@@ -156,6 +164,7 @@ void Engine::deleteVectorSceneManager() {
 }
 
 void Engine::shutdown() {
+  rlImGuiShutdown();
   CloseWindow();
   engine.shader = {}; // deletes the shader, unloading it
 }
@@ -164,7 +173,7 @@ std::vector<std::shared_ptr<Scene>> Engine::vectorSceneManager;
 Engine::SceneManager Engine::sceneManager;
 
 void Engine::updateCurrentScene() {
-    logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
+  logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
   unsigned int currentSceneId = sceneManager.getCurrentSceneID();
   if (currentSceneId < vectorSceneManager.size() &&
       vectorSceneManager[currentSceneId] != nullptr) {
@@ -175,8 +184,13 @@ void Engine::updateCurrentScene() {
 std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
   if (ID >= Engine::vectorSceneManager.size()) {
 
-    logger.addLog(LogLevel::CRITICAL, basePath,"World ID " + std::to_string(ID)+" is out of bounds! Resizing vector." , "logRica.txt");
-    logger.addLog(LogLevel::CRITICAL, basePath,"World ID " + std::to_string(ID)+" is out of bounds! Resizing vector.");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "World ID " + std::to_string(ID) +
+                      " is out of bounds! Resizing vector.",
+                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "World ID " + std::to_string(ID) +
+                      " is out of bounds! Resizing vector.");
 
     Engine::vectorSceneManager.resize(ID + 1, nullptr);
   }
@@ -190,13 +204,23 @@ std::shared_ptr<Scene> Engine::SceneManager::newSceneByID(unsigned int ID) {
 
 void Engine::SceneManager::setSceneByID(unsigned int ID) {
   if (ID >= vectorSceneManager.size()) {
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": out of bounds", "logRica.txt");
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": out of bounds");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": out of bounds",
+                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": out of bounds");
     return;
   }
   if (vectorSceneManager[ID] == nullptr) {
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": scene is null", "logRica.txt");
-    logger.addLog(LogLevel::CRITICAL, basePath,"Cannot set scene ID " + std::to_string(ID)+": scene is null");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": scene is null",
+                  "logRica.txt");
+    logger.addLog(LogLevel::CRITICAL, basePath,
+                  "Cannot set scene ID " + std::to_string(ID) +
+                      ": scene is null");
 
     return;
   }
@@ -239,16 +263,16 @@ int main() {
     // 2. OFF-SCREEN РЕНДЕРИНГ (Заполнение текстур)
     //    Этот блок должен быть ВНЕ BeginDrawing()/EndDrawing()
     // ==========================================================
-    if(engine.is3Dmode()){
+    if (engine.is3Dmode()) {
       render3Dsystem.update(currentScenePtr->getAllEntities());
-      physic3DSystem.update(currentScenePtr->getAllEntities(), engine.deltaTime);
-    }
-    else{
+      physic3DSystem.update(currentScenePtr->getAllEntities(),
+                            engine.deltaTime);
+    } else {
       collider2DSystem.update(currentScenePtr->getAllEntities());
       render2Dsystem.update(currentScenePtr->getAllEntities());
       audioSystem.update(currentScenePtr->getAllEntities());
     }
-    
+
     // ==========================================================
     // 3. ON-SCREEN РЕНДЕРИНГ (Отрисовка на экран)
     // ==========================================================
@@ -256,36 +280,37 @@ int main() {
     ClearBackground(BLACK);
 
     // Выбираем, какую текстуру и размеры использовать
-    RenderTexture2D& targetTexture = engine.is3Dmode() ? 
-                                     render3Dsystem.getRenderTexture() : 
-                                     render2Dsystem.getRenderTexture();
-    
-    int width = engine.is3Dmode() ? render3Dsystem.getWidth() : render2Dsystem.getWidth();
-    int height = engine.is3Dmode() ? render3Dsystem.getHeight() : render2Dsystem.getHeight();
+    RenderTexture2D& targetTexture = engine.is3Dmode()
+                                         ? render3Dsystem.getRenderTexture()
+                                         : render2Dsystem.getRenderTexture();
+
+    int width = engine.is3Dmode() ? render3Dsystem.getWidth()
+                                  : render2Dsystem.getWidth();
+    int height = engine.is3Dmode() ? render3Dsystem.getHeight()
+                                   : render2Dsystem.getHeight();
 
     // Финальная отрисовка буфера на экран (здесь можно добавить шейдер)
     if (targetTexture.id > 0) {
       BeginShaderMode(engine.shader->getRaylibShader());
 
-        DrawTextureRec(
-            targetTexture.texture,
-            // Используем правильные размеры и отрицательную высоту
-            (Rectangle){ 0, 0, (float)width, (float)-height },
-            (Vector2){ 0, 0 },
-            WHITE 
-        );
+      DrawTextureRec(targetTexture.texture,
+                     // Используем правильные размеры и отрицательную высоту
+                     (Rectangle){0, 0, (float)width, (float)-height},
+                     (Vector2){0, 0}, WHITE);
 
-        EndShaderMode();
+      EndShaderMode();
     }
-    
-    // 
+
+    rlImGuiBegin();
+    currentScenePtr->ImGuiDraw();
+    rlImGuiEnd();
 
     // Отрисовка UI/FPS поверх сцены
     DrawFPS(10, 10);
-    
+
     EndDrawing(); // <-- ЗАКРЫВАЕМ БЛОК ОТРИСОВКИ НА ЭКРАН
 
-    logger.addLog(LogLevel::DEBUG, basePath, __func__,"logRica.txt");
+    logger.addLog(LogLevel::DEBUG, basePath, __func__, "logRica.txt");
     engine.update();
   }
 
